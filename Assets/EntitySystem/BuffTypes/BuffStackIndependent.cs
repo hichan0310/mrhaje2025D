@@ -83,11 +83,16 @@ namespace EntitySystem.BuffTypes
 
         public virtual void registrarTarget(Entity target, object args = null)
         {
-            if (targets.ContainsKey(target)) return;
-
-            this.targets[target].addStack((args is ITimeInfo t) ? t.time : this.defaultTime);
-            target.registerListener(this);
-            target.stat.registerBuff(this);
+            if (targets.ContainsKey(target))
+            {
+                this.targets[target].addStack((args is ITimeInfo t) ? t.time : this.defaultTime);
+                target.registerListener(this);
+                target.stat.registerBuff(this);
+            }
+            else
+            {
+                this.targets.Add(target, new StackManager(1));
+            }
         }
 
         public void removeSelf()
