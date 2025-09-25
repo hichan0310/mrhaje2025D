@@ -16,7 +16,7 @@
 
         int IStat.nowHp => 1;
 
-        public int calculateTrueDamage(AtkTagSet tags, int coefficient)
+        public int calculateTrueDamage(AtkTagSet tags, float coefficient)
         {
             return 0;
         }

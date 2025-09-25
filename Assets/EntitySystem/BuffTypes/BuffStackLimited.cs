@@ -2,34 +2,36 @@
 using EntitySystem;
 using EntitySystem.Events;
 using EntitySystem.StatSystem;
+using UnityEngine;
 
 namespace GameBackend
 {
-    public abstract class BuffStackLimited:IBuff, IEntityEventListener
+    public abstract class BuffStackLimited : MonoBehaviour, IBuff, IEntityEventListener
     {
         protected class StackManager
         {
-            public float time{get;set;}
-            public int stack{get;set;}
+            public float time { get; set; }
+            public int stack { get; set; }
         }
-        
+
         protected Dictionary<Entity, StackManager> targets = new();
 
         protected int getStack(Entity entity)
-        { 
+        {
             return targets[entity].stack;
         }
 
         protected abstract float defaultTime { get; }
         protected abstract int limitStack { get; }
-        
-        public abstract void applyBuff(IStat status);
 
-        public abstract void eventActive<T>(T eventArgs) where T : EventArgs;
+        public abstract void applyBuff(IStat stat);
 
-        public virtual void registrarTarget(Entity target, object args=null)
+        public virtual void eventActive(EventArgs eventArgs)
         {
+        }
 
+        public virtual void registerTarget(Entity target, object args = null)
+        {
             if (targets.ContainsKey(target))
             {
                 targets[target].time = this.defaultTime;
@@ -40,8 +42,8 @@ namespace GameBackend
                 target.registerListener(this);
                 target.stat.registerBuff(this);
             }
-            
-            if(targets[target].stack<limitStack) targets[target].stack+=1;
+
+            if (targets[target].stack < limitStack) targets[target].stack += 1;
         }
 
         public void removeSelf()
@@ -51,6 +53,7 @@ namespace GameBackend
                 target.Key.removeListener(this);
                 target.Key.stat.removeBuff(this);
             }
+
             targets.Clear();
         }
 
@@ -69,8 +72,8 @@ namespace GameBackend
             {
                 if (targets[entity].stack >= 1)
                 {
-                    targets[entity].stack-=1;
-                    targets[entity].time=this.defaultTime;
+                    targets[entity].stack -= 1;
+                    targets[entity].time = this.defaultTime;
                 }
                 else
                 {

@@ -1,19 +1,20 @@
 ﻿using System.Collections.Generic;
 using EntitySystem.Events;
 using EntitySystem.StatSystem;
+using UnityEngine;
 
 namespace EntitySystem.BuffTypes
 {
-    public abstract class BuffOnce : IBuff, IEntityEventListener
+    public abstract class BuffOnce : MonoBehaviour, IBuff, IEntityEventListener
     {
         
         protected Dictionary<Entity, float> targets = new();
 
-        public abstract void applyBuff(IStat status);
+        public abstract void applyBuff(IStat stat);
 
-        public abstract void eventActive<T>(T eventArgs) where T : EventArgs;
+        public virtual void eventActive(EventArgs eventArgs){}
 
-        public virtual void registrarTarget(Entity target, object args=null)
+        public virtual void registerTarget(Entity target, object args=null)
         {
             if(targets.ContainsKey(target)) return;
             
@@ -22,7 +23,7 @@ namespace EntitySystem.BuffTypes
             target.stat.registerBuff(this);
         }
 
-        public void removeSelf()
+        public virtual void removeSelf()
         {
             foreach (var target in targets)
             {

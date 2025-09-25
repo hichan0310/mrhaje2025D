@@ -7,7 +7,7 @@
         
         public int maxHp { get; }
         public int nowHp { get; }
-        public int calculateTrueDamage(AtkTagSet tags, int coefficient);
+        public int calculateTrueDamage(AtkTagSet tags, float coefficient);
         public int calculateTakenDamage(AtkTagSet tags, int damage);
         public void takeDamage(int damage);
     }

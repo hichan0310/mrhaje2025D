@@ -9,8 +9,8 @@
     
     public interface IEntityEventListener
     {
-        public void eventActive<T>(T eventArgs) where T : EventArgs;
-        public void registrarTarget(Entity target, object args=null);
+        public void eventActive(EventArgs eventArgs);
+        public void registerTarget(Entity target, object args=null);
         public void removeSelf();
         public void update(float deltaTime, Entity target);
     }

@@ -99,7 +99,7 @@ namespace EntitySystem.StatSystem
             }
         }
 
-        public int calculateTrueDamage(AtkTagSet tags, int coefficient)
+        public int calculateTrueDamage(AtkTagSet tags, float coefficient)
         {
             if (changeBuffs.Count > 0) return calculate().calculateTrueDamage(tags, coefficient);
 

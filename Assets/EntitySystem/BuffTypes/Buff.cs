@@ -1,17 +1,16 @@
 ﻿using EntitySystem.Events;
 using EntitySystem.StatSystem;
+using UnityEngine;
 
 namespace EntitySystem.BuffTypes
 {
-    public abstract class Buff : IBuff, IEntityEventListener
+    public abstract class Buff : MonoBehaviour, IBuff, IEntityEventListener
     {
         protected Entity target;
 
-        public virtual void applyBuff(IStat stus)
-        {
-        }
+        public abstract void applyBuff(IStat stus);
 
-        public virtual void eventActive<T>(T eventArgs) where T : EventArgs
+        public virtual void eventActive(EventArgs eventArgs)
         {
         }
 
@@ -19,7 +18,7 @@ namespace EntitySystem.BuffTypes
         {
         }
 
-        public virtual void registrarTarget(Entity target, object args=null)
+        public virtual void registerTarget(Entity target, object args=null)
         {
             if (this.target != null)
             {

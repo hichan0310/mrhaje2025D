@@ -10,6 +10,7 @@ namespace EntitySystem
         criticalHit = 1,
         notcriticalHit = 2,
         notTakeEvent = 3,
+        fireball = 4,
     }
 
     public static class Tag
@@ -17,7 +18,7 @@ namespace EntitySystem
         public static int atkTagCount = Enum.GetValues(typeof(AtkTags)).Length;
     }
     
-    public struct AtkTagSet : IEnumerable<AtkTags>
+    public class AtkTagSet : IEnumerable<AtkTags>
     {
         private ulong _mask; 
         // 비트마스크로 최대 64개 태그 저장 가능
@@ -29,6 +30,11 @@ namespace EntitySystem
         {
             _mask |= 1UL << (int)tag;
             return this;
+        }
+
+        public AtkTagSet(AtkTagSet copy)
+        {
+            this._mask = copy._mask;
         }
 
         public AtkTagSet Add(params AtkTags[] tags)
