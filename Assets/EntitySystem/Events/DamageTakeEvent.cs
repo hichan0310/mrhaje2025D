@@ -7,10 +7,10 @@ namespace EntitySystem.Events
         public int realDmg { get; set; }
         public Entity attacker { get; }
         public Entity target { get; }
-        public List<AtkTags> atkTags { get; }
+        public AtkTagSet atkTags { get; }
 
 
-        public DamageTakeEvent(int realDmg, Entity attacker, Entity target, List<AtkTags> atkTags)
+        public DamageTakeEvent(int realDmg, Entity attacker, Entity target, AtkTagSet atkTags)
         {
             name = "DmgTakeEvent";
             this.realDmg = realDmg;
