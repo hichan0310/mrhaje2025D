@@ -22,6 +22,7 @@ namespace PlayerSystem.Triggers
         public override void registerTarget(Entity target, object args = null)
         {
             this.target = target;
+            target.registerListener(this);
         }
 
         public override void removeSelf()
