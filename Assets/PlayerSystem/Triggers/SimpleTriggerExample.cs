@@ -12,7 +12,7 @@ namespace PlayerSystem.Triggers
 
         public override void eventActive(EventArgs eventArgs)
         {
-            if (timer <= 0 || eventArgs is DamageGiveEvent)
+            if (timer <= 0 && eventArgs is DamageGiveEvent)
             {
                 timer = 0.5f;
                 foreach (var effect in effects) effect.trigger(target, 1f);
