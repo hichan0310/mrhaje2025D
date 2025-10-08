@@ -324,7 +324,7 @@ namespace PlayerSystem
 
         private void OnMovePerformed(InputAction.CallbackContext ctx)
         {
-            moveInput = ctx.ReadValue<Vector2>();
+            moveInput = ReadVector2(ctx);
             if (Mathf.Abs(moveInput.x) > 0.01f)
             {
                 facingDirection = new Vector2(Mathf.Sign(moveInput.x), 0f);
@@ -622,7 +622,7 @@ namespace PlayerSystem
             Vector2 aim = Vector2.zero;
             if (aimAction != null && aimAction.action != null)
             {
-                aim = aimAction.action.ReadValue<Vector2>();
+                aim = ReadVector2(aimAction.action);
             }
 
             if (aim.sqrMagnitude < minAimMagnitude * minAimMagnitude)
@@ -640,8 +640,6 @@ namespace PlayerSystem
             return aim.normalized;
         }
 
-<<<<<<< Updated upstream
-=======
         private static Vector2 ReadVector2(InputAction.CallbackContext ctx)
         {
             var type = ctx.valueType;
@@ -682,7 +680,7 @@ namespace PlayerSystem
             object val;
             try
             {
-                val = action.ReadValueAsObject(); // 실제 바인딩 타입대로 값이 옴
+                val = action.ReadValueAsObject();
             }
             catch
             {
@@ -700,7 +698,6 @@ namespace PlayerSystem
                 case bool b: return new Vector2(b ? 1f : 0f, 0f);
             }
 
-            // 보너스: activeControl/첫 컨트롤 기준으로 한 번 더 시도 (optional)
             var ctrl = action.activeControl ?? action.controls.FirstOrDefault();
             var t = ctrl?.valueType;
             if (t == typeof(Vector2)) return action.ReadValue<Vector2>();
@@ -712,7 +709,6 @@ namespace PlayerSystem
             return Vector2.zero;
         }
 
->>>>>>> Stashed changes
         private void StartDropThroughPlatforms()
         {
             if (isDropping)
