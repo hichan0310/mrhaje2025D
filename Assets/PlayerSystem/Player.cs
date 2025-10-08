@@ -1,5 +1,6 @@
 using EntitySystem;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace PlayerSystem
 {

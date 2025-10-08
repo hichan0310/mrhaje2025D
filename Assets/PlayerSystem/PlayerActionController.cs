@@ -1,9 +1,11 @@
+using EntitySystem;
 using System;
 using System.Collections.Generic;
-using EntitySystem;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+
 
 namespace PlayerSystem
 {
@@ -490,7 +492,7 @@ namespace PlayerSystem
             var normalized = 1f - Mathf.Clamp01(dodgeTimer / Mathf.Max(0.0001f, dodgeDuration));
             var curveValue = dodgeSpeedCurve != null ? dodgeSpeedCurve.Evaluate(normalized) : 1f;
             var velocity = dodgeDirection * dodgeSpeed * curveValue;
-            body.velocity = new Vector2(velocity.x, body.velocity.y);
+            body.linearVelocity = new Vector2(velocity.x, body.linearVelocity.y);
 
             if (dodgeTimer <= 0f)
             {
@@ -555,10 +557,10 @@ namespace PlayerSystem
             var accelRate = Mathf.Abs(targetSpeed) > 0.01f ? acceleration : deceleration;
             accelRate *= control;
 
-            var velocity = body.velocity;
+            var velocity = body.linearVelocity;
             var maxDelta = accelRate * deltaTime;
             velocity.x = Mathf.MoveTowards(velocity.x, targetSpeed, maxDelta);
-            body.velocity = velocity;
+            body.linearVelocity = velocity;
         }
 
         private void ApplyJump()
@@ -570,9 +572,9 @@ namespace PlayerSystem
 
             if (grounded || coyoteTimer > 0f)
             {
-                var velocity = body.velocity;
+                var velocity = body.linearVelocity;
                 velocity.y = jumpForce;
-                body.velocity = velocity;
+                body.linearVelocity = velocity;
                 grounded = false;
                 coyoteTimer = 0f;
                 jumpBufferTimer = 0f;
@@ -582,11 +584,11 @@ namespace PlayerSystem
 
         private void ApplyGravityModifiers()
         {
-            if (body.velocity.y < -0.01f)
+            if (body.linearVelocity.y < -0.01f)
             {
                 body.gravityScale = fallGravityMultiplier;
             }
-            else if (body.velocity.y > 0.01f && !jumpHeld)
+            else if (body.linearVelocity.y > 0.01f && !jumpHeld)
             {
                 body.gravityScale = lowJumpGravityMultiplier;
             }
@@ -638,6 +640,79 @@ namespace PlayerSystem
             return aim.normalized;
         }
 
+<<<<<<< Updated upstream
+=======
+        private static Vector2 ReadVector2(InputAction.CallbackContext ctx)
+        {
+            var type = ctx.valueType;
+            if (type == typeof(Vector2))
+            {
+                return ctx.ReadValue<Vector2>();
+            }
+
+            if (type == typeof(Vector3))
+            {
+                var value = ctx.ReadValue<Vector3>();
+                return new Vector2(value.x, value.y);
+            }
+
+            if (type == typeof(Vector4))
+            {
+                var value = ctx.ReadValue<Vector4>();
+                return new Vector2(value.x, value.y);
+            }
+
+            if (type == typeof(float))
+            {
+                return new Vector2(ctx.ReadValue<float>(), 0f);
+            }
+
+            if (type == typeof(int))
+            {
+                return new Vector2(ctx.ReadValue<int>(), 0f);
+            }
+
+            return Vector2.zero;
+        }
+
+        private static Vector2 ReadVector2(InputAction action)
+        {
+            if (action == null) return Vector2.zero;
+
+            object val;
+            try
+            {
+                val = action.ReadValueAsObject(); // 실제 바인딩 타입대로 값이 옴
+            }
+            catch
+            {
+                return Vector2.zero;
+            }
+
+            switch (val)
+            {
+                case Vector2 v2: return v2;
+                case Vector3 v3: return new Vector2(v3.x, v3.y);
+                case Vector4 v4: return new Vector2(v4.x, v4.y);
+                case float f: return new Vector2(f, 0f);
+                case double d: return new Vector2((float)d, 0f);
+                case int i: return new Vector2(i, 0f);
+                case bool b: return new Vector2(b ? 1f : 0f, 0f);
+            }
+
+            // 보너스: activeControl/첫 컨트롤 기준으로 한 번 더 시도 (optional)
+            var ctrl = action.activeControl ?? action.controls.FirstOrDefault();
+            var t = ctrl?.valueType;
+            if (t == typeof(Vector2)) return action.ReadValue<Vector2>();
+            if (t == typeof(Vector3)) { var v = action.ReadValue<Vector3>(); return new Vector2(v.x, v.y); }
+            if (t == typeof(Vector4)) { var v = action.ReadValue<Vector4>(); return new Vector2(v.x, v.y); }
+            if (t == typeof(float)) return new Vector2(action.ReadValue<float>(), 0f);
+            if (t == typeof(int)) return new Vector2(action.ReadValue<int>(), 0f);
+
+            return Vector2.zero;
+        }
+
+>>>>>>> Stashed changes
         private void StartDropThroughPlatforms()
         {
             if (isDropping)
@@ -710,7 +785,7 @@ namespace PlayerSystem
 
             if (dodgeCancelsVelocity)
             {
-                body.velocity = Vector2.zero;
+                body.linearVelocity = Vector2.zero;
             }
 
             HandleAction(PlayerActionType.Dodge, 1f, 0f, dodgeDirection, primaryTarget, dodgeDuration, wasJust);
@@ -769,7 +844,7 @@ namespace PlayerSystem
         {
             var resolvedTarget = target != null ? target : primaryTarget;
             var normalizedAim = aimDirection.sqrMagnitude > 0.0001f ? aimDirection.normalized : facingDirection;
-            var currentSpeed = body != null ? body.velocity.magnitude : 0f;
+            var currentSpeed = body != null ? body.linearVelocity.magnitude : 0f;
             var groundedState = grounded;
 
             var resolvedPower = powerMultiplier;
