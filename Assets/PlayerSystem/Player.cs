@@ -1,11 +1,39 @@
-﻿using EntitySystem;
+using EntitySystem;
+using UnityEngine;
 
 namespace PlayerSystem
 {
-    public class Player:Entity
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(PlayerActionController))]
+    public class Player : Entity
     {
-        private Trigger trigger { get; set; } = null;
+        [SerializeField]
+        [Tooltip("Optional trigger that is automatically registered to this player on start.")]
+        [SerializeReference]
+        private Trigger defaultTrigger;
 
+        public PlayerActionController Actions { get; private set; }
 
+        protected override void Start()
+        {
+            base.Start();
+            Actions = GetComponent<PlayerActionController>();
+            RegisterDefaultTrigger();
+        }
+
+        private void OnDestroy()
+        {
+            defaultTrigger?.removeSelf();
+        }
+
+        private void RegisterDefaultTrigger()
+        {
+            if (defaultTrigger == null)
+            {
+                return;
+            }
+
+            defaultTrigger.registerTarget(this);
+        }
     }
 }
