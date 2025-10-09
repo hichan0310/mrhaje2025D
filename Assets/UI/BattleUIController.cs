@@ -58,6 +58,8 @@ namespace Frontend
         private RectTransform hudContainer;
         private readonly List<EntityHealthView> healthViews = new List<EntityHealthView>();
 
+        public BattleMapDefinition CurrentMapDefinition => mapDefinition;
+
         private void Reset()
         {
             mapDefinition = BattleMapDefinition.Default();
@@ -254,5 +256,6 @@ namespace Frontend
             go.transform.SetParent(parent, false);
             return go.GetComponent<RectTransform>();
         }
+
     }
 }

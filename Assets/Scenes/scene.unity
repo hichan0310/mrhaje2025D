@@ -179,6 +179,80 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2102456789
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2102456790}
+  - component: {fileID: 2102456791}
+  m_Layer: 0
+  m_Name: Battle Playfield Generator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2102456790
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2102456789}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2102456791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2102456789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a3f6c2a1f0f476ebb0cb7db07e4f997, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  mapSource: {fileID: 628585843}
+  mapDefinition:
+    size: {x: 6, y: 4}
+    rows:
+    - P...E.
+    - .#....
+    - .#EE..
+    - P...#.
+  inheritDefinitionFromSource: 1
+  playfieldRoot: {fileID: 0}
+  playfieldOrigin: {x: 0, y: 0}
+  tileWorldSize: 1
+  colliderPadding: {x: 0.05, y: 0.05}
+  platformSurfaceArc: 160
+  addDebugSprites: 1
+  groundTileColor: {r: 0.18, g: 0.72, b: 0.43, a: 0.75}
+  platformTileColor: {r: 0.25, g: 0.52, b: 0.93, a: 0.75}
+  tileRules:
+  - tileType: 1
+    collision: 1
+    layerName: Ground
+    tag: Ground
+  - tileType: 2
+    collision: 2
+    layerName: Platform
+    tag: Platform
+  - tileType: 3
+    collision: 2
+    layerName: Platform
+    tag: Platform
 --- !u!1 &940571448
 GameObject:
   m_ObjectHideFlags: 0

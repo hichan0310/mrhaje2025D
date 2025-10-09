@@ -13,4 +13,4 @@
 ## Collider 필요 여부
 `BattleMapRenderer`는 전투 맵을 UI(Canvas) 위에 그리기 때문에, 물리 충돌을 위한 Collider가 필요하지 않습니다. 각 타일은 `UnityEngine.UI.Image` 컴포넌트를 가지고 있으며, `Image.raycastTarget` 옵션을 통해 그래픽 레이캐스트(UI 이벤트 시스템)로 클릭/터치를 감지합니다. Inspector에서 "Interaction" 섹션의 **Enable Tile Raycasts** 옵션이 켜져 있으면 Collider 없이도 Pointer 이벤트를 받을 수 있습니다.
 
-Physics(2D/3D) 기반 상호작용이 필요한 경우 별도의 월드 오브젝트와 Collider를 사용하거나, 필요한 오브젝트에 Collider 컴포넌트를 직접 추가해야 합니다.
+Physics(2D/3D) 기반 상호작용이 필요한 경우 `BattlePlayfieldGenerator` 컴포넌트를 사용해 동일한 맵 정의로 Collider를 자동 생성하거나, 별도의 월드 오브젝트에 Collider 컴포넌트를 직접 추가해야 합니다.
