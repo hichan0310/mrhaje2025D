@@ -176,6 +176,7 @@ namespace PlayerSystem
             playerCollider = GetComponent<Collider2D>();
 
             EnsureLayerMasksConfigured();
+            EnsureRigidbodySetup();
             EnsurePlayerLayerAssignment();
         }
 
@@ -187,6 +188,7 @@ namespace PlayerSystem
             playerCollider = playerCollider != null ? playerCollider : GetComponent<Collider2D>();
             EnsureLayerMasksConfigured();
             EnsureColliderSetup();
+            EnsureRigidbodySetup();
             EnsurePlayerLayerAssignment();
             BuildEffectLookup();
             BuildEventLookup();
@@ -213,6 +215,7 @@ namespace PlayerSystem
             playerCollider = GetComponent<Collider2D>();
             EnsureLayerMasksConfigured();
             EnsureColliderSetup();
+            EnsureRigidbodySetup();
             EnsurePlayerLayerAssignment();
             BuildEffectLookup();
             BuildEventLookup();
@@ -814,6 +817,32 @@ namespace PlayerSystem
             if (playerCollider.isTrigger)
             {
                 Debug.LogWarning("플레이어 Collider2D가 Trigger로 설정되어 있어 충돌 판정이 되지 않습니다. Trigger 옵션을 해제하세요.", playerCollider);
+            }
+        }
+
+        private void EnsureRigidbodySetup()
+        {
+            if (body == null)
+            {
+                Debug.LogWarning("PlayerActionController에 Rigidbody2D가 필요합니다. 플레이어 오브젝트에 Rigidbody2D를 추가하세요.", this);
+                return;
+            }
+
+            if (body.bodyType != RigidbodyType2D.Dynamic)
+            {
+                Debug.LogWarning($"플레이어 Rigidbody2D가 {body.bodyType}로 설정되어 있습니다. 플랫폼 이동을 위해 Dynamic으로 변경합니다.", body);
+                body.bodyType = RigidbodyType2D.Dynamic;
+            }
+
+            if ((body.constraints & RigidbodyConstraints2D.FreezeRotation) == 0)
+            {
+                body.constraints |= RigidbodyConstraints2D.FreezeRotation;
+            }
+
+            if (Mathf.Abs(body.rotation) > 0.01f || Mathf.Abs(body.angularVelocity) > 0.01f)
+            {
+                body.rotation = 0f;
+                body.angularVelocity = 0f;
             }
         }
 
