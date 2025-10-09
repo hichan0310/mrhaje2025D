@@ -1,0 +1,80 @@
+# 씬 셋업 가이드
+
+이 문서는 `PlayerSystem`과 `Gameplay` 폴더에 포함된 플랫폼 슈터 프로토타입을 Unity 씬에서 구성하는 방법을 요약합니다. 기본 사용자는 Unity 2021 LTS 이상을 가정합니다.
+
+## 1. 필수 에셋 준비
+
+### 1.1 메모리 관련 스크립터블 오브젝트
+
+1. **메모리 피스**: `Create > Player > Memory > Piece` 메뉴에서 `MemoryPieceAsset`을 생성합니다.
+   - `Trigger Type`: 어떤 플레이어 동작이 이 피스를 발동시키는지 지정합니다.
+   - `Effect`: `TriggerEffectAsset` 인스턴스를 연결합니다 (아래 참조).
+   - `Shape Cells`: 격자 배치 시 차지하는 셀 오프셋을 정의합니다.
+   - `Resource Type`/`Cost`: 발동에 필요한 자원 소비가 있다면 지정합니다.
+2. **강화 구역**: `Create > Player > Memory > Reinforcement Zone`을 통해 `MemoryReinforcementZoneAsset`을 생성합니다. 강화 영역은 붙어있는 메모리 피스의 파워 배율을 증가시킵니다.
+3. **트리거 효과**: 다음 메뉴에서 원하는 효과를 생성하고 매개변수를 설정합니다.
+   - `Create > Player > Trigger Effects > Spawn Projectile`
+   - `Create > Player > Trigger Effects > Gain Resource`
+   - `Create > Player > Trigger Effects > Stat Buff`
+
+### 1.2 무기 & 기타
+
+- **Projectile 프리팹**: `Assets/PlayerSystem/Weapons/Projectile` 스크립트를 사용하는 프리팹을 준비합니다. `Rigidbody2D`, `Collider2D` 등을 연결하고 `Projectile` 컴포넌트의 속도를 설정합니다.
+- **플랫폼 프리팹**: `StageLayoutBuilder`가 생성할 기본 발판 프리팹을 만들고, Collider2D와 필요한 Tile/Sprite Renderer를 추가합니다.
+
+## 2. 플레이어 프리팹 구성
+
+1. 씬에 빈 GameObject를 만들고 이름을 `Player`로 지정합니다.
+2. 다음 컴포넌트를 추가합니다.
+   - `Player` (자동으로 `Rigidbody2D`, `Collider2D`, `PlayerMemoryBinder`가 요구됩니다)
+   - 필요 시 애니메이터나 비주얼 컴포넌트를 추가합니다.
+3. `Player` 컴포넌트 필드를 설정합니다.
+   - **Movement**: 속도, 점프 파라미터를 입력하고 `Ground Check` 트랜스폼과 `Ground Mask`를 지정합니다.
+   - **Combat**: `Default Projectile` 프리팹, `Fire Point` 트랜스폼, `Fallback Skill/Ultimate Effect`를 각각 연결합니다.
+   - **Mobility/Interaction/Input**: 프로젝트 입력에 맞추어 키 설정 및 상호작용 레이어를 조정합니다.
+4. 자식 오브젝트로 `GroundCheck`와 `FirePoint`를 만들어 필드에 할당합니다.
+
+## 3. 플레이어 메모리 보드 설정
+
+`Player` 객체의 `PlayerMemoryBinder` 컴포넌트를 선택하여 아래 항목을 구성합니다.
+
+1. **Board Settings**
+   - `Grid Size`: 메모리 격자의 가로/세로 셀 수를 지정합니다.
+   - `Resources`: `MemoryResourcePool` 목록을 필요 개수만큼 추가해 각 자원 타입, 최대치, 초당 회복량을 설정합니다.
+   - `Starting Pieces`: 시작 시 자동으로 배치될 메모리 피스를 지정합니다.
+     - `Piece`: `MemoryPieceAsset` 참조.
+     - `Origin`: 격자 내 좌표 (왼쪽 아래가 `(0,0)`).
+     - `Power Multiplier`: 해당 피스의 파워 배율.
+     - `Locked`: `true`로 설정하면 런타임에 제거되지 않습니다.
+   - `Reinforcement Zones`: 강화 구역 에셋과 배치 좌표를 지정합니다.
+2. 플레이 중 메모리 구성을 테스트하려면 `PlayerMemoryBinder`의 `Trigger(...)`를 호출하거나 `MemoryTerminal`과 상호작용합니다.
+
+## 4. 메모리 터미널 배치 (선택)
+
+1. 씬에 `MemoryTerminal` 컴포넌트를 가진 GameObject를 추가합니다.
+2. `Grants` 배열에 플레이어가 상호작용했을 때 부여할 메모리 피스를 설정합니다.
+   - `Piece`: 지급할 `MemoryPieceAsset`.
+   - `Position`: 보드 내 배치 좌표.
+   - `Power Multiplier`: 적용할 배율.
+3. `Player` 스크립트의 `Interact Mask`가 터미널의 레이어를 포함하도록 하고, `Interact Key`를 통해 상호작용할 수 있습니다.
+
+## 5. 스테이지 레이아웃 빌더 사용
+
+1. 씬에 빈 GameObject를 만들고 `StageLayoutBuilder` 컴포넌트를 추가합니다.
+2. `Platform Prefab` 필드에 준비한 플랫폼 프리팹을 할당합니다.
+3. `Stages` 배열에서 각 맵의 층 수, 층 간 간격(`Floor Offset`), 층당 세그먼트 수 등을 설정합니다.
+4. `Auto Build`가 켜져 있으면 플레이 시 자동으로 맵이 생성됩니다. 에디터에서 미리보기하려면 컴포넌트의 `Build Stage` 컨텍스트 메뉴를 사용하고, `Clear Stage`로 제거할 수 있습니다.
+
+## 6. 입력 & 카메라 참고 사항
+
+- `Player` 스크립트는 기본 Unity Input Manager 축(`Horizontal`)과 `KeyCode` 기반 입력을 사용합니다. 새로운 입력 시스템을 사용할 경우 스크립트를 수정하거나 키 설정을 변경하십시오.
+- 카메라 추적이 필요하면 `Cinemachine` 등 별도 카메라 시스템을 추가하고 플레이어를 추적 대상으로 지정합니다.
+
+## 7. 테스트 체크리스트
+
+- 씬을 재생하여 이동/점프/대시/회피/발사가 정상 동작하는지 확인합니다.
+- 각 동작이 대응하는 트리거를 호출해 메모리 피스가 발동하는지 콘솔 로그 또는 디버그 UI로 검증합니다.
+- `MemoryTerminal` 상호작용으로 보드 구성이 변경되는지 확인합니다.
+- `StageLayoutBuilder`가 원하는 맵 형태를 생성하는지 확인합니다.
+
+위 절차를 통해 씬에서 메모리 기반 강화 시스템과 다층 맵을 갖춘 2D 횡스크롤 플랫포머를 빠르게 구성할 수 있습니다.
