@@ -225,7 +225,7 @@ namespace PlayerSystem
                 return;
             }
 
-            Vector2 velocity = body.velocity;
+            Vector2 velocity = body.linearVelocity;
             float fixedDelta = Time.fixedDeltaTime;
 
             if (isDashing)
@@ -245,7 +245,7 @@ namespace PlayerSystem
                 jumpQueued = false;
             }
 
-            body.velocity = velocity;
+            body.linearVelocity = velocity;
         }
 
         private void HandleFallThrough()

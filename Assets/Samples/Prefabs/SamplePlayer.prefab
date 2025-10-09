@@ -28,6 +28,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7300000000000000000}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -36,7 +37,6 @@ Transform:
   - {fileID: 7300000000000000008}
   - {fileID: 7300000000000000010}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7300000000000000002
 SpriteRenderer:
@@ -55,6 +55,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -92,7 +95,7 @@ SpriteRenderer:
   m_SpriteSortPoint: 0
 --- !u!50 &7300000000000000003
 Rigidbody2D:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -103,10 +106,16 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
   m_GravityScale: 2
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -119,11 +128,32 @@ CapsuleCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7300000000000000000}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0, y: -0.1}
   m_Size: {x: 0.6, y: 1.2}
   m_Direction: 0
@@ -147,13 +177,15 @@ MonoBehaviour:
   jumpBuffer: 0.15
   groundCheck: {fileID: 7300000000000000010}
   groundCheckRadius: 0.2
-  groundMask: -1
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
   fallThroughDuration: 0.35
   defaultProjectile: {fileID: 585103627240126144, guid: 36266858b3c0489180fabadc6c426bb5, type: 3}
   firePoint: {fileID: 7300000000000000008}
   fireCooldown: 0.2
-  fallbackSkillEffect: {fileID: 11400000, guid: 0a55b1579a3b45539412e764b66ea52b, type: 2}
-  fallbackUltimateEffect: {fileID: 11400000, guid: 0a55b1579a3b45539412e764b66ea52b, type: 2}
+  fallbackSkillEffect: {fileID: 9000000000000000000, guid: 0a55b1579a3b45539412e764b66ea52b, type: 2}
+  fallbackUltimateEffect: {fileID: 0}
   skillCooldown: 5
   ultimateCooldown: 12
   dashSpeed: 18
@@ -163,7 +195,9 @@ MonoBehaviour:
   dodgeCooldown: 1.5
   justDodgeWindow: 0.2
   interactRadius: 1.5
-  interactMask: -1
+  interactMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
   horizontalAxis: Horizontal
   jumpKey: 32
   downKey: 115
@@ -194,12 +228,12 @@ MonoBehaviour:
       regenPerSecond: 12
       startAmount: 60
     startingPieces:
-    - piece: {fileID: 11400000, guid: 7c78b0ac30164c9895d75b2393f5df2a, type: 2}
+    - piece: {fileID: 0}
       origin: {x: 2, y: 2}
       powerMultiplier: 1
       locked: 0
     reinforcementZones:
-    - zone: {fileID: 11400000, guid: 80a6953b4c7d493ead66df0446c02a5c, type: 2}
+    - zone: {fileID: 0}
       origin: {x: 2, y: 3}
   globalPowerScale: 1
 --- !u!1 &7300000000000000007
@@ -225,13 +259,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7300000000000000007}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.6, y: 0.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7300000000000000001}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7300000000000000009
 GameObject:
@@ -256,11 +290,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7300000000000000009}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7300000000000000001}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
