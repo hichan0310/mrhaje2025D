@@ -28,6 +28,18 @@ namespace Frontend
         [SerializeField]
         private float hudSpacing = 12f;
 
+        [Header("Canvas")]
+        [SerializeField]
+        [Tooltip("Battle UI 캔버스의 RenderMode입니다. 기본적으로 ScreenSpaceOverlay로 설정되어 월드 오브젝트와 겹치지 않습니다.")]
+        private RenderMode canvasRenderMode = RenderMode.ScreenSpaceOverlay;
+
+        [SerializeField]
+        private Vector2 referenceResolution = new Vector2(1920f, 1080f);
+
+        [SerializeField]
+        [Range(0f, 1f)]
+        private float referenceMatch = 0.5f;
+
         [Header("Entities")]
         [SerializeField]
         private Entity playerEntity;
@@ -60,6 +72,9 @@ namespace Frontend
             hudPreferredSize.x = Mathf.Max(120f, hudPreferredSize.x);
             hudPreferredSize.y = Mathf.Max(48f, hudPreferredSize.y);
             hudSpacing = Mathf.Max(0f, hudSpacing);
+            referenceResolution.x = Mathf.Max(320f, referenceResolution.x);
+            referenceResolution.y = Mathf.Max(240f, referenceResolution.y);
+            referenceMatch = Mathf.Clamp01(referenceMatch);
         }
 
         private void Start()
@@ -92,13 +107,24 @@ namespace Frontend
             canvasGo.transform.SetParent(transform, false);
 
             var createdCanvas = canvasGo.GetComponent<Canvas>();
-            createdCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            createdCanvas.renderMode = canvasRenderMode;
             createdCanvas.pixelPerfect = false;
+
+            if (canvasRenderMode == RenderMode.ScreenSpaceCamera && createdCanvas.worldCamera == null)
+            {
+                createdCanvas.worldCamera = Camera.main;
+            }
+
+            if (canvasRenderMode == RenderMode.WorldSpace)
+            {
+                var rect = (RectTransform)createdCanvas.transform;
+                rect.sizeDelta = referenceResolution;
+            }
 
             var scaler = canvasGo.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1920f, 1080f);
-            scaler.matchWidthOrHeight = 0.5f;
+            scaler.referenceResolution = referenceResolution;
+            scaler.matchWidthOrHeight = referenceMatch;
 
             return createdCanvas;
         }
