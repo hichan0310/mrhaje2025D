@@ -6,5 +6,6 @@ namespace EntitySystem
     {
         public bool isStable { get; }
         public void applyBuff(IStat stat);
+        public void removeSelf();
     }
 }
