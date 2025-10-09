@@ -64,6 +64,11 @@ namespace Frontend
         [SerializeField]
         private string enemySpawnLayer;
 
+        [Header("Interaction")]
+        [SerializeField]
+        [Tooltip("UI 그래픽 레이캐스트로 타일을 선택할 수 있게 Image.raycastTarget을 활성화합니다. UI 전용 맵이므로 별도의 Collider가 필요하지 않습니다.")]
+        private bool enableTileRaycasts = true;
+
         [Header("Debug")]
         [SerializeField]
         private bool showCoordinates;
@@ -172,6 +177,7 @@ namespace Frontend
             image.sprite = tileSprite;
             image.type = tileSprite != null ? Image.Type.Sliced : Image.Type.Simple;
             image.color = ResolveColor(type);
+            image.raycastTarget = enableTileRaycasts;
 
             ApplyTagAndLayer(tileObject, type);
 
