@@ -12,6 +12,7 @@ namespace PlayerSystem
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Player))]
     [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(Collider2D))]
     public class PlayerActionController : MonoBehaviour
     {
         [Header("Component References")]
@@ -20,6 +21,9 @@ namespace PlayerSystem
 
         [SerializeField]
         private Rigidbody2D body;
+
+        [SerializeField]
+        private PlayerInput playerInput;
 
         [SerializeField]
         private Transform groundCheck;
@@ -137,6 +141,7 @@ namespace PlayerSystem
         private readonly Dictionary<PlayerActionType, PlayerActionUnityEvent> eventLookup = new Dictionary<PlayerActionType, PlayerActionUnityEvent>();
         private readonly List<Action> unbinders = new List<Action>();
         private readonly List<InputAction> enabledActions = new List<InputAction>();
+        private readonly HashSet<string> missingActionWarnings = new HashSet<string>();
 
         private Vector2 moveInput;
         private bool jumpHeld;
@@ -145,6 +150,8 @@ namespace PlayerSystem
         private bool grounded;
         private bool isDropping;
         private float dropTimer;
+
+        private Collider2D playerCollider;
 
         private bool isDodging;
         private float dodgeTimer;
@@ -169,14 +176,22 @@ namespace PlayerSystem
         {
             player = GetComponent<Player>();
             body = GetComponent<Rigidbody2D>();
+            playerInput = GetComponent<PlayerInput>();
             groundCheck = transform;
+            playerCollider = GetComponent<Collider2D>();
+
+            EnsureLayerMasksConfigured();
+            EnsureRigidbodySetup();
+            EnsurePlayerLayerAssignment();
         }
 
         private void Awake()
         {
-            player = player != null ? player : GetComponent<Player>();
-            body = body != null ? body : GetComponent<Rigidbody2D>();
-            groundCheck = groundCheck != null ? groundCheck : transform;
+            CacheComponents();
+            EnsureLayerMasksConfigured();
+            EnsureColliderSetup();
+            EnsureRigidbodySetup();
+            EnsurePlayerLayerAssignment();
             BuildEffectLookup();
             BuildEventLookup();
         }
@@ -199,6 +214,11 @@ namespace PlayerSystem
             dodgeCooldown = Mathf.Max(0f, dodgeCooldown);
             fireInterval = Mathf.Max(0.01f, fireInterval);
             minAimMagnitude = Mathf.Max(0.01f, minAimMagnitude);
+            CacheComponents();
+            EnsureLayerMasksConfigured();
+            EnsureColliderSetup();
+            EnsureRigidbodySetup();
+            EnsurePlayerLayerAssignment();
             BuildEffectLookup();
             BuildEventLookup();
         }
@@ -249,19 +269,29 @@ namespace PlayerSystem
 
         private void EnableInput()
         {
-            BindAction(moveAction, OnMovePerformed, OnMoveCanceled);
-            BindAction(jumpAction, OnJumpStarted, OnJumpPerformed, OnJumpCanceled);
-            BindAction(dropAction, null, OnDropPerformed);
-            BindAction(fireAction, OnFireStarted, OnFirePerformed, OnFireCanceled);
-            BindAction(skillAction, OnSkillStarted, null, OnSkillCanceled);
-            BindAction(ultimateAction, OnUltimateStarted, null, OnUltimateCanceled);
-            BindAction(interactAction, null, OnInteractPerformed);
-            BindAction(dodgeAction, OnDodgeStarted, null, null);
-            if (aimAction != null && aimAction.action != null)
+            CacheComponents();
+            missingActionWarnings.Clear();
+            BindAction(moveAction, "Move", OnMovePerformed, OnMoveCanceled);
+            BindAction(jumpAction, "Jump", OnJumpStarted, OnJumpPerformed, OnJumpCanceled);
+            BindAction(dropAction, "DownJump|Drop", null, OnDropPerformed);
+            BindAction(fireAction, "Attack|Fire", OnFireStarted, OnFirePerformed, OnFireCanceled);
+            BindAction(skillAction, "Skill", OnSkillStarted, null, OnSkillCanceled);
+            BindAction(ultimateAction, "Ultimate", OnUltimateStarted, null, OnUltimateCanceled);
+            BindAction(interactAction, "Interact", null, OnInteractPerformed);
+            BindAction(dodgeAction, "Dodge", OnDodgeStarted, null, null);
+
+            var aim = ResolveAction(aimAction, "Look|Aim", logIfMissing: false);
+            if (aim != null)
             {
-                var aim = aimAction.action;
-                aim.Enable();
-                enabledActions.Add(aim);
+                if (!aim.enabled)
+                {
+                    aim.Enable();
+                }
+
+                if (!enabledActions.Contains(aim))
+                {
+                    enabledActions.Add(aim);
+                }
             }
         }
 
@@ -285,16 +315,12 @@ namespace PlayerSystem
         }
 
         private void BindAction(InputActionReference reference,
+            string fallbackActionName,
             Action<InputAction.CallbackContext> started,
             Action<InputAction.CallbackContext> performed,
             Action<InputAction.CallbackContext> canceled = null)
         {
-            if (reference == null)
-            {
-                return;
-            }
-
-            var action = reference.action;
+            var action = ResolveAction(reference, fallbackActionName);
             if (action == null)
             {
                 return;
@@ -318,8 +344,73 @@ namespace PlayerSystem
                 unbinders.Add(() => action.canceled -= canceled);
             }
 
-            action.Enable();
-            enabledActions.Add(action);
+            if (!action.enabled)
+            {
+                action.Enable();
+            }
+
+            if (!enabledActions.Contains(action))
+            {
+                enabledActions.Add(action);
+            }
+        }
+
+        private InputAction ResolveAction(InputActionReference reference, string fallbackActionNames, bool logIfMissing = true)
+        {
+            InputAction action = null;
+
+            if (reference != null)
+            {
+                try
+                {
+                    action = reference.action;
+                }
+                catch (InvalidOperationException)
+                {
+                    action = null;
+                }
+            }
+
+#if ENABLE_INPUT_SYSTEM
+            if (action == null && playerInput != null && !string.IsNullOrEmpty(fallbackActionNames))
+            {
+                var actions = playerInput.actions;
+                if (actions != null)
+                {
+                    var names = fallbackActionNames.Split('|');
+                    for (var i = 0; i < names.Length; i++)
+                    {
+                        var candidate = names[i].Trim();
+                        if (string.IsNullOrEmpty(candidate))
+                        {
+                            continue;
+                        }
+
+                        action = actions.FindAction(candidate, throwIfNotFound: false);
+                        if (action != null)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+#endif
+
+            if (logIfMissing && action == null && !string.IsNullOrEmpty(fallbackActionNames) && missingActionWarnings.Add(fallbackActionNames))
+            {
+                Debug.LogWarning($"입력 액션 '{fallbackActionNames}'을 찾지 못했습니다. PlayerInput 또는 InputActionReference 설정을 확인하세요.", this);
+            }
+
+            return action;
+        }
+
+        private void CacheComponents()
+        {
+            player = player != null ? player : GetComponent<Player>();
+            body = body != null ? body : GetComponent<Rigidbody2D>();
+            playerInput = playerInput != null ? playerInput : GetComponent<PlayerInput>();
+            groundCheck = groundCheck != null ? groundCheck : transform;
+            playerCollider = playerCollider != null ? playerCollider : GetComponent<Collider2D>();
         }
 
         private void OnMovePerformed(InputAction.CallbackContext ctx)
@@ -492,7 +583,7 @@ namespace PlayerSystem
             var normalized = 1f - Mathf.Clamp01(dodgeTimer / Mathf.Max(0.0001f, dodgeDuration));
             var curveValue = dodgeSpeedCurve != null ? dodgeSpeedCurve.Evaluate(normalized) : 1f;
             var velocity = dodgeDirection * dodgeSpeed * curveValue;
-            body.linearVelocity = new Vector2(velocity.x, body.linearVelocity.y);
+            body.velocity = new Vector2(velocity.x, body.velocity.y);
 
             if (dodgeTimer <= 0f)
             {
@@ -557,10 +648,10 @@ namespace PlayerSystem
             var accelRate = Mathf.Abs(targetSpeed) > 0.01f ? acceleration : deceleration;
             accelRate *= control;
 
-            var velocity = body.linearVelocity;
+            var velocity = body.velocity;
             var maxDelta = accelRate * deltaTime;
             velocity.x = Mathf.MoveTowards(velocity.x, targetSpeed, maxDelta);
-            body.linearVelocity = velocity;
+            body.velocity = velocity;
         }
 
         private void ApplyJump()
@@ -572,9 +663,9 @@ namespace PlayerSystem
 
             if (grounded || coyoteTimer > 0f)
             {
-                var velocity = body.linearVelocity;
+                var velocity = body.velocity;
                 velocity.y = jumpForce;
-                body.linearVelocity = velocity;
+                body.velocity = velocity;
                 grounded = false;
                 coyoteTimer = 0f;
                 jumpBufferTimer = 0f;
@@ -584,11 +675,11 @@ namespace PlayerSystem
 
         private void ApplyGravityModifiers()
         {
-            if (body.linearVelocity.y < -0.01f)
+            if (body.velocity.y < -0.01f)
             {
                 body.gravityScale = fallGravityMultiplier;
             }
-            else if (body.linearVelocity.y > 0.01f && !jumpHeld)
+            else if (body.velocity.y > 0.01f && !jumpHeld)
             {
                 body.gravityScale = lowJumpGravityMultiplier;
             }
@@ -758,6 +849,85 @@ namespace PlayerSystem
             return layers;
         }
 
+        private void EnsureLayerMasksConfigured()
+        {
+            if (groundLayers.value == 0)
+            {
+                var combined = 0;
+                var groundLayer = LayerMask.NameToLayer("Ground");
+                if (groundLayer >= 0)
+                {
+                    combined |= 1 << groundLayer;
+                }
+
+                var platformLayer = LayerMask.NameToLayer("Platform");
+                if (platformLayer >= 0)
+                {
+                    combined |= 1 << platformLayer;
+                }
+
+                groundLayers = combined != 0 ? combined : ~0;
+            }
+
+            if (dropThroughLayers.value == 0)
+            {
+                var platformLayer = LayerMask.NameToLayer("Platform");
+                if (platformLayer >= 0)
+                {
+                    dropThroughLayers = 1 << platformLayer;
+                }
+            }
+        }
+
+        private void EnsureColliderSetup()
+        {
+            if (playerCollider == null)
+            {
+                Debug.LogWarning("PlayerActionController에 Collider2D가 필요합니다. 플레이어 오브젝트에 Collider2D를 추가하세요.", this);
+                return;
+            }
+
+            if (playerCollider.isTrigger)
+            {
+                Debug.LogWarning("플레이어 Collider2D가 Trigger로 설정되어 있어 충돌 판정이 되지 않습니다. Trigger 옵션을 해제하세요.", playerCollider);
+            }
+        }
+
+        private void EnsureRigidbodySetup()
+        {
+            if (body == null)
+            {
+                Debug.LogWarning("PlayerActionController에 Rigidbody2D가 필요합니다. 플레이어 오브젝트에 Rigidbody2D를 추가하세요.", this);
+                return;
+            }
+
+            if (body.bodyType != RigidbodyType2D.Dynamic)
+            {
+                Debug.LogWarning($"플레이어 Rigidbody2D가 {body.bodyType}로 설정되어 있습니다. 플랫폼 이동을 위해 Dynamic으로 변경합니다.", body);
+                body.bodyType = RigidbodyType2D.Dynamic;
+            }
+
+            if ((body.constraints & RigidbodyConstraints2D.FreezeRotation) == 0)
+            {
+                body.constraints |= RigidbodyConstraints2D.FreezeRotation;
+            }
+
+            if (Mathf.Abs(body.rotation) > 0.01f || Mathf.Abs(body.angularVelocity) > 0.01f)
+            {
+                body.rotation = 0f;
+                body.angularVelocity = 0f;
+            }
+        }
+
+        private void EnsurePlayerLayerAssignment()
+        {
+            var playerLayer = LayerMask.NameToLayer("Player");
+            if (playerLayer >= 0 && gameObject.layer != playerLayer)
+            {
+                gameObject.layer = playerLayer;
+            }
+        }
+
         private void TryStartDodge()
         {
             if (isDodging || dodgeCooldownTimer > 0f)
@@ -781,7 +951,7 @@ namespace PlayerSystem
 
             if (dodgeCancelsVelocity)
             {
-                body.linearVelocity = Vector2.zero;
+                body.velocity = Vector2.zero;
             }
 
             HandleAction(PlayerActionType.Dodge, 1f, 0f, dodgeDirection, primaryTarget, dodgeDuration, wasJust);
@@ -840,7 +1010,7 @@ namespace PlayerSystem
         {
             var resolvedTarget = target != null ? target : primaryTarget;
             var normalizedAim = aimDirection.sqrMagnitude > 0.0001f ? aimDirection.normalized : facingDirection;
-            var currentSpeed = body != null ? body.linearVelocity.magnitude : 0f;
+            var currentSpeed = body != null ? body.velocity.magnitude : 0f;
             var groundedState = grounded;
 
             var resolvedPower = powerMultiplier;

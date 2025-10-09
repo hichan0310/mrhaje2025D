@@ -37,6 +37,38 @@ namespace Frontend
         [SerializeField]
         private float outlineThickness = 2f;
 
+        [Header("Tags & Layers")]
+        [SerializeField]
+        [Tooltip("생성되는 기본 타일에 적용할 Unity 태그. 비워두면 변경하지 않습니다.")]
+        private string defaultTileTag;
+
+        [SerializeField]
+        private string obstacleTag;
+
+        [SerializeField]
+        private string playerSpawnTag;
+
+        [SerializeField]
+        private string enemySpawnTag;
+
+        [SerializeField]
+        [Tooltip("생성되는 기본 타일에 적용할 Unity 레이어 이름. 비워두면 변경하지 않습니다.")]
+        private string defaultTileLayer;
+
+        [SerializeField]
+        private string obstacleLayer;
+
+        [SerializeField]
+        private string playerSpawnLayer;
+
+        [SerializeField]
+        private string enemySpawnLayer;
+
+        [Header("Interaction")]
+        [SerializeField]
+        [Tooltip("UI 그래픽 레이캐스트로 타일을 선택할 수 있게 Image.raycastTarget을 활성화합니다. UI 전용 맵이므로 별도의 Collider가 필요하지 않습니다.")]
+        private bool enableTileRaycasts = true;
+
         [Header("Debug")]
         [SerializeField]
         private bool showCoordinates;
@@ -145,6 +177,9 @@ namespace Frontend
             image.sprite = tileSprite;
             image.type = tileSprite != null ? Image.Type.Sliced : Image.Type.Simple;
             image.color = ResolveColor(type);
+            image.raycastTarget = enableTileRaycasts;
+
+            ApplyTagAndLayer(tileObject, type);
 
             if (outlineThickness > 0f)
             {
@@ -203,6 +238,58 @@ namespace Frontend
                 BattleTileType.PlayerSpawn => playerSpawnColor,
                 BattleTileType.EnemySpawn => enemySpawnColor,
                 _ => baseTileColor,
+            };
+        }
+
+        private void ApplyTagAndLayer(GameObject tileObject, BattleTileType type)
+        {
+            var tagName = ResolveTag(type);
+            if (!string.IsNullOrWhiteSpace(tagName))
+            {
+                try
+                {
+                    tileObject.tag = tagName;
+                }
+                catch (UnityException)
+                {
+                    Debug.LogWarning($"BattleMapRenderer: '{tagName}' 태그가 정의되어 있지 않아 타일에 적용하지 못했습니다.", this);
+                }
+            }
+
+            var layerName = ResolveLayer(type);
+            if (!string.IsNullOrWhiteSpace(layerName))
+            {
+                var layer = LayerMask.NameToLayer(layerName);
+                if (layer == -1)
+                {
+                    Debug.LogWarning($"BattleMapRenderer: '{layerName}' 레이어가 존재하지 않아 타일에 적용하지 못했습니다.", this);
+                }
+                else
+                {
+                    tileObject.layer = layer;
+                }
+            }
+        }
+
+        private string ResolveTag(BattleTileType type)
+        {
+            return type switch
+            {
+                BattleTileType.Obstacle => obstacleTag,
+                BattleTileType.PlayerSpawn => playerSpawnTag,
+                BattleTileType.EnemySpawn => enemySpawnTag,
+                _ => defaultTileTag,
+            };
+        }
+
+        private string ResolveLayer(BattleTileType type)
+        {
+            return type switch
+            {
+                BattleTileType.Obstacle => obstacleLayer,
+                BattleTileType.PlayerSpawn => playerSpawnLayer,
+                BattleTileType.EnemySpawn => enemySpawnLayer,
+                _ => defaultTileLayer,
             };
         }
     }
