@@ -6,6 +6,7 @@
 - 빈 GameObject를 만들고 이름을 `Player`로 지정합니다.
 - `Player` 컴포넌트를 추가합니다. 이 컴포넌트는 자동으로 `PlayerActionController`를 요구하므로, Unity가 해당 스크립트를 함께 추가하도록 합니다.【F:Assets/PlayerSystem/Player.cs†L6-L22】【F:Assets/PlayerSystem/PlayerActionController.cs†L10-L214】
 - `Rigidbody2D`는 `PlayerActionController`가 이동과 점프를 처리할 때 필수이며 RequireComponent로 강제됩니다.【F:Assets/PlayerSystem/PlayerActionController.cs†L11-L235】
+- Rigidbody2D의 Body Type을 **Dynamic**으로 두고 *Constraints → Freeze Rotation (Z)*를 체크하면 충돌 시 회전을 막을 수 있습니다. `PlayerActionController`가 실행 중 자동으로 동일한 설정을 적용하지만, 초기값을 맞춰 두면 경고 메시지를 피할 수 있습니다.【F:Assets/PlayerSystem/PlayerActionController.cs†L173-L220】【F:Assets/PlayerSystem/PlayerActionController.cs†L806-L846】
 - 땅 판정에 사용할 `groundCheck` 트랜스폼을 지정하지 않으면 기본적으로 플레이어 오브젝트의 트랜스폼을 사용합니다. 필요하다면 자식 오브젝트를 만들어 할당하세요.【F:Assets/PlayerSystem/PlayerActionController.cs†L22-L24】【F:Assets/PlayerSystem/PlayerActionController.cs†L166-L178】【F:Assets/PlayerSystem/PlayerActionController.cs†L434-L448】
 - 이동/점프/공격 등에 대응하는 `InputActionReference` 필드에 프로젝트의 Input System 액션들을 연결해야 실제 입력이 동작합니다. 최소한 Move, Jump, Drop, Fire, Skill, Ultimate, Interact, Dodge, Aim 액션을 할당하세요.【F:Assets/PlayerSystem/PlayerActionController.cs†L99-L263】
 - 드롭다운 플랫폼이나 지면에 사용할 레이어를 `groundLayers`와 `dropThroughLayers` 필드에 지정하면 점프/하강 판정이 정상 동작합니다.【F:Assets/PlayerSystem/PlayerActionController.cs†L54-L75】【F:Assets/PlayerSystem/PlayerActionController.cs†L434-L674】
