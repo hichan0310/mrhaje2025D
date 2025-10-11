@@ -90,13 +90,28 @@ namespace PlayerSystem
 
             private readonly Vector2Int[] occupiedCells;
 
-            internal MemoryPiecePlacementInfo(MemoryPieceRuntime runtime)
+            internal MemoryPiecePlacementInfo(
+                MemoryPieceAsset asset,
+                Vector2Int origin,
+                float powerMultiplier,
+                bool locked,
+                IEnumerable<Vector2Int> occupied)
             {
-                Asset = runtime.Asset;
-                Origin = runtime.Origin;
-                PowerMultiplier = runtime.PowerMultiplier;
-                Locked = runtime.Locked;
-                occupiedCells = runtime.OccupiedCells.ToArray();
+                if (asset == null)
+                {
+                    throw new ArgumentNullException(nameof(asset));
+                }
+
+                if (occupied == null)
+                {
+                    throw new ArgumentNullException(nameof(occupied));
+                }
+
+                Asset = asset;
+                Origin = origin;
+                PowerMultiplier = powerMultiplier;
+                Locked = locked;
+                occupiedCells = occupied.ToArray();
             }
         }
 
@@ -108,11 +123,24 @@ namespace PlayerSystem
 
             private readonly Vector2Int[] occupiedCells;
 
-            internal MemoryReinforcementInfo(MemoryReinforcementRuntime runtime)
+            internal MemoryReinforcementInfo(
+                MemoryReinforcementZoneAsset zone,
+                Vector2Int origin,
+                IEnumerable<Vector2Int> occupied)
             {
-                Zone = runtime.Asset;
-                Origin = runtime.Origin;
-                occupiedCells = runtime.OccupiedCells.ToArray();
+                if (zone == null)
+                {
+                    throw new ArgumentNullException(nameof(zone));
+                }
+
+                if (occupied == null)
+                {
+                    throw new ArgumentNullException(nameof(occupied));
+                }
+
+                Zone = zone;
+                Origin = origin;
+                occupiedCells = occupied.ToArray();
             }
         }
 
@@ -145,7 +173,7 @@ namespace PlayerSystem
             buffer.Clear();
             foreach (var runtime in runtimePieces)
             {
-                buffer.Add(new MemoryPiecePlacementInfo(runtime));
+                buffer.Add(new MemoryPiecePlacementInfo(runtime.Asset, runtime.Origin, runtime.PowerMultiplier, runtime.Locked, runtime.OccupiedCells));
             }
         }
 
@@ -153,7 +181,7 @@ namespace PlayerSystem
         {
             if (asset && runtimeLookup.TryGetValue(asset, out var runtime))
             {
-                info = new MemoryPiecePlacementInfo(runtime);
+                info = new MemoryPiecePlacementInfo(runtime.Asset, runtime.Origin, runtime.PowerMultiplier, runtime.Locked, runtime.OccupiedCells);
                 return true;
             }
 
@@ -171,7 +199,7 @@ namespace PlayerSystem
             buffer.Clear();
             foreach (var runtime in runtimeReinforcements)
             {
-                buffer.Add(new MemoryReinforcementInfo(runtime));
+                buffer.Add(new MemoryReinforcementInfo(runtime.Asset, runtime.Origin, runtime.OccupiedCells));
             }
         }
 
