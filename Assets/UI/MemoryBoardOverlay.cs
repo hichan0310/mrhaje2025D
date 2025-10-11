@@ -33,7 +33,8 @@ namespace UI
         [SerializeField] private CanvasGroup canvasGroup = null;
         [SerializeField] private RectTransform boardGridRoot = null;
         [SerializeField] private MemoryBoardCellView cellPrefab = null;
-        [SerializeField] private Transform inventoryContentRoot = null;
+        [SerializeField] private ScrollRect inventoryScrollRect = null;
+        [SerializeField] private RectTransform inventoryContentRoot = null;
         [SerializeField] private MemoryPieceInventoryItemView inventoryItemPrefab = null;
         [SerializeField] private Button closeButton = null;
         [SerializeField] private TMP_Text selectedPieceLabel = null;
@@ -43,6 +44,10 @@ namespace UI
         [SerializeField] private Color occupiedCellColor = new Color(0.36f, 0.68f, 0.94f, 0.9f);
         [SerializeField] private Color originCellColor = new Color(0.94f, 0.74f, 0.36f, 0.95f);
         [SerializeField] private Color reinforcementColor = new Color(0.5f, 0.9f, 0.6f, 0.6f);
+        [SerializeField] private float inventoryItemSpacing = 12f;
+        [SerializeField] private float inventoryPaddingTop = 12f;
+        [SerializeField] private float inventoryPaddingBottom = 12f;
+        [SerializeField] private float inventoryItemFallbackHeight = 80f;
 
         private readonly Dictionary<Vector2Int, MemoryBoardCellView> cellLookup = new();
         private readonly List<MemoryBoardCellView> cellViews = new();
@@ -54,6 +59,7 @@ namespace UI
 
         private PlayerMemoryBinder boundBinder = null;
         private InventoryItem? selectedItem = null;
+        private float resolvedInventoryItemHeight = 0f;
 
         private void Awake()
         {
@@ -62,6 +68,9 @@ namespace UI
             {
                 closeButton.onClick.AddListener(Close);
             }
+
+            ResolveInventoryItemHeight();
+            ConfigureScrollRect();
         }
 
         private void OnDestroy()
@@ -207,6 +216,7 @@ namespace UI
                 }
                 selectedItem = null;
                 UpdateSelectedPieceLabel();
+                LayoutInventoryViews();
                 return;
             }
 
@@ -242,6 +252,7 @@ namespace UI
             }
 
             UpdateSelectedPieceLabel();
+            LayoutInventoryViews();
         }
 
         private void EnsureInventoryViewCount(int count)
@@ -251,6 +262,7 @@ namespace UI
                 var view = Instantiate(inventoryItemPrefab, inventoryContentRoot);
                 view.Initialize(HandleInventoryItemClicked);
                 view.Bind(null, 1f, 0);
+                ConfigureInventoryItemRect(view.transform as RectTransform);
                 inventoryViews.Add(view);
             }
         }
@@ -360,6 +372,138 @@ namespace UI
             }
         }
 
+        private void ResolveInventoryItemHeight()
+        {
+            if (resolvedInventoryItemHeight > 0f)
+            {
+                return;
+            }
+
+            if (inventoryItemPrefab)
+            {
+                var prefabRect = inventoryItemPrefab.transform as RectTransform;
+                if (prefabRect)
+                {
+                    resolvedInventoryItemHeight = Mathf.Max(resolvedInventoryItemHeight, Mathf.Abs(prefabRect.rect.height));
+                }
+            }
+
+            if (resolvedInventoryItemHeight <= 0f)
+            {
+                resolvedInventoryItemHeight = Mathf.Max(1f, inventoryItemFallbackHeight);
+            }
+        }
+
+        private void ConfigureScrollRect()
+        {
+            if (!inventoryScrollRect)
+            {
+                return;
+            }
+
+            inventoryScrollRect.horizontal = false;
+            inventoryScrollRect.vertical = true;
+            inventoryScrollRect.movementType = ScrollRect.MovementType.Clamped;
+
+            if (inventoryContentRoot)
+            {
+                inventoryScrollRect.content = inventoryContentRoot;
+            }
+        }
+
+        private void ConfigureInventoryItemRect(RectTransform rect)
+        {
+            if (!rect)
+            {
+                return;
+            }
+
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.pivot = new Vector2(0.5f, 1f);
+            rect.anchoredPosition = Vector2.zero;
+            rect.offsetMin = new Vector2(0f, rect.offsetMin.y);
+            rect.offsetMax = new Vector2(0f, rect.offsetMax.y);
+            rect.localScale = Vector3.one;
+        }
+
+        private void LayoutInventoryViews()
+        {
+            if (!inventoryContentRoot)
+            {
+                return;
+            }
+
+            float yOffset = Mathf.Max(0f, inventoryPaddingTop);
+            bool anyActive = false;
+
+            foreach (var view in inventoryViews)
+            {
+                if (!view)
+                {
+                    continue;
+                }
+
+                var go = view.gameObject;
+                if (!go.activeSelf)
+                {
+                    continue;
+                }
+
+                anyActive = true;
+
+                var rect = view.transform as RectTransform;
+                ConfigureInventoryItemRect(rect);
+
+                float height = 0f;
+                if (rect)
+                {
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(rect);
+                    height = Mathf.Abs(rect.rect.height);
+                    if (height <= 0f)
+                    {
+                        height = LayoutUtility.GetPreferredHeight(rect);
+                    }
+                }
+
+                if (height <= 0f)
+                {
+                    height = resolvedInventoryItemHeight;
+                }
+
+                if (rect)
+                {
+                    rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, -yOffset);
+                }
+
+                yOffset += height + Mathf.Max(0f, inventoryItemSpacing);
+            }
+
+            float totalHeight = anyActive
+                ? yOffset - Mathf.Max(0f, inventoryItemSpacing) + Mathf.Max(0f, inventoryPaddingBottom)
+                : Mathf.Max(0f, inventoryPaddingTop + inventoryPaddingBottom);
+
+            inventoryContentRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, totalHeight);
+
+            if (inventoryScrollRect && inventoryScrollRect.content != inventoryContentRoot)
+            {
+                inventoryScrollRect.content = inventoryContentRoot;
+            }
+        }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            ResolveInventoryItemHeight();
+            ConfigureScrollRect();
+
+            if (!Application.isPlaying)
+            {
+                LayoutInventoryViews();
+            }
+        }
+#endif
+
         private void Show()
         {
             if (canvasGroup)
@@ -398,11 +542,11 @@ namespace UI
                 string multiplierText = Mathf.Approximately(item.PowerMultiplier, 1f)
                     ? string.Empty
                     : $" ×{item.PowerMultiplier:0.##}";
-                selectedPieceLabel.text = $"Selected: {item.Asset.DisplayName}{multiplierText}";
+                selectedPieceLabel.text = $"선택된 메모리: {item.Asset.DisplayName}{multiplierText}";
             }
             else
             {
-                selectedPieceLabel.text = "No selected memory";
+                selectedPieceLabel.text = "선택된 메모리가 없습니다";
             }
         }
 
