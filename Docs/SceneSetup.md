@@ -49,14 +49,69 @@
    - `Reinforcement Zones`: 강화 구역 에셋과 배치 좌표를 지정합니다.
 2. 플레이 중 메모리 구성을 테스트하려면 `PlayerMemoryBinder`의 `Trigger(...)`를 호출하거나 `MemoryTerminal`과 상호작용합니다.
 
+### 3.1 메모리 보드 오버레이 UI 구성
+
+메모리 보드와 인벤토리를 시각화하려면 `MemoryBoardOverlay`, `MemoryBoardCellView`, `MemoryPieceInventoryItemView`
+스크립트를 기반으로 한 UI를 준비해야 합니다.
+
+1. **캔버스 준비**
+   - 씬에 `Canvas`를 추가하고 `Screen Space - Overlay` 모드를 사용합니다.
+   - `Canvas`에 `CanvasGroup` 컴포넌트를 추가합니다.
+   - 같은 오브젝트에 `MemoryBoardOverlay` 컴포넌트를 붙이고 아래 필드를 채울 수 있도록 빈 자식 오브젝트를 만들어 둡니다.
+
+2. **보드 그리드 루트**
+   - 캔버스의 자식으로 `BoardGrid`(임의 이름) `RectTransform`을 만들고 `GridLayoutGroup`을 추가합니다.
+   - `Cell Size`는 메모리 셀 한 칸의 픽셀 크기로, `Spacing`으로 셀 간격을 조정합니다.
+   - 이 `RectTransform`을 `MemoryBoardOverlay.boardGridRoot`에 할당합니다.
+
+3. **보드 셀 프리팹**
+   - `UI > Button`으로 새 프리팹을 만들고 `MemoryBoardCellView` 스크립트를 붙입니다.
+   - 버튼 루트에 `Image`를 유지하여 배경으로 사용하고, `MemoryBoardCellView.backgroundImage`에 연결합니다.
+   - 자식으로 다음 요소를 추가하고 스크립트 필드에 연결합니다.
+     - `ReinforcementHighlight`: 투명도를 가진 `Image`, `MemoryBoardCellView.reinforcementHighlight`.
+     - `PieceIcon`: `Image` 컴포넌트.
+     - `PieceLabel`: `TextMeshProUGUI`.
+     - `LockIndicator`: 잠금 상태를 표시할 아이콘 `GameObject`.
+   - 준비된 프리팹을 `MemoryBoardOverlay.cellPrefab`에 지정합니다.
+
+4. **인벤토리 리스트 루트**
+   - 캔버스의 다른 자식으로 `InventoryContent` `RectTransform`을 만들고 `VerticalLayoutGroup` 또는 `GridLayoutGroup`을 추가합니다.
+   - 이 트랜스폼을 `MemoryBoardOverlay.inventoryContentRoot`에 연결합니다.
+
+5. **인벤토리 아이템 프리팹**
+   - `UI > Button`으로 새 프리팹을 만들고 `MemoryPieceInventoryItemView`를 붙입니다.
+   - 프리팹 안에 다음 요소를 배치하고 필드에 연결합니다.
+     - 아이콘 표시용 `Image` → `iconImage`.
+     - 이름/배율 표기를 위한 `TextMeshProUGUI` → `nameLabel`.
+     - 소지 개수 텍스트용 `TextMeshProUGUI` → `countLabel`.
+     - 선택 시 강조할 `GameObject` → `selectionHighlight`.
+   - 이 프리팹을 `MemoryBoardOverlay.inventoryItemPrefab`에 할당합니다.
+
+6. **기타 UI 참조**
+   - 닫기 버튼을 하나 배치하고 `MemoryBoardOverlay.closeButton`에 연결합니다.
+   - 선택 중인 조각을 표시할 `TextMeshProUGUI`를 만들고 `selectedPieceLabel`에 연결합니다.
+   - 초기 상태에서 오버레이가 보이지 않도록 `CanvasGroup.alpha = 0`, `Interactable/Blocks Raycasts = false`로 두어도 됩니다.
+
 ## 4. 메모리 터미널 배치 (선택)
 
-1. 씬에 `MemoryTerminal` 컴포넌트를 가진 GameObject를 추가합니다.
-2. `Grants` 배열에 플레이어가 상호작용했을 때 부여할 메모리 피스를 설정합니다.
+씬에 배치한 UI만으로는 플레이어가 상호작용할 수 있는 월드 오브젝트가 존재하지 않으므로, `MemoryTerminal`을 가시적인 형태로
+직접 만들어 두어야 합니다.
+
+1. 월드에 빈 GameObject를 만들고 `MemoryTerminal` 컴포넌트를 추가합니다.
+2. **가시 요소 추가**
+   - 같은 오브젝트에 `SpriteRenderer` 또는 `MeshRenderer`를 붙여 플레이어가 알아볼 수 있는 모델/스프라이트를 지정합니다.
+   - 필요하다면 자식에 `Canvas`(World Space)와 상호작용 안내 텍스트를 배치해도 됩니다.
+3. **충돌체/레이어 설정**
+   - `CircleCollider2D`(또는 원하는 모양의 Collider)를 추가하고 `Is Trigger`를 켭니다.
+   - 이 오브젝트의 레이어를 `Player`의 `Interact Mask`가 포함한 레이어(예: `Interactable`)로 지정합니다.
+4. `Grants` 배열에 플레이어가 상호작용했을 때 부여할 메모리 피스를 설정합니다.
    - `Piece`: 지급할 `MemoryPieceAsset`.
    - `Position`: 보드 내 배치 좌표.
    - `Power Multiplier`: 적용할 배율.
-3. `Player` 스크립트의 `Interact Mask`가 터미널의 레이어를 포함하도록 하고, `Interact Key`를 통해 상호작용할 수 있습니다.
+5. `Player` 스크립트의 `Interact Key`로 터미널과 상호작용하면 인벤토리에 조각이 추가되고, `openOverlayOnInteract`가 켜져 있다면
+   연결된 오버레이가 열립니다.
+6. 씬에 배치한 `MemoryBoardOverlay` 인스턴스를 `MemoryTerminal.overlayReference` 필드에 연결하면 해당 오버레이를 사용하고,
+   필드를 비워 두면 씬 내 첫 번째 `MemoryBoardOverlay`를 자동 탐색하여 사용합니다.
 
 ## 5. 스테이지 레이아웃 빌더 사용
 
