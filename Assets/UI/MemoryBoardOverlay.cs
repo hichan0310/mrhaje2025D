@@ -398,11 +398,11 @@ namespace UI
                 string multiplierText = Mathf.Approximately(item.PowerMultiplier, 1f)
                     ? string.Empty
                     : $" ×{item.PowerMultiplier:0.##}";
-                selectedPieceLabel.text = $"선택된 메모리: {item.Asset.DisplayName}{multiplierText}";
+                selectedPieceLabel.text = $"Selected: {item.Asset.DisplayName}{multiplierText}";
             }
             else
             {
-                selectedPieceLabel.text = "선택된 메모리가 없습니다";
+                selectedPieceLabel.text = "No selected memory";
             }
         }
 
