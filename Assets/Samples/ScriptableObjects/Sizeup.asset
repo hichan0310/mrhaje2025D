@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 991be269d56948bcb3625f803408cbcd, type: 3}
   m_Name: Sizeup
   m_EditorClassIdentifier: 
-  displayName: Memory Piece
+  displayName: Larger on Jump
   triggerType: 1
   effect: {fileID: 11400000, guid: d9f17c35c83b2d442a2cba82c2e2e337, type: 2}
   basePower: 1

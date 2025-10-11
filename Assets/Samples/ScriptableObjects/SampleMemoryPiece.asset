@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 991be269d56948bcb3625f803408cbcd, type: 3}
   m_Name: SampleMemoryPiece
   m_EditorClassIdentifier: 
-  displayName: "3\uC5F0\uBC1C \uC0F7"
+  displayName: 3 Bullets
   triggerType: 4
   effect: {fileID: 9000000000000000000, guid: 0a55b1579a3b45539412e764b66ea52b, type: 2}
   basePower: 1
