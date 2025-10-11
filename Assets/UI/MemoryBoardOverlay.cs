@@ -436,6 +436,7 @@ namespace UI
 
             float yOffset = Mathf.Max(0f, inventoryPaddingTop);
             bool anyActive = false;
+            int siblingIndex = 0;
 
             foreach (var view in inventoryViews)
             {
@@ -455,6 +456,11 @@ namespace UI
                 var rect = view.transform as RectTransform;
                 ConfigureInventoryItemRect(rect);
 
+                if (rect)
+                {
+                    view.transform.SetSiblingIndex(siblingIndex++);
+                }
+
                 float height = 0f;
                 if (rect)
                 {
@@ -473,7 +479,9 @@ namespace UI
 
                 if (rect)
                 {
-                    rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, -yOffset);
+                    rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, yOffset, height);
+                    rect.offsetMin = new Vector2(0f, rect.offsetMin.y);
+                    rect.offsetMax = new Vector2(0f, rect.offsetMax.y);
                 }
 
                 yOffset += height + Mathf.Max(0f, inventoryItemSpacing);
