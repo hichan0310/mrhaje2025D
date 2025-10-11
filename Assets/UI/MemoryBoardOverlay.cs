@@ -45,7 +45,7 @@ namespace UI
         [SerializeField] private Color occupiedCellColor = new Color(0.36f, 0.68f, 0.94f, 0.9f);
         [SerializeField] private Color originCellColor = new Color(0.94f, 0.74f, 0.36f, 0.95f);
         [SerializeField] private Color reinforcementColor = new Color(0.5f, 0.9f, 0.6f, 0.6f);
-        [SerializeField] private float inventoryItemSpacing = 12f;
+        [SerializeField] private float inventoryItemSpacing = 50f;
         [SerializeField] private float inventoryPaddingTop = 12f;
         [SerializeField] private float inventoryPaddingBottom = 12f;
 
@@ -406,7 +406,7 @@ namespace UI
                 padding.top = Mathf.RoundToInt(Mathf.Max(0f, inventoryPaddingTop));
                 padding.bottom = Mathf.RoundToInt(Mathf.Max(0f, inventoryPaddingBottom));
                 inventoryLayoutGroup.padding = padding;
-                inventoryLayoutGroup.spacing = Mathf.Max(0f, inventoryItemSpacing);
+                inventoryLayoutGroup.spacing = 50f;
                 inventoryLayoutGroup.childAlignment = TextAnchor.UpperCenter;
                 inventoryLayoutGroup.childControlHeight = true;
                 inventoryLayoutGroup.childControlWidth = true;
