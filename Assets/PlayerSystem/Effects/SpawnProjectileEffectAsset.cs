@@ -12,6 +12,7 @@ namespace PlayerSystem.Effects
         [SerializeField] private float directionOverride = 0f;
         [SerializeField] private int projectileCount = 1;
         [SerializeField] private float spreadAngle = 5f;
+        [SerializeField] private float size = 0f;
 
         protected override void OnTrigger(Entity entity, float power)
         {
@@ -35,7 +36,7 @@ namespace PlayerSystem.Effects
                 Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
                 Vector2 direction = rotation * baseDirection;
                 var instance = Instantiate(projectilePrefab, entity.transform.position + (Vector3)spawnOffset, Quaternion.identity);
-                instance.Initialize(entity, direction, power);
+                instance.Initialize(entity, direction, power, size);
             }
         }
     }

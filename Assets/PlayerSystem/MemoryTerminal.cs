@@ -52,6 +52,7 @@ namespace PlayerSystem
                 }
 
                 float multiplier = grant.powerMultiplier <= 0f ? 1f : grant.powerMultiplier;
+                Debug.Log("interact");
                 binder.TryAddPiece(grant.piece, grant.position, multiplier);
             }
 

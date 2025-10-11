@@ -272,7 +272,7 @@ namespace PlayerSystem
                 float direction = Mathf.Sign(transform.localScale.x);
                 Vector2 dir = new Vector2(direction, 0f);
                 var instance = Instantiate(defaultProjectile, firePoint.position, Quaternion.identity);
-                instance.Initialize(this, dir, 1f);
+                instance.Initialize(this, dir, 1f, 0f);
             }
 
             fireTimer = fireCooldown;

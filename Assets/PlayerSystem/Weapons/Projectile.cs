@@ -15,6 +15,7 @@ namespace PlayerSystem.Weapons
         [SerializeField] private int baseDamage = 10;
         [SerializeField] private LayerMask collisionMask = ~0;
         [SerializeField] private bool destroyOnAnyCollision = true;
+        [SerializeField] private float size = 1f;
 
         private Entity owner;
         private Vector2 direction;
@@ -37,12 +38,13 @@ namespace PlayerSystem.Weapons
             }
         }
 
-        public void Initialize(Entity owner, Vector2 direction, float power)
+        public void Initialize(Entity owner, Vector2 direction, float power, float size)
         {
             this.owner = owner;
             this.direction = direction.sqrMagnitude > 0f ? direction.normalized : Vector2.right;
             this.powerMultiplier = Mathf.Max(0.1f, power);
             remainingLife = lifeTime;
+            transform.localScale += new Vector3(size, size, 0);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
