@@ -1,4 +1,5 @@
 using UnityEngine;
+using UI;
 
 namespace PlayerSystem
 {
@@ -15,6 +16,8 @@ namespace PlayerSystem
         [SerializeField] private MemoryGrant[] grants = new MemoryGrant[0];
         [SerializeField] private bool oneTimePickup = true;
         [SerializeField] private bool removeIfExists = false;
+        [SerializeField] private bool openOverlayOnInteract = true;
+        [SerializeField] private MemoryBoardOverlay overlayReference = null;
 
         private bool granted;
 
@@ -33,30 +36,44 @@ namespace PlayerSystem
                 return;
             }
 
-            if (oneTimePickup && granted)
+            bool canGrant = !(oneTimePickup && granted);
+            bool anyChange = false;
+            if (canGrant)
             {
-                return;
-            }
-
-            foreach (var grant in grants)
-            {
-                if (!grant.piece)
+                foreach (var grant in grants)
                 {
-                    continue;
+                    if (!grant.piece)
+                    {
+                        continue;
+                    }
+
+                    if (removeIfExists && binder.Board.Contains(grant.piece))
+                    {
+                        if (binder.RemovePiece(grant.piece))
+                        {
+                            anyChange = true;
+                        }
+                        continue;
+                    }
+
+                    float multiplier = grant.powerMultiplier <= 0f ? 1f : grant.powerMultiplier;
+                    if (binder.TryAddPieceToInventory(grant.piece, multiplier))
+                    {
+                        anyChange = true;
+                    }
                 }
 
-                if (removeIfExists && binder.Board.Contains(grant.piece))
+                if (anyChange)
                 {
-                    binder.RemovePiece(grant.piece);
-                    continue;
+                    granted = true;
                 }
-
-                float multiplier = grant.powerMultiplier <= 0f ? 1f : grant.powerMultiplier;
-                Debug.Log("interact");
-                binder.TryAddPiece(grant.piece, grant.position, multiplier);
             }
 
-            granted = true;
+            if (openOverlayOnInteract)
+            {
+                var overlay = overlayReference ? overlayReference : FindObjectOfType<MemoryBoardOverlay>(true);
+                overlay?.Open(binder);
+            }
         }
     }
 }

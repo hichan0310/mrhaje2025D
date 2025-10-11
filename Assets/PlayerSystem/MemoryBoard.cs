@@ -66,15 +66,81 @@ namespace PlayerSystem
         {
             public MemoryReinforcementZoneAsset Asset { get; }
             public HashSet<Vector2Int> OccupiedCells { get; }
+            public Vector2Int Origin { get; }
 
             public MemoryReinforcementRuntime(MemoryReinforcementZoneAsset asset, Vector2Int origin)
             {
                 Asset = asset;
+                Origin = origin;
                 OccupiedCells = new HashSet<Vector2Int>();
                 foreach (var offset in asset.ShapeCells)
                 {
                     OccupiedCells.Add(origin + offset);
                 }
+            }
+        }
+
+        public readonly struct MemoryPiecePlacementInfo
+        {
+            public MemoryPieceAsset Asset { get; }
+            public Vector2Int Origin { get; }
+            public float PowerMultiplier { get; }
+            public bool Locked { get; }
+            public IReadOnlyList<Vector2Int> OccupiedCells => occupiedCells;
+
+            private readonly Vector2Int[] occupiedCells;
+
+            internal MemoryPiecePlacementInfo(
+                MemoryPieceAsset asset,
+                Vector2Int origin,
+                float powerMultiplier,
+                bool locked,
+                IEnumerable<Vector2Int> occupied)
+            {
+                if (asset == null)
+                {
+                    throw new ArgumentNullException(nameof(asset));
+                }
+
+                if (occupied == null)
+                {
+                    throw new ArgumentNullException(nameof(occupied));
+                }
+
+                Asset = asset;
+                Origin = origin;
+                PowerMultiplier = powerMultiplier;
+                Locked = locked;
+                occupiedCells = occupied.ToArray();
+            }
+        }
+
+        public readonly struct MemoryReinforcementInfo
+        {
+            public MemoryReinforcementZoneAsset Zone { get; }
+            public Vector2Int Origin { get; }
+            public IReadOnlyList<Vector2Int> OccupiedCells => occupiedCells;
+
+            private readonly Vector2Int[] occupiedCells;
+
+            internal MemoryReinforcementInfo(
+                MemoryReinforcementZoneAsset zone,
+                Vector2Int origin,
+                IEnumerable<Vector2Int> occupied)
+            {
+                if (zone == null)
+                {
+                    throw new ArgumentNullException(nameof(zone));
+                }
+
+                if (occupied == null)
+                {
+                    throw new ArgumentNullException(nameof(occupied));
+                }
+
+                Zone = zone;
+                Origin = origin;
+                occupiedCells = occupied.ToArray();
             }
         }
 
@@ -96,6 +162,46 @@ namespace PlayerSystem
 
         public Vector2Int GridSize => gridSize;
         public IReadOnlyList<MemoryResourcePool> Resources => resources;
+
+        public void GetPiecePlacements(List<MemoryPiecePlacementInfo> buffer)
+        {
+            if (buffer == null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
+
+            buffer.Clear();
+            foreach (var runtime in runtimePieces)
+            {
+                buffer.Add(new MemoryPiecePlacementInfo(runtime.Asset, runtime.Origin, runtime.PowerMultiplier, runtime.Locked, runtime.OccupiedCells));
+            }
+        }
+
+        public bool TryGetPlacement(MemoryPieceAsset asset, out MemoryPiecePlacementInfo info)
+        {
+            if (asset && runtimeLookup.TryGetValue(asset, out var runtime))
+            {
+                info = new MemoryPiecePlacementInfo(runtime.Asset, runtime.Origin, runtime.PowerMultiplier, runtime.Locked, runtime.OccupiedCells);
+                return true;
+            }
+
+            info = default;
+            return false;
+        }
+
+        public void GetReinforcementPlacements(List<MemoryReinforcementInfo> buffer)
+        {
+            if (buffer == null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
+
+            buffer.Clear();
+            foreach (var runtime in runtimeReinforcements)
+            {
+                buffer.Add(new MemoryReinforcementInfo(runtime.Asset, runtime.Origin, runtime.OccupiedCells));
+            }
+        }
 
         public void Initialize(PlayerMemoryBinder binder)
         {
