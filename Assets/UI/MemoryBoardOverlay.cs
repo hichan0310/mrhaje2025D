@@ -165,6 +165,7 @@ namespace UI
             }
 
             Vector2Int size = boundBinder.Board.GridSize;
+            ConfigureBoardLayout(size);
             for (int y = size.y - 1; y >= 0; y--)
             {
                 for (int x = 0; x < size.x; x++)
@@ -177,6 +178,23 @@ namespace UI
                     cellLookup[cell.Coordinates] = cell;
                 }
             }
+        }
+
+        private void ConfigureBoardLayout(Vector2Int size)
+        {
+            if (!boardGridRoot)
+            {
+                return;
+            }
+
+            var layout = boardGridRoot.GetComponent<GridLayoutGroup>();
+            if (!layout)
+            {
+                return;
+            }
+
+            layout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            layout.constraintCount = Mathf.Max(1, size.x);
         }
 
         private void RefreshInventory()
@@ -380,11 +398,11 @@ namespace UI
                 string multiplierText = Mathf.Approximately(item.PowerMultiplier, 1f)
                     ? string.Empty
                     : $" ×{item.PowerMultiplier:0.##}";
-                selectedPieceLabel.text = $"선택된 메모리: {item.Asset.DisplayName}{multiplierText}";
+                selectedPieceLabel.text = $"Selected: {item.Asset.DisplayName}{multiplierText}";
             }
             else
             {
-                selectedPieceLabel.text = "선택된 메모리가 없습니다";
+                selectedPieceLabel.text = "No selected memory";
             }
         }
 
