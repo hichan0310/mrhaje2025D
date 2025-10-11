@@ -35,6 +35,7 @@ namespace UI
         [SerializeField] private MemoryBoardCellView cellPrefab = null;
         [SerializeField] private ScrollRect inventoryScrollRect = null;
         [SerializeField] private RectTransform inventoryContentRoot = null;
+        [SerializeField] private VerticalLayoutGroup inventoryLayoutGroup = null;
         [SerializeField] private MemoryPieceInventoryItemView inventoryItemPrefab = null;
         [SerializeField] private Button closeButton = null;
         [SerializeField] private TMP_Text selectedPieceLabel = null;
@@ -47,7 +48,6 @@ namespace UI
         [SerializeField] private float inventoryItemSpacing = 12f;
         [SerializeField] private float inventoryPaddingTop = 12f;
         [SerializeField] private float inventoryPaddingBottom = 12f;
-        [SerializeField] private float inventoryItemFallbackHeight = 80f;
 
         private readonly Dictionary<Vector2Int, MemoryBoardCellView> cellLookup = new();
         private readonly List<MemoryBoardCellView> cellViews = new();
@@ -59,7 +59,6 @@ namespace UI
 
         private PlayerMemoryBinder boundBinder = null;
         private InventoryItem? selectedItem = null;
-        private float resolvedInventoryItemHeight = 0f;
 
         private void Awake()
         {
@@ -69,8 +68,8 @@ namespace UI
                 closeButton.onClick.AddListener(Close);
             }
 
-            ResolveInventoryItemHeight();
             ConfigureScrollRect();
+            ConfigureInventoryLayoutGroup();
         }
 
         private void OnDestroy()
@@ -208,6 +207,8 @@ namespace UI
 
         private void RefreshInventory()
         {
+            ConfigureInventoryLayoutGroup();
+
             if (!boundBinder)
             {
                 foreach (var view in inventoryViews)
@@ -216,7 +217,6 @@ namespace UI
                 }
                 selectedItem = null;
                 UpdateSelectedPieceLabel();
-                LayoutInventoryViews();
                 return;
             }
 
@@ -252,7 +252,6 @@ namespace UI
             }
 
             UpdateSelectedPieceLabel();
-            LayoutInventoryViews();
         }
 
         private void EnsureInventoryViewCount(int count)
@@ -372,28 +371,6 @@ namespace UI
             }
         }
 
-        private void ResolveInventoryItemHeight()
-        {
-            if (resolvedInventoryItemHeight > 0f)
-            {
-                return;
-            }
-
-            if (inventoryItemPrefab)
-            {
-                var prefabRect = inventoryItemPrefab.transform as RectTransform;
-                if (prefabRect)
-                {
-                    resolvedInventoryItemHeight = Mathf.Max(resolvedInventoryItemHeight, Mathf.Abs(prefabRect.rect.height));
-                }
-            }
-
-            if (resolvedInventoryItemHeight <= 0f)
-            {
-                resolvedInventoryItemHeight = Mathf.Max(1f, inventoryItemFallbackHeight);
-            }
-        }
-
         private void ConfigureScrollRect()
         {
             if (!inventoryScrollRect)
@@ -411,7 +388,46 @@ namespace UI
             }
         }
 
-        private void ConfigureInventoryItemRect(RectTransform rect)
+        private void ConfigureInventoryLayoutGroup()
+        {
+            if (!inventoryContentRoot)
+            {
+                return;
+            }
+
+            if (!inventoryLayoutGroup)
+            {
+                inventoryLayoutGroup = inventoryContentRoot.GetComponent<VerticalLayoutGroup>();
+            }
+
+            if (inventoryLayoutGroup)
+            {
+                var padding = inventoryLayoutGroup.padding;
+                padding.top = Mathf.RoundToInt(Mathf.Max(0f, inventoryPaddingTop));
+                padding.bottom = Mathf.RoundToInt(Mathf.Max(0f, inventoryPaddingBottom));
+                inventoryLayoutGroup.padding = padding;
+                inventoryLayoutGroup.spacing = Mathf.Max(0f, inventoryItemSpacing);
+                inventoryLayoutGroup.childAlignment = TextAnchor.UpperCenter;
+                inventoryLayoutGroup.childControlHeight = true;
+                inventoryLayoutGroup.childControlWidth = true;
+                inventoryLayoutGroup.childForceExpandHeight = false;
+                inventoryLayoutGroup.childForceExpandWidth = true;
+            }
+
+            var fitter = inventoryContentRoot.GetComponent<ContentSizeFitter>();
+            if (fitter)
+            {
+                fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+                fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            }
+
+            if (inventoryScrollRect && inventoryScrollRect.content != inventoryContentRoot)
+            {
+                inventoryScrollRect.content = inventoryContentRoot;
+            }
+        }
+
+        private static void ConfigureInventoryItemRect(RectTransform rect)
         {
             if (!rect)
             {
@@ -427,87 +443,18 @@ namespace UI
             rect.localScale = Vector3.one;
         }
 
-        private void LayoutInventoryViews()
-        {
-            if (!inventoryContentRoot)
-            {
-                return;
-            }
-
-            float yOffset = Mathf.Max(0f, inventoryPaddingTop);
-            bool anyActive = false;
-            int siblingIndex = 0;
-
-            foreach (var view in inventoryViews)
-            {
-                if (!view)
-                {
-                    continue;
-                }
-
-                var go = view.gameObject;
-                if (!go.activeSelf)
-                {
-                    continue;
-                }
-
-                anyActive = true;
-
-                var rect = view.transform as RectTransform;
-                ConfigureInventoryItemRect(rect);
-
-                if (rect)
-                {
-                    view.transform.SetSiblingIndex(siblingIndex++);
-                }
-
-                float height = 0f;
-                if (rect)
-                {
-                    LayoutRebuilder.ForceRebuildLayoutImmediate(rect);
-                    height = Mathf.Abs(rect.rect.height);
-                    if (height <= 0f)
-                    {
-                        height = LayoutUtility.GetPreferredHeight(rect);
-                    }
-                }
-
-                if (height <= 0f)
-                {
-                    height = resolvedInventoryItemHeight;
-                }
-
-                if (rect)
-                {
-                    rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, yOffset, height);
-                    rect.offsetMin = new Vector2(0f, rect.offsetMin.y);
-                    rect.offsetMax = new Vector2(0f, rect.offsetMax.y);
-                }
-
-                yOffset += height + Mathf.Max(0f, inventoryItemSpacing);
-            }
-
-            float totalHeight = anyActive
-                ? yOffset - Mathf.Max(0f, inventoryItemSpacing) + Mathf.Max(0f, inventoryPaddingBottom)
-                : Mathf.Max(0f, inventoryPaddingTop + inventoryPaddingBottom);
-
-            inventoryContentRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, totalHeight);
-
-            if (inventoryScrollRect && inventoryScrollRect.content != inventoryContentRoot)
-            {
-                inventoryScrollRect.content = inventoryContentRoot;
-            }
-        }
-
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            ResolveInventoryItemHeight();
             ConfigureScrollRect();
+            ConfigureInventoryLayoutGroup();
 
             if (!Application.isPlaying)
             {
-                LayoutInventoryViews();
+                if (inventoryContentRoot)
+                {
+                    LayoutRebuilder.MarkLayoutForRebuild(inventoryContentRoot);
+                }
             }
         }
 #endif

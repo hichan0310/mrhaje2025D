@@ -77,8 +77,9 @@
 4. **인벤토리 스크롤 영역**
    - 캔버스에 `InventoryScroll`(임의 이름) 오브젝트를 만들고 `ScrollRect`와 `Image` 컴포넌트를 추가합니다. `Image`는 배경과 마스크 역할을 겸할 수 있습니다.
    - `ScrollRect`의 자식으로 `Viewport` `RectTransform`을 만들고 `Mask`(또는 `RectMask2D`)를 붙입니다. 그 안에 `InventoryContent` `RectTransform`을 추가해 스크롤되는 컨텐츠 루트를 구성합니다.
+   - `InventoryContent`에는 `VerticalLayoutGroup`과 `ContentSizeFitter`(Vertical Fit을 `Preferred Size`)를 붙여 세로 방향으로 아이템이 자연스럽게 쌓이도록 합니다.
    - `ScrollRect`에서 `Horizontal` 체크는 끄고 `Vertical`만 활성화합니다. `Movement Type`은 `Clamped`를 권장합니다.
-   - `InventoryScroll`의 `ScrollRect`를 `MemoryBoardOverlay.inventoryScrollRect` 필드에 연결하고, `InventoryContent` `RectTransform`을 `inventoryContentRoot`에 할당합니다. 이 스크립트가 높이·배치를 관리하므로 `VerticalLayoutGroup`/`GridLayoutGroup`은 추가하지 않아도 됩니다.
+   - `InventoryScroll`의 `ScrollRect`를 `MemoryBoardOverlay.inventoryScrollRect` 필드에, `InventoryContent` `RectTransform`을 `inventoryContentRoot`에, `VerticalLayoutGroup`을 `inventoryLayoutGroup` 필드에 각각 연결합니다.
 
 5. **인벤토리 아이템 프리팹**
    - `UI > Button`으로 새 프리팹을 만들고 `MemoryPieceInventoryItemView`를 붙입니다.
@@ -92,7 +93,7 @@
 6. **기타 UI 참조**
    - 닫기 버튼을 하나 배치하고 `MemoryBoardOverlay.closeButton`에 연결합니다.
    - 선택 중인 조각을 표시할 `TextMeshProUGUI`를 만들고 `selectedPieceLabel`에 연결합니다.
-   - 인벤토리 영역의 간격과 여백은 `Inventory Item Spacing`, `Inventory Padding Top`, `Inventory Padding Bottom`, `Inventory Item Fallback Height` 필드로 조정할 수 있습니다.
+   - 인벤토리 영역의 간격과 여백은 `Inventory Item Spacing`, `Inventory Padding Top`, `Inventory Padding Bottom` 필드로 조정하며, 설정값은 연결된 `VerticalLayoutGroup`에 바로 반영됩니다.
    - 초기 상태에서 오버레이가 보이지 않도록 `CanvasGroup.alpha = 0`, `Interactable/Blocks Raycasts = false`로 두어도 됩니다.
 
 ## 4. 메모리 터미널 배치 (선택)
