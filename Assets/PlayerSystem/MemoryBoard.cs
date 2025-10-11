@@ -66,15 +66,53 @@ namespace PlayerSystem
         {
             public MemoryReinforcementZoneAsset Asset { get; }
             public HashSet<Vector2Int> OccupiedCells { get; }
+            public Vector2Int Origin { get; }
 
             public MemoryReinforcementRuntime(MemoryReinforcementZoneAsset asset, Vector2Int origin)
             {
                 Asset = asset;
+                Origin = origin;
                 OccupiedCells = new HashSet<Vector2Int>();
                 foreach (var offset in asset.ShapeCells)
                 {
                     OccupiedCells.Add(origin + offset);
                 }
+            }
+        }
+
+        public readonly struct MemoryPiecePlacementInfo
+        {
+            public MemoryPieceAsset Asset { get; }
+            public Vector2Int Origin { get; }
+            public float PowerMultiplier { get; }
+            public bool Locked { get; }
+            public IReadOnlyList<Vector2Int> OccupiedCells => occupiedCells;
+
+            private readonly Vector2Int[] occupiedCells;
+
+            internal MemoryPiecePlacementInfo(MemoryPieceRuntime runtime)
+            {
+                Asset = runtime.Asset;
+                Origin = runtime.Origin;
+                PowerMultiplier = runtime.PowerMultiplier;
+                Locked = runtime.Locked;
+                occupiedCells = runtime.OccupiedCells.ToArray();
+            }
+        }
+
+        public readonly struct MemoryReinforcementInfo
+        {
+            public MemoryReinforcementZoneAsset Zone { get; }
+            public Vector2Int Origin { get; }
+            public IReadOnlyList<Vector2Int> OccupiedCells => occupiedCells;
+
+            private readonly Vector2Int[] occupiedCells;
+
+            internal MemoryReinforcementInfo(MemoryReinforcementRuntime runtime)
+            {
+                Zone = runtime.Asset;
+                Origin = runtime.Origin;
+                occupiedCells = runtime.OccupiedCells.ToArray();
             }
         }
 
@@ -96,6 +134,46 @@ namespace PlayerSystem
 
         public Vector2Int GridSize => gridSize;
         public IReadOnlyList<MemoryResourcePool> Resources => resources;
+
+        public void GetPiecePlacements(List<MemoryPiecePlacementInfo> buffer)
+        {
+            if (buffer == null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
+
+            buffer.Clear();
+            foreach (var runtime in runtimePieces)
+            {
+                buffer.Add(new MemoryPiecePlacementInfo(runtime));
+            }
+        }
+
+        public bool TryGetPlacement(MemoryPieceAsset asset, out MemoryPiecePlacementInfo info)
+        {
+            if (asset && runtimeLookup.TryGetValue(asset, out var runtime))
+            {
+                info = new MemoryPiecePlacementInfo(runtime);
+                return true;
+            }
+
+            info = default;
+            return false;
+        }
+
+        public void GetReinforcementPlacements(List<MemoryReinforcementInfo> buffer)
+        {
+            if (buffer == null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
+
+            buffer.Clear();
+            foreach (var runtime in runtimeReinforcements)
+            {
+                buffer.Add(new MemoryReinforcementInfo(runtime));
+            }
+        }
 
         public void Initialize(PlayerMemoryBinder binder)
         {
