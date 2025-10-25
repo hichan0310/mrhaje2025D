@@ -1,9 +1,10 @@
 using System;
+using System.Linq;
 using EntitySystem;
+using EntitySystem.StatSystem;
 using PlayerSystem;
 using PlayerSystem.Weapons;
 using UnityEngine;
-using System.Linq;
 
 namespace EnemySystem
 {
@@ -66,7 +67,6 @@ namespace EnemySystem
                     entity = this,
                     speed = definition.MoveSpeed
                 };
-                stat.nowHp = stat.maxHp;
                 sequence = definition.ActionSequence == null
                     ? Array.Empty<EnemyDefinition.ActionSequenceEntry>()
                     : definition.ActionSequence.ToArray();
@@ -74,7 +74,6 @@ namespace EnemySystem
             else
             {
                 stat = new EntityStat(50, 10, 0) { entity = this };
-                stat.nowHp = stat.maxHp;
                 sequence = Array.Empty<EnemyDefinition.ActionSequenceEntry>();
             }
 
