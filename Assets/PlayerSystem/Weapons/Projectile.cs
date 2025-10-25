@@ -21,6 +21,9 @@ namespace PlayerSystem.Weapons
         private Vector2 direction;
         private float remainingLife;
         private float powerMultiplier = 1f;
+        private float damageBonusPercent = 0f;
+        private float knockbackForce = 0f;
+        private float recoilForce = 0f;
 
         private void Awake()
         {
@@ -45,6 +48,16 @@ namespace PlayerSystem.Weapons
             this.powerMultiplier = Mathf.Max(0.1f, power);
             remainingLife = lifeTime;
             transform.localScale += new Vector3(size, size, 0);
+            damageBonusPercent = 0f;
+            knockbackForce = 0f;
+            recoilForce = 0f;
+        }
+
+        public void ApplyTriggerEnhancements(float bonusPercent, float knockback, float recoil)
+        {
+            damageBonusPercent += bonusPercent;
+            knockbackForce += knockback;
+            recoilForce += recoil;
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -67,8 +80,19 @@ namespace PlayerSystem.Weapons
                 }
 
                 var tags = new AtkTagSet();
-                int damage = Mathf.RoundToInt(baseDamage * powerMultiplier);
+                float totalPower = powerMultiplier * (1f + damageBonusPercent / 100f);
+                int damage = Mathf.RoundToInt(baseDamage * Mathf.Max(0f, totalPower));
                 new DamageGiveEvent(damage, Vector3.zero, owner, entity, tags).trigger();
+
+                if (knockbackForce > 0f && entity.TryGetComponent(out Rigidbody2D targetBody))
+                {
+                    targetBody.AddForce(direction * knockbackForce, ForceMode2D.Impulse);
+                }
+
+                if (recoilForce > 0f && owner && owner.TryGetComponent(out Rigidbody2D ownerBody))
+                {
+                    ownerBody.AddForce(-direction * recoilForce, ForceMode2D.Impulse);
+                }
             }
 
             if (destroyOnAnyCollision)

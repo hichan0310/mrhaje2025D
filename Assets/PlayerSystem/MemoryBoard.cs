@@ -246,7 +246,7 @@ namespace PlayerSystem
             }
         }
 
-        public void Trigger(ActionTriggerType triggerType, Entity entity, float basePower)
+        public void Trigger(ActionTriggerType triggerType, Entity entity, float basePower, MemoryTriggerContext? context)
         {
             var list = GatherPieces(triggerType);
             if (list.Count == 0)
@@ -264,6 +264,7 @@ namespace PlayerSystem
                 float power = basePower * piece.Asset.BasePower * piece.PowerMultiplier * CalculateReinforcementMultiplier(piece);
                 if (TryConsumeResource(piece.Asset))
                 {
+                    context?.SetCurrentPiece(piece.Asset, power);
                     piece.Asset.Effect?.trigger(entity, power);
                     piece.SetCooldown();
                     OnPieceTriggered?.Invoke(piece.Asset, power);

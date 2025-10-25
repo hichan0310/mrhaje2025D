@@ -21,6 +21,8 @@ namespace PlayerSystem.Effects
                 return;
             }
 
+            MemoryTriggerContext.TryGetActive(entity, out var context);
+
             float angleStep = projectileCount > 1 ? spreadAngle / (projectileCount - 1) : 0f;
             float startAngle = -spreadAngle * 0.5f;
             Vector2 baseDirection = entity.transform.localScale.x >= 0 ? Vector2.right : Vector2.left;
@@ -37,6 +39,7 @@ namespace PlayerSystem.Effects
                 Vector2 direction = rotation * baseDirection;
                 var instance = Instantiate(projectilePrefab, entity.transform.position + (Vector3)spawnOffset, Quaternion.identity);
                 instance.Initialize(entity, direction, power, size);
+                context?.ApplyToProjectile(instance);
             }
         }
     }

@@ -13,13 +13,18 @@ namespace PlayerSystem.Effects
         {
             if (!entity) return;
 
-            var memoryComponent = entity.GetComponent<PlayerMemoryBinder>();
-            if (!memoryComponent)
+            float amount = amountPerPower * Mathf.Max(0f, power);
+
+            if (MemoryTriggerContext.TryGetActive(entity, out var context))
             {
+                context.Board.AddResource(resourceType, amount);
                 return;
             }
 
-            memoryComponent.Board?.AddResource(resourceType, amountPerPower * Mathf.Max(0f, power));
+            if (entity.TryGetComponent(out PlayerMemoryBinder memoryComponent) && memoryComponent.ActiveBoard != null)
+            {
+                memoryComponent.ActiveBoard.AddResource(resourceType, amount);
+            }
         }
     }
 }

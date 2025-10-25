@@ -12,11 +12,12 @@ namespace PlayerSystem
         None = 0,
         Jump = 1 << 0,
         DropDown = 1 << 1,
-        Shoot = 1 << 2,
-        Skill = 1 << 3,
+        BasicAttack = 1 << 2,
+        HeavyAttack = 1 << 3,
         Interact = 1 << 4,
         Dodge = 1 << 5,
         Dash = 1 << 6,
         Hit = 1 << 7,
+        Ultimate = 1 << 8,
     }
 }

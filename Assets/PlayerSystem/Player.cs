@@ -265,7 +265,7 @@ namespace PlayerSystem
                 return;
             }
 
-            ActivateMemory(ActionTriggerType.Shoot, 1f);
+            ActivateMemory(ActionTriggerType.BasicAttack, 1f);
 
             if (defaultProjectile && firePoint)
             {
@@ -285,7 +285,7 @@ namespace PlayerSystem
                 return;
             }
 
-            ActivateMemory(ActionTriggerType.Skill, 1f);
+            ActivateMemory(ActionTriggerType.HeavyAttack, 1f);
             fallbackSkillEffect?.trigger(this, 1f);
             skillTimer = skillCooldown;
         }
@@ -297,7 +297,7 @@ namespace PlayerSystem
                 return;
             }
 
-            ActivateMemory(ActionTriggerType.Skill, 2f);
+            ActivateMemory(ActionTriggerType.Ultimate, 2f);
             fallbackUltimateEffect?.trigger(this, 2f);
             ultimateTimer = ultimateCooldown;
         }
