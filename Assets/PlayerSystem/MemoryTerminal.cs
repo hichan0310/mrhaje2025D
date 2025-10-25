@@ -47,7 +47,7 @@ namespace PlayerSystem
                         continue;
                     }
 
-                    if (removeIfExists && binder.Board.Contains(grant.piece))
+                    if (removeIfExists && binder.ContainsPiece(grant.piece))
                     {
                         if (binder.RemovePiece(grant.piece))
                         {

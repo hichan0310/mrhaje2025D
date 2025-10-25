@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace EntitySystem.StatSystem
@@ -42,6 +43,33 @@ namespace EntitySystem.StatSystem
         public float[] dmgTakeUp { get; set; }
         public float[] dmgAdd { get; set; }
         
+        public EntityStat(int baseHp, int baseAtk, int baseDef)
+        {
+            this.baseHp = Mathf.Max(1, baseHp);
+            this.baseAtk = Mathf.Max(0, baseAtk);
+            this.baseDef = Mathf.Max(0, baseDef);
+            addHp = 0;
+            increaseHp = 0f;
+            addAtk = 0;
+            increaseAtk = 0f;
+            addDef = 0;
+            increaseDef = 0f;
+            crit = 0f;
+            critDmg = 50f;
+            dmgUp = new float[Tag.atkTagCount];
+            dmgTakeUp = new float[Tag.atkTagCount];
+            dmgDrain = new float[Tag.atkTagCount];
+            dmgAdd = new float[Tag.atkTagCount];
+            for (int i = 0; i < dmgDrain.Length; i++)
+            {
+                dmgDrain[i] = 1f;
+            }
+
+            movePower = 0f;
+            energyRecharge = 0f;
+            nowHp = maxHp;
+        }
+
         public EntityStat(EntityStat copy)
         {
             this.speed = copy.speed;

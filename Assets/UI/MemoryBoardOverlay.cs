@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,6 +34,8 @@ namespace UI
         [SerializeField] private CanvasGroup canvasGroup = null;
         [SerializeField] private RectTransform boardGridRoot = null;
         [SerializeField] private MemoryBoardCellView cellPrefab = null;
+        [SerializeField] private RectTransform boardTabsRoot = null;
+        [SerializeField] private Button boardTabButtonPrefab = null;
         [SerializeField] private ScrollRect inventoryScrollRect = null;
         [SerializeField] private RectTransform inventoryContentRoot = null;
         [SerializeField] private VerticalLayoutGroup inventoryLayoutGroup = null;
@@ -45,6 +48,8 @@ namespace UI
         [SerializeField] private Color occupiedCellColor = new Color(0.36f, 0.68f, 0.94f, 0.9f);
         [SerializeField] private Color originCellColor = new Color(0.94f, 0.74f, 0.36f, 0.95f);
         [SerializeField] private Color reinforcementColor = new Color(0.5f, 0.9f, 0.6f, 0.6f);
+        [SerializeField] private Color activeTabColor = Color.white;
+        [SerializeField] private Color inactiveTabColor = new Color(0.35f, 0.35f, 0.35f, 1f);
         [SerializeField] private float inventoryItemSpacing = 50f;
         [SerializeField] private float inventoryPaddingTop = 12f;
         [SerializeField] private float inventoryPaddingBottom = 12f;
@@ -56,9 +61,11 @@ namespace UI
         private readonly List<MemoryBoard.MemoryReinforcementInfo> reinforcementBuffer = new();
         private readonly Dictionary<Vector2Int, MemoryPieceAsset> cellOccupants = new();
         private readonly Dictionary<MemoryPieceAsset, MemoryBoard.MemoryPiecePlacementInfo> pieceLookup = new();
+        private readonly Dictionary<ActionTriggerType, Button> boardTabButtons = new();
 
         private PlayerMemoryBinder boundBinder = null;
         private InventoryItem? selectedItem = null;
+        private ActionTriggerType displayedTrigger = ActionTriggerType.None;
 
         private void Awake()
         {
@@ -115,11 +122,14 @@ namespace UI
             DetachBinder();
             boundBinder = binder;
             boundBinder.InventoryChanged += HandleInventoryChanged;
-            boundBinder.Board.OnPieceAdded += HandleBoardChanged;
-            boundBinder.Board.OnPieceRemoved += HandleBoardChanged;
+            boundBinder.BoardChanged += HandleBoardChanged;
+            boundBinder.ActiveBoardChanged += HandleActiveBoardChanged;
 
+            displayedTrigger = boundBinder.ActiveTrigger;
+            RebuildBoardTabs();
             RebuildBoardGrid();
             RefreshAll();
+            UpdateBoardTabVisuals();
         }
 
         private void DetachBinder()
@@ -130,11 +140,13 @@ namespace UI
             }
 
             boundBinder.InventoryChanged -= HandleInventoryChanged;
-            boundBinder.Board.OnPieceAdded -= HandleBoardChanged;
-            boundBinder.Board.OnPieceRemoved -= HandleBoardChanged;
+            boundBinder.BoardChanged -= HandleBoardChanged;
+            boundBinder.ActiveBoardChanged -= HandleActiveBoardChanged;
             boundBinder = null;
             selectedItem = null;
+            displayedTrigger = ActionTriggerType.None;
             UpdateSelectedPieceLabel();
+            ClearBoardTabs();
         }
 
         private void HandleInventoryChanged()
@@ -142,9 +154,21 @@ namespace UI
             RefreshInventory();
         }
 
-        private void HandleBoardChanged(MemoryPieceAsset _)
+        private void HandleBoardChanged(ActionTriggerType trigger)
         {
+            if (trigger == displayedTrigger)
+            {
+                RefreshBoard();
+            }
+        }
+
+        private void HandleActiveBoardChanged(ActionTriggerType trigger)
+        {
+            displayedTrigger = trigger;
+            RebuildBoardGrid();
             RefreshBoard();
+            UpdateBoardTabVisuals();
+            UpdateSelectedPieceLabel();
         }
 
         private void RefreshAll()
@@ -172,7 +196,17 @@ namespace UI
                 return;
             }
 
-            Vector2Int size = boundBinder.Board.GridSize;
+            if (displayedTrigger == ActionTriggerType.None)
+            {
+                displayedTrigger = boundBinder.ActiveTrigger;
+            }
+
+            if (!boundBinder.TryGetBoard(displayedTrigger, out var board) || board == null)
+            {
+                return;
+            }
+
+            Vector2Int size = board.GridSize;
             ConfigureBoardLayout(size);
             for (int y = size.y - 1; y >= 0; y--)
             {
@@ -186,6 +220,110 @@ namespace UI
                     cellLookup[cell.Coordinates] = cell;
                 }
             }
+        }
+
+        private void RebuildBoardTabs()
+        {
+            ClearBoardTabs();
+
+            if (!boardTabsRoot || !boardTabButtonPrefab || !boundBinder)
+            {
+                return;
+            }
+
+            foreach (var trigger in boundBinder.AvailableTriggers)
+            {
+                var button = Instantiate(boardTabButtonPrefab, boardTabsRoot);
+                var label = button.GetComponentInChildren<TMP_Text>();
+                if (label)
+                {
+                    label.text = FormatTriggerLabel(trigger);
+                }
+
+                ActionTriggerType captured = trigger;
+                button.onClick.AddListener(() => OnBoardTabClicked(captured));
+                boardTabButtons[captured] = button;
+            }
+
+            UpdateBoardTabVisuals();
+        }
+
+        private void ClearBoardTabs()
+        {
+            foreach (var pair in boardTabButtons)
+            {
+                if (pair.Value)
+                {
+                    pair.Value.onClick.RemoveAllListeners();
+                    Destroy(pair.Value.gameObject);
+                }
+            }
+
+            boardTabButtons.Clear();
+        }
+
+        private void UpdateBoardTabVisuals()
+        {
+            ActionTriggerType active = boundBinder ? boundBinder.ActiveTrigger : ActionTriggerType.None;
+            foreach (var pair in boardTabButtons)
+            {
+                if (!pair.Value)
+                {
+                    continue;
+                }
+
+                bool isActive = pair.Key == active;
+                pair.Value.interactable = !isActive;
+
+                if (pair.Value.targetGraphic)
+                {
+                    pair.Value.targetGraphic.color = isActive ? activeTabColor : inactiveTabColor;
+                }
+
+                var label = pair.Value.GetComponentInChildren<TMP_Text>();
+                if (label)
+                {
+                    label.color = isActive ? activeTabColor : inactiveTabColor;
+                }
+            }
+        }
+
+        private void OnBoardTabClicked(ActionTriggerType trigger)
+        {
+            if (!boundBinder)
+            {
+                return;
+            }
+
+            boundBinder.SetActiveBoard(trigger);
+        }
+
+        private static string FormatTriggerLabel(ActionTriggerType trigger)
+        {
+            if (trigger == ActionTriggerType.None)
+            {
+                return "None";
+            }
+
+            string name = trigger.ToString();
+            if (string.IsNullOrEmpty(name))
+            {
+                return string.Empty;
+            }
+
+            var builder = new StringBuilder(name.Length + 4);
+            for (int i = 0; i < name.Length; i++)
+            {
+                char c = name[i];
+                if (i > 0 && char.IsUpper(c))
+                {
+                    builder.Append(' ');
+                }
+
+                builder.Append(c);
+            }
+
+            return builder.ToString();
         }
 
         private void ConfigureBoardLayout(Vector2Int size)
@@ -284,7 +422,17 @@ namespace UI
                 return;
             }
 
-            boundBinder.Board.GetReinforcementPlacements(reinforcementBuffer);
+            if (displayedTrigger == ActionTriggerType.None)
+            {
+                displayedTrigger = boundBinder.ActiveTrigger;
+            }
+
+            if (!boundBinder.TryGetBoard(displayedTrigger, out var board) || board == null)
+            {
+                return;
+            }
+
+            board.GetReinforcementPlacements(reinforcementBuffer);
             foreach (var info in reinforcementBuffer)
             {
                 foreach (var cellPos in info.OccupiedCells)
@@ -296,7 +444,7 @@ namespace UI
                 }
             }
 
-            boundBinder.Board.GetPiecePlacements(placementBuffer);
+            board.GetPiecePlacements(placementBuffer);
             foreach (var placement in placementBuffer)
             {
                 if (!placement.Asset)
@@ -363,7 +511,7 @@ namespace UI
             }
 
             var item = selectedItem.Value;
-            bool placed = boundBinder.TryPlaceInventoryPiece(item, cell.Coordinates, false);
+            bool placed = boundBinder.TryPlaceInventoryPiece(displayedTrigger, item, cell.Coordinates, false);
             if (placed && !boundBinder.HasInventoryPiece(item))
             {
                 selectedItem = null;
@@ -491,17 +639,21 @@ namespace UI
                 return;
             }
 
+            string boardLabel = boundBinder
+                ? FormatTriggerLabel(displayedTrigger == ActionTriggerType.None ? boundBinder.ActiveTrigger : displayedTrigger)
+                : "None";
+
             if (selectedItem.HasValue)
             {
                 var item = selectedItem.Value;
                 string multiplierText = Mathf.Approximately(item.PowerMultiplier, 1f)
                     ? string.Empty
                     : $" ×{item.PowerMultiplier:0.##}";
-                selectedPieceLabel.text = $"선택된 메모리: {item.Asset.DisplayName}{multiplierText}";
+                selectedPieceLabel.text = $"선택된 메모리 ({boardLabel}): {item.Asset.DisplayName}{multiplierText}";
             }
             else
             {
-                selectedPieceLabel.text = "선택된 메모리가 없습니다";
+                selectedPieceLabel.text = $"선택된 메모리가 없습니다 ({boardLabel})";
             }
         }
 

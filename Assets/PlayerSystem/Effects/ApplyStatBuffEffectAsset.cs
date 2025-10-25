@@ -16,6 +16,12 @@ namespace PlayerSystem.Effects
                 return;
             }
 
+            if (MemoryTriggerContext.TryGetActive(entity, out var context))
+            {
+                context.AddDamageBonusPercent(attackIncreasePercent * power);
+                return;
+            }
+
             var buff = entity.gameObject.AddComponent<TemporaryStatModifier>();
             buff.Initialize(entity, attackIncreasePercent * power, duration);
         }
