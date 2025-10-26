@@ -86,6 +86,7 @@ namespace PlayerSystem
         protected override void Start()
         {
             base.Start();
+            EnsureLayerMasksConfigured();
             body = GetComponent<Rigidbody2D>();
             bodyCollider = GetComponent<Collider2D>();
             memoryBinder = GetComponent<PlayerMemoryBinder>();
@@ -114,6 +115,34 @@ namespace PlayerSystem
             ApplyMovement();
             HandleFallThrough();
         }
+
+        private void EnsureLayerMasksConfigured()
+        {
+            if (groundMask == -1)
+            {
+                int groundLayer = LayerMask.NameToLayer("Ground");
+                if (groundLayer >= 0)
+                {
+                    groundMask = 1 << groundLayer;
+                }
+            }
+
+            if (dropPlatformMask == 0)
+            {
+                int platformLayer = LayerMask.NameToLayer("Platform");
+                if (platformLayer >= 0)
+                {
+                    dropPlatformMask = 1 << platformLayer;
+                }
+            }
+        }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            EnsureLayerMasksConfigured();
+        }
+#endif
 
         private void CacheGroundedState()
         {
