@@ -77,6 +77,7 @@ namespace UI
 
             ConfigureScrollRect();
             ConfigureInventoryLayoutGroup();
+            ConfigureBoardTabsLayout();
         }
 
         private void OnDestroy()
@@ -111,6 +112,33 @@ namespace UI
             DetachBinder();
         }
 
+
+private void ConfigureBoardTabsLayout()
+{
+    if (!boardTabsRoot) return;
+
+    // Vertical Layout Group 추가 또는 가져오기
+    var layout = boardTabsRoot.GetComponent<VerticalLayoutGroup>();
+    if (!layout)
+        layout = boardTabsRoot.gameObject.AddComponent<VerticalLayoutGroup>();
+
+    layout.spacing = 12f; // 버튼 간격
+    layout.childAlignment = TextAnchor.UpperCenter;
+    layout.childControlWidth = true;
+    layout.childControlHeight = true;
+    layout.childForceExpandWidth = true;  // 폭 꽉 채우기 (글씨 안 짤림)
+    layout.childForceExpandHeight = false;
+
+    // 컨텐츠 사이즈 맞추기
+    var fitter = boardTabsRoot.GetComponent<ContentSizeFitter>();
+    if (!fitter)
+        fitter = boardTabsRoot.gameObject.AddComponent<ContentSizeFitter>();
+
+    fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+    fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+}
+
+
         private void AttachBinder(PlayerMemoryBinder binder)
         {
             if (boundBinder == binder)
@@ -131,6 +159,21 @@ namespace UI
             RefreshAll();
             UpdateBoardTabVisuals();
         }
+
+        private static void PrepareBoardTabButton(RectTransform rect)
+        {
+            if (!rect) return;
+
+            rect.anchorMin = new Vector2(0, 1);
+            rect.anchorMax = new Vector2(1, 1);
+            rect.pivot = new Vector2(0.5f, 1f);
+
+            rect.anchoredPosition = Vector2.zero;
+            rect.localScale = Vector3.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+        }
+
 
         private void DetachBinder()
         {
@@ -234,9 +277,19 @@ namespace UI
             foreach (var trigger in boundBinder.AvailableTriggers)
             {
                 var button = Instantiate(boardTabButtonPrefab, boardTabsRoot);
+                PrepareBoardTabButton(button.transform as RectTransform);
+
+                var le = button.GetComponent<LayoutElement>();
+                if (!le) le = button.gameObject.AddComponent<LayoutElement>();
+                le.preferredHeight = 54f;
+                le.preferredWidth =120f;// ← 원하는 크기로 조절 (40~64 사이 추천)
+                le.minHeight = 40f;
                 var label = button.GetComponentInChildren<TMP_Text>();
                 if (label)
                 {
+                    label.enableAutoSizing = true;      // 글자수가 늘어나도 알아서 조정
+                    label.fontSizeMin = 18f;
+                    label.fontSizeMax = 28f;
                     label.text = FormatTriggerLabel(trigger);
                 }
 
@@ -244,7 +297,7 @@ namespace UI
                 button.onClick.AddListener(() => OnBoardTabClicked(captured));
                 boardTabButtons[captured] = button;
             }
-
+            LayoutRebuilder.ForceRebuildLayoutImmediate(boardTabsRoot);
             UpdateBoardTabVisuals();
         }
 
@@ -519,6 +572,17 @@ namespace UI
             }
         }
 
+        private static void ResetChildRectForLayout(RectTransform rect)
+        {
+            if (!rect) return;
+            rect.anchorMin = new Vector2(0, 1);
+            rect.anchorMax = new Vector2(0, 1);
+            rect.pivot = new Vector2(0, 1);
+            rect.anchoredPosition = Vector2.zero;
+            rect.localScale = Vector3.one;
+            rect.offsetMin = rect.offsetMax = Vector2.zero;
+        }
+
         private void ConfigureScrollRect()
         {
             if (!inventoryScrollRect)
@@ -596,6 +660,7 @@ namespace UI
         {
             ConfigureScrollRect();
             ConfigureInventoryLayoutGroup();
+            ConfigureBoardTabsLayout();
 
             if (!Application.isPlaying)
             {

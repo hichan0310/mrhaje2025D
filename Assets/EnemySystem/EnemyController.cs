@@ -124,7 +124,7 @@ namespace EnemySystem
         {
             if (body)
             {
-                body.velocity = new Vector2(velocity.x, body.velocity.y);
+                body.linearVelocity = new Vector2(velocity.x, body.linearVelocity.y);
                 body.MovePosition(body.position + velocity * deltaTime);
             }
             else
@@ -142,7 +142,7 @@ namespace EnemySystem
         {
             if (body)
             {
-                body.velocity = new Vector2(0f, body.velocity.y);
+                body.linearVelocity = new Vector2(0f, body.linearVelocity.y);
             }
         }
 

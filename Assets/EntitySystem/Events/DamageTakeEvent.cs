@@ -21,6 +21,9 @@ namespace EntitySystem.Events
 
         public override void trigger()
         {
+            UnityEngine.Debug.Log($"[DmgTake.trigger] atkTags? {(atkTags == null ? "null" : "ok")}, " +
+                      $"Manager.Instance? {(DamageEventManager.Instance == null ? "null" : "ok")}, " +
+                      $"target? {(target == null ? "null" : "ok")}");
             if (atkTags.Contains(AtkTags.notTakeEvent)) return;
             DamageEventManager.Instance.TriggerDmgTakeEvent(this);
             target.eventActive(this);
