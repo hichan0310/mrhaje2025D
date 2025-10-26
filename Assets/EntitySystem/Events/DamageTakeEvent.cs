@@ -24,10 +24,12 @@ namespace EntitySystem.Events
             UnityEngine.Debug.Log($"[DmgTake.trigger] atkTags? {(atkTags == null ? "null" : "ok")}, " +
                       $"Manager.Instance? {(DamageEventManager.Instance == null ? "null" : "ok")}, " +
                       $"target? {(target == null ? "null" : "ok")}");
-            if (atkTags.Contains(AtkTags.notTakeEvent)) return;
-            DamageEventManager.Instance.TriggerDmgTakeEvent(this);
-            target.eventActive(this);
-            if (target.stat.nowHp <= 0)
+            if (atkTags != null && atkTags.Contains(AtkTags.notTakeEvent)) return;
+
+            DamageEventManager.Instance?.TriggerDmgTakeEvent(this);
+            target?.eventActive(this);
+
+            if (target != null && target.stat != null && target.stat.nowHp <= 0)
             {
                 new EntityDieEvent(target, attacker).trigger();
             }

@@ -50,7 +50,7 @@ namespace EntitySystem
                 if (isUIOverlay)
                 {
 
-                    if (_cam == null) _cam = Camera.main;
+                    EnsureCamera();
                     if (_rt == null) _rt = transform as RectTransform;
 
                     if (_cam != null && _rt != null)
@@ -75,14 +75,14 @@ namespace EntitySystem
                 _text.fontSize = isCrit ? critFontSize : normalFontSize;
                 _text.color = isCrit ? critColor : normalColor;
 
-                _timer = 0f; 
+                _timer = 0f;
             }
         }
 
         private void Awake()
         {
             CacheText();
-            _cam = Camera.main;
+            EnsureCamera();
 
 
             var mr = GetComponent<MeshRenderer>();
@@ -94,6 +94,12 @@ namespace EntitySystem
 
             // 파괴 예약
             Invoke(nameof(DestroySelf), destroyTime);
+        }
+
+        private void EnsureCamera()
+        {
+            if (_cam != null) return;
+            _cam = Camera.main;
         }
 
         private void CacheText()
@@ -126,6 +132,18 @@ namespace EntitySystem
                 col.a = 1f - t;
                 _text.color = col;
             }
+        }
+
+        private void LateUpdate()
+        {
+            if (isUIOverlay) return;
+
+            EnsureCamera();
+            if (_cam == null) return;
+
+            var camTransform = _cam.transform;
+            // Billboard toward the camera so the text is readable regardless of view angle.
+            transform.rotation = Quaternion.LookRotation(transform.position - camTransform.position, camTransform.up);
         }
 
         private void DestroySelf()
