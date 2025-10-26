@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using EntitySystem;
 using EntitySystem.Events;
+using PlayerSystem.Tiling;
+using UnityEngine;
 
 namespace PlayerSystem
 {
-    public abstract class Trigger:IEntityEventListener
+    public abstract class Trigger:MonoBehaviour, IEntityEventListener
     {
+        public Board board;
         protected Entity entity { get; set; }
         protected List<ITriggerEffect> effects { get; set; } = new List<ITriggerEffect>();
         public abstract void eventActive(EventArgs eventArgs);

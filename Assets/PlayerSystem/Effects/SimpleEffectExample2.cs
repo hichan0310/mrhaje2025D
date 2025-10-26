@@ -1,10 +1,11 @@
 ﻿using EntitySystem;
 using EntitySystem.Events;
+using PlayerSystem.Tiling;
 using UnityEngine;
 
 namespace PlayerSystem.Effects
 {
-    public class SimpleEffectExample2 : MonoBehaviour, ITriggerEffect
+    public class SimpleEffectExample2 : Polyomino, ITriggerEffect
     {
         public Example2FireBall fireball;
         private AtkTagSet atkTagSet = new AtkTagSet().Add(AtkTags.fireball);
@@ -20,6 +21,15 @@ namespace PlayerSystem.Effects
             var tag = new AtkTagSet(atkTagSet);
             var dmg=stat.calculateTrueDamage(tag, 100*power);
             f.damage = new(dmg, Vector3.zero, entity, null, tag);
+        }
+
+        public SimpleEffectExample2(string name) : base(name)
+        {
+        }
+
+        protected override (int x, int y)[] BaseCells()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

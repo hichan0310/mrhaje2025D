@@ -1,5 +1,8 @@
-﻿using EntitySystem;
+﻿using System;
+using EntitySystem;
 using EntitySystem.Events;
+using PlayerSystem.Tiling;
+using EventArgs = EntitySystem.Events.EventArgs;
 
 namespace PlayerSystem.Triggers
 {
@@ -8,6 +11,34 @@ namespace PlayerSystem.Triggers
     {
         private float timer;
         public Entity target;
+
+        
+
+        private void Awake()
+        {
+            this.board = new Board(8, 6);
+        }
+
+        public bool tryAddEffect<T>(T effect, int stateIndex, int ax, int ay, out Board.Placement placement) where T : Polyomino, ITriggerEffect
+        {
+            var res=this.board.TryPlace(effect, stateIndex, ax, ay, out placement);
+            return res;
+        }
+
+        public bool tryRemoveEffect<T>(int ax, int ay, out T effect) where T : Polyomino, ITriggerEffect
+        {
+            if (board.TryGetPlacementAt(ax, ay, out var placement))
+            {
+                var poly = board.getPolyomino(in placement);
+                if (poly is ITriggerEffect t)
+                {
+                    effect = (T)t;
+                    return true;
+                }
+            }
+            effect = null;
+            return false;
+        }
 
 
         public override void eventActive(EventArgs eventArgs)
