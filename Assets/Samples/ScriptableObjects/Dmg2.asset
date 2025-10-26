@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 991be269d56948bcb3625f803408cbcd, type: 3}
-  m_Name: Sizeup
+  m_Name: Dmg2
   m_EditorClassIdentifier: 
-  displayName: Larger
+  displayName: Dmg*2
   allowedTriggers: -1
-  effect: {fileID: 11400000, guid: d9f17c35c83b2d442a2cba82c2e2e337, type: 2}
-  basePower: 30
+  effect: {fileID: 11400000, guid: 7a339d8ee3298224ba287262e451a225, type: 2}
+  basePower: 10
   cooldownSeconds: 0
   resourceType: 0
   resourceCost: 0
@@ -24,3 +24,7 @@ MonoBehaviour:
   description: 
   shapeCells:
   - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 2, y: 0}
+  - {x: 3, y: 0}
+  - {x: 4, y: 0}

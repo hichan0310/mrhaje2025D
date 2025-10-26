@@ -11,19 +11,42 @@ namespace PlayerSystem.Effects
 
         protected override void OnTrigger(Entity entity, float power)
         {
+            Debug.Log($"[StatBuffEffect] Triggered → entity:{entity?.name ?? "null"}, power:{power}");
+
             if (!entity)
             {
+                Debug.LogWarning("[StatBuffEffect] Entity is NULL → 버프 적용 불가");
                 return;
             }
+
+            float totalBuff = attackIncreasePercent * power;
+            Debug.Log($"[StatBuffEffect] Calculated Buff = {attackIncreasePercent}% * {power} = {totalBuff}");
 
             if (MemoryTriggerContext.TryGetActive(entity, out var context))
             {
-                context.AddDamageBonusPercent(attackIncreasePercent * power);
+                Debug.Log($"[StatBuffEffect] MemoryTriggerContext 적용! → {entity.name}");
+                context.AddDamageBonusPercent(totalBuff);
+                Debug.Log($"[StatBuffEffect] context.AddDamageBonusPercent({totalBuff}) 호출됨");
                 return;
+            }
+            else
+            {
+                Debug.LogWarning($"[StatBuffEffect] MemoryTriggerContext 없음 → TemporaryStatModifier로 처리");
             }
 
             var buff = entity.gameObject.AddComponent<TemporaryStatModifier>();
-            buff.Initialize(entity, attackIncreasePercent * power, duration);
+            if (buff == null)
+            {
+                Debug.LogError("[StatBuffEffect] TemporaryStatModifier 추가 실패!!");
+            }
+            else
+            {
+                Debug.Log($"[StatBuffEffect] TemporaryStatModifier 추가됨 → {entity.name}, Duration:{duration}");
+            }
+
+            buff.Initialize(entity, totalBuff, duration);
+            Debug.Log($"[StatBuffEffect] buff.Initialize({entity.name}, {totalBuff}, {duration}) 호출됨");
         }
     }
 }
+

@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: SampleMemoryPiece
   m_EditorClassIdentifier: 
   displayName: 3 Bullets
-  triggerType: 4
+  allowedTriggers: -1
   effect: {fileID: 9000000000000000000, guid: 0a55b1579a3b45539412e764b66ea52b, type: 2}
   basePower: 1
   cooldownSeconds: 1
   resourceType: 1
   resourceCost: 0
   isCore: 0
-  icon: {fileID: 21300000, guid: edaef81df8ce4fddae2670b9c527ef99, type: 3}
+  icon: {fileID: 0}
   description: "\uC0AC\uACA9 \uC2DC \uC804\uBC29\uC73C\uB85C 3\uBC1C\uC758 \uAC15\uD654\uD0C4\uC744
     \uBC1C\uC0AC\uD55C\uB2E4."
   shapeCells:

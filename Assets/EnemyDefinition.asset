@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemyDefinition
   m_EditorClassIdentifier: 
   displayName: Enemy
-  baseHealth: 50
+  baseHealth: 1000
   baseAttack: 10
   baseDefense: 0
   moveSpeed: 3
