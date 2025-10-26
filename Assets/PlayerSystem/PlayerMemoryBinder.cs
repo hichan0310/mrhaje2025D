@@ -61,6 +61,7 @@ namespace PlayerSystem
         private readonly List<MemoryBoard.MemoryPiecePlacementInfo> placementBuffer = new();
 
         private MemoryTriggerContext? currentContext = null;
+        private MemoryTriggerContext? pendingContextCompletion = null;
         private ActionTriggerType activeTrigger = ActionTriggerType.None;
 
         private void Awake()
@@ -74,8 +75,14 @@ namespace PlayerSystem
             InitializeInventory();
         }
 
+        private void OnDisable()
+        {
+            CompleteCurrentContext();
+        }
+
         private void OnDestroy()
         {
+            CompleteCurrentContext();
             foreach (var pair in boardLookup)
             {
                 if (boardAddHandlers.TryGetValue(pair.Key, out var addHandler))
@@ -105,6 +112,11 @@ namespace PlayerSystem
             }
         }
 
+        private void LateUpdate()
+        {
+            CompleteCurrentContext();
+        }
+
         public bool TryGetBoard(ActionTriggerType trigger, out MemoryBoard board)
         {
             trigger = NormalizeTrigger(trigger);
@@ -131,6 +143,8 @@ namespace PlayerSystem
 
         public void Trigger(ActionTriggerType triggerType, float basePower = 1f)
         {
+            CompleteCurrentContext();
+
             if (!player)
             {
                 return;
@@ -146,8 +160,7 @@ namespace PlayerSystem
             var context = new MemoryTriggerContext(this, triggerType, board, power);
             currentContext = context;
             board.Trigger(triggerType, player, power, context);
-            context.Complete();
-            currentContext = null;
+            pendingContextCompletion = context;
         }
 
         public bool TryPlaceInventoryPiece(ActionTriggerType trigger, MemoryPieceInventoryItem item, Vector2Int origin, bool locked = false)
@@ -408,6 +421,20 @@ namespace PlayerSystem
             }
 
             return ActionTriggerType.None;
+        }
+
+        private void CompleteCurrentContext()
+        {
+            if (pendingContextCompletion != null)
+            {
+                pendingContextCompletion.Complete();
+                pendingContextCompletion = null;
+            }
+
+            if (pendingContextCompletion == null)
+            {
+                currentContext = null;
+            }
         }
     }
 }

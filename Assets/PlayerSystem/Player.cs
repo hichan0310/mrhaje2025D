@@ -273,6 +273,10 @@ namespace PlayerSystem
                 Vector2 dir = new Vector2(direction, 0f);
                 var instance = Instantiate(defaultProjectile, firePoint.position, Quaternion.identity);
                 instance.Initialize(this, dir, 1f, 0f);
+                if (MemoryTriggerContext.TryGetActive(this, out var context))
+                {
+                    context.ApplyToProjectile(instance);
+                }
             }
 
             fireTimer = fireCooldown;
