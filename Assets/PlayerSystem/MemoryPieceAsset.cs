@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using PlayerSystem.Effects;
 
 namespace PlayerSystem
@@ -8,7 +9,8 @@ namespace PlayerSystem
     public class MemoryPieceAsset : ScriptableObject
     {
         [SerializeField] private string displayName = "Memory Piece";
-        [SerializeField] private ActionTriggerType triggerType = ActionTriggerType.None;
+        [FormerlySerializedAs("triggerType")]
+        [SerializeField] private ActionTriggerType allowedTriggers = ActionTriggerType.All;
         [SerializeField] private TriggerEffectAsset effect = null;
         [SerializeField] private float basePower = 1f;
         [SerializeField] private float cooldownSeconds = 0f;
@@ -21,7 +23,16 @@ namespace PlayerSystem
         [SerializeField] private List<Vector2Int> shapeCells = new() { Vector2Int.zero };
 
         public string DisplayName => displayName;
-        public ActionTriggerType TriggerType => triggerType;
+        public ActionTriggerType AllowedTriggers => allowedTriggers == ActionTriggerType.None ? ActionTriggerType.All : allowedTriggers;
+        public bool IsTriggerAllowed(ActionTriggerType trigger)
+        {
+            if (trigger == ActionTriggerType.None)
+            {
+                return true;
+            }
+
+            return AllowedTriggers.HasFlag(trigger);
+        }
         public TriggerEffectAsset Effect => effect;
         public float BasePower => basePower;
         public float CooldownSeconds => Mathf.Max(0f, cooldownSeconds);

@@ -158,7 +158,7 @@ namespace PlayerSystem
                 return false;
             }
 
-            if (!item.Asset || !item.Asset.TriggerType.HasFlag(trigger))
+            if (!item.Asset || !item.Asset.IsTriggerAllowed(trigger))
             {
                 return false;
             }
@@ -288,7 +288,7 @@ namespace PlayerSystem
                     continue;
                 }
 
-                entry.board.Initialize(this);
+                entry.board.Initialize(this, trigger);
                 boardLookup[trigger] = entry.board;
                 triggerOrder.Add(trigger);
 

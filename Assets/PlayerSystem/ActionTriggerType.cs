@@ -19,5 +19,6 @@ namespace PlayerSystem
         Dash = 1 << 6,
         Hit = 1 << 7,
         Ultimate = 1 << 8,
+        All = Jump | DropDown | BasicAttack | HeavyAttack | Interact | Dodge | Dash | Hit | Ultimate,
     }
 }

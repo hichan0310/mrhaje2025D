@@ -152,9 +152,8 @@ namespace PlayerSystem
 
         private readonly List<MemoryPieceRuntime> runtimePieces = new();
         private readonly List<MemoryReinforcementRuntime> runtimeReinforcements = new();
-        private readonly Dictionary<ActionTriggerType, List<MemoryPieceRuntime>> piecesByTrigger = new();
         private readonly Dictionary<MemoryPieceAsset, MemoryPieceRuntime> runtimeLookup = new();
-        private readonly List<MemoryPieceRuntime> triggerBuffer = new();
+        private ActionTriggerType boardTrigger = ActionTriggerType.None;
 
         public event Action<MemoryPieceAsset, float>? OnPieceTriggered;
         public event Action<MemoryPieceAsset>? OnPieceAdded;
@@ -203,7 +202,7 @@ namespace PlayerSystem
             }
         }
 
-        public void Initialize(PlayerMemoryBinder binder)
+        public void Initialize(PlayerMemoryBinder binder, ActionTriggerType trigger)
         {
             if (binder == null)
             {
@@ -212,8 +211,8 @@ namespace PlayerSystem
 
             runtimePieces.Clear();
             runtimeReinforcements.Clear();
-            piecesByTrigger.Clear();
             runtimeLookup.Clear();
+            boardTrigger = trigger;
 
             foreach (var resource in resources)
             {
@@ -248,13 +247,12 @@ namespace PlayerSystem
 
         public void Trigger(ActionTriggerType triggerType, Entity entity, float basePower, MemoryTriggerContext? context)
         {
-            var list = GatherPieces(triggerType);
-            if (list.Count == 0)
+            if (!MatchesTrigger(triggerType) || runtimePieces.Count == 0)
             {
                 return;
             }
 
-            foreach (var piece in list)
+            foreach (var piece in runtimePieces)
             {
                 if (!CanActivate(piece))
                 {
@@ -272,37 +270,6 @@ namespace PlayerSystem
             }
         }
 
-        private List<MemoryPieceRuntime> GatherPieces(ActionTriggerType triggerType)
-        {
-            triggerBuffer.Clear();
-
-            if (triggerType == ActionTriggerType.None)
-            {
-                return triggerBuffer;
-            }
-
-            if (piecesByTrigger.TryGetValue(triggerType, out var direct))
-            {
-                triggerBuffer.AddRange(direct);
-                return triggerBuffer;
-            }
-
-            foreach (var pair in piecesByTrigger)
-            {
-                if (pair.Key == ActionTriggerType.None)
-                {
-                    continue;
-                }
-
-                if (triggerType.HasFlag(pair.Key))
-                {
-                    triggerBuffer.AddRange(pair.Value);
-                }
-            }
-
-            return triggerBuffer;
-        }
-
         public bool TryAddPiece(MemoryPieceAsset asset, Vector2Int origin, float multiplier = 1f, bool locked = false)
         {
             return TryAddPieceInternal(asset, origin, multiplier, locked, false);
@@ -311,6 +278,11 @@ namespace PlayerSystem
         private bool TryAddPieceInternal(MemoryPieceAsset asset, Vector2Int origin, float multiplier, bool locked, bool initializing)
         {
             if (!asset)
+            {
+                return false;
+            }
+
+            if (!IsTriggerCompatible(asset))
             {
                 return false;
             }
@@ -328,13 +300,6 @@ namespace PlayerSystem
             var runtime = new MemoryPieceRuntime(asset, origin, multiplier, locked);
             runtimePieces.Add(runtime);
             runtimeLookup[asset] = runtime;
-
-            if (!piecesByTrigger.TryGetValue(asset.TriggerType, out var list))
-            {
-                list = new List<MemoryPieceRuntime>();
-                piecesByTrigger[asset.TriggerType] = list;
-            }
-            list.Add(runtime);
 
             if (!initializing)
             {
@@ -360,10 +325,6 @@ namespace PlayerSystem
 
             runtimePieces.Remove(runtime);
             runtimeLookup.Remove(asset);
-            if (piecesByTrigger.TryGetValue(asset.TriggerType, out var list))
-            {
-                list.Remove(runtime);
-            }
 
             var placement = startingPieces.FirstOrDefault(p => p.piece == asset);
             if (placement != null)
@@ -393,6 +354,36 @@ namespace PlayerSystem
             }
 
             pool.Add(amount);
+        }
+
+        private bool MatchesTrigger(ActionTriggerType triggerType)
+        {
+            if (triggerType == ActionTriggerType.None)
+            {
+                return false;
+            }
+
+            if (boardTrigger == ActionTriggerType.None)
+            {
+                return true;
+            }
+
+            return triggerType.HasFlag(boardTrigger);
+        }
+
+        private bool IsTriggerCompatible(MemoryPieceAsset asset)
+        {
+            if (!asset)
+            {
+                return false;
+            }
+
+            if (boardTrigger == ActionTriggerType.None)
+            {
+                return true;
+            }
+
+            return asset.IsTriggerAllowed(boardTrigger);
         }
 
         private bool CanActivate(MemoryPieceRuntime runtime)
