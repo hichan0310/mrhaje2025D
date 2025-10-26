@@ -54,10 +54,12 @@ namespace EntitySystem
 
         public void takeDamage(DamageGiveEvent e)
         {
-            var stat = this.stat.calculate();
-            var dmg=stat.calculateTakenDamage(e.atkTags, e.trueDmg);
+            if (stat == null || e == null || e.target != this) return;
+
+            var snapshot = stat.calculate();
+            var dmg = snapshot.calculateTakenDamage(e.atkTags, e.trueDmg);
             stat.takeDamage(dmg);
-            new DamageTakeEvent(dmg, e.attacker, e.target, e.atkTags).trigger();
+            new DamageTakeEvent(dmg, e.attacker, this, e.atkTags).trigger();
         }
     }
 }

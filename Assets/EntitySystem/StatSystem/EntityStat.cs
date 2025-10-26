@@ -133,24 +133,25 @@ namespace EntitySystem.StatSystem
 
             float dmg = coefficient;
             dmg += dmgAdd[(int)AtkTags.all];
-            foreach (AtkTags atkTag in tags)
+            var tagSet = tags ?? AtkTagSet.None;
+            foreach (AtkTags atkTag in tagSet)
             {
                 if (atkTag == AtkTags.all) continue;
                 dmg += dmgAdd[(int)atkTag];
             }
-            if (Random.value < crit / 100 && !tags.Contains(AtkTags.notcriticalHit))
+            if (Random.value < crit / 100 && !tagSet.Contains(AtkTags.notcriticalHit))
             {
                 dmg = (int)(dmg * (1 + critDmg / 100));
-                tags.Add(AtkTags.criticalHit);
+                tagSet.Add(AtkTags.criticalHit);
             }
-            else if (tags.Contains(AtkTags.criticalHit))
+            else if (tagSet.Contains(AtkTags.criticalHit))
             {
                 dmg = (int)(dmg * (1 + critDmg / 100));
             }
 
             float dmgUpSum = dmgUp[(int)AtkTags.all];
             dmg = (int)(dmgDrain[(int)AtkTags.all] * dmg);
-            foreach (AtkTags atkTag in tags)
+            foreach (AtkTags atkTag in tagSet)
             {
                 if (atkTag == AtkTags.all) continue;
                 dmgUpSum += dmgUp[(int)atkTag];
@@ -164,10 +165,11 @@ namespace EntitySystem.StatSystem
         public int calculateTakenDamage(AtkTagSet tags, int damage)
         {
             if(changeBuffs.Count > 0) return calculate().calculateTakenDamage(tags, damage);
-            
+
             int C = 200;
             float dmgUpSum = dmgTakeUp[(int)AtkTags.all];
-            foreach (AtkTags atkTag in tags)
+            var tagSet = tags ?? AtkTagSet.None;
+            foreach (AtkTags atkTag in tagSet)
             {
                 dmgUpSum += dmgTakeUp[(int)atkTag];
             }
@@ -177,7 +179,7 @@ namespace EntitySystem.StatSystem
 
         public void takeDamage(int damage)
         {
-            nowHp -= damage;
+            nowHp = Mathf.Max(0, nowHp - damage);
         }
 
         public virtual EntityStat calculate()

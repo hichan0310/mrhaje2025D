@@ -19,7 +19,7 @@ namespace EntitySystem.Events
             this.force = force;
             this.attacker = attacker;
             this.target = target;
-            this.atkTags = atkTags;
+            this.atkTags = atkTags ?? AtkTagSet.None;
         }
 
         public override void trigger()
