@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace EntitySystem.StatSystem
@@ -42,6 +43,33 @@ namespace EntitySystem.StatSystem
         public float[] dmgTakeUp { get; set; }
         public float[] dmgAdd { get; set; }
         
+        public EntityStat(int baseHp, int baseAtk, int baseDef)
+        {
+            this.baseHp = Mathf.Max(1, baseHp);
+            this.baseAtk = Mathf.Max(0, baseAtk);
+            this.baseDef = Mathf.Max(0, baseDef);
+            addHp = 0;
+            increaseHp = 0f;
+            addAtk = 0;
+            increaseAtk = 0f;
+            addDef = 0;
+            increaseDef = 0f;
+            crit = 0f;
+            critDmg = 50f;
+            dmgUp = new float[Tag.atkTagCount];
+            dmgTakeUp = new float[Tag.atkTagCount];
+            dmgDrain = new float[Tag.atkTagCount];
+            dmgAdd = new float[Tag.atkTagCount];
+            for (int i = 0; i < dmgDrain.Length; i++)
+            {
+                dmgDrain[i] = 1f;
+            }
+
+            movePower = 0f;
+            energyRecharge = 0f;
+            nowHp = maxHp;
+        }
+
         public EntityStat(EntityStat copy)
         {
             this.speed = copy.speed;
@@ -105,24 +133,25 @@ namespace EntitySystem.StatSystem
 
             float dmg = coefficient;
             dmg += dmgAdd[(int)AtkTags.all];
-            foreach (AtkTags atkTag in tags)
+            var tagSet = tags ?? AtkTagSet.None;
+            foreach (AtkTags atkTag in tagSet)
             {
                 if (atkTag == AtkTags.all) continue;
                 dmg += dmgAdd[(int)atkTag];
             }
-            if (Random.value < crit / 100 && !tags.Contains(AtkTags.notcriticalHit))
+            if (Random.value < crit / 100 && !tagSet.Contains(AtkTags.notcriticalHit))
             {
                 dmg = (int)(dmg * (1 + critDmg / 100));
-                tags.Add(AtkTags.criticalHit);
+                tagSet.Add(AtkTags.criticalHit);
             }
-            else if (tags.Contains(AtkTags.criticalHit))
+            else if (tagSet.Contains(AtkTags.criticalHit))
             {
                 dmg = (int)(dmg * (1 + critDmg / 100));
             }
 
             float dmgUpSum = dmgUp[(int)AtkTags.all];
             dmg = (int)(dmgDrain[(int)AtkTags.all] * dmg);
-            foreach (AtkTags atkTag in tags)
+            foreach (AtkTags atkTag in tagSet)
             {
                 if (atkTag == AtkTags.all) continue;
                 dmgUpSum += dmgUp[(int)atkTag];
@@ -136,10 +165,11 @@ namespace EntitySystem.StatSystem
         public int calculateTakenDamage(AtkTagSet tags, int damage)
         {
             if(changeBuffs.Count > 0) return calculate().calculateTakenDamage(tags, damage);
-            
+
             int C = 200;
             float dmgUpSum = dmgTakeUp[(int)AtkTags.all];
-            foreach (AtkTags atkTag in tags)
+            var tagSet = tags ?? AtkTagSet.None;
+            foreach (AtkTags atkTag in tagSet)
             {
                 dmgUpSum += dmgTakeUp[(int)atkTag];
             }
@@ -149,7 +179,7 @@ namespace EntitySystem.StatSystem
 
         public void takeDamage(int damage)
         {
-            nowHp -= damage;
+            nowHp = Mathf.Max(0, nowHp - damage);
         }
 
         public virtual EntityStat calculate()

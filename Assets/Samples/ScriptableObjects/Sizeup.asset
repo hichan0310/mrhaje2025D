@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 991be269d56948bcb3625f803408cbcd, type: 3}
+  m_Name: Sizeup
+  m_EditorClassIdentifier: 
+  displayName: Larger
+  allowedTriggers: -1
+  effect: {fileID: 11400000, guid: d9f17c35c83b2d442a2cba82c2e2e337, type: 2}
+  basePower: 30
+  cooldownSeconds: 0
+  resourceType: 0
+  resourceCost: 0
+  isCore: 0
+  icon: {fileID: 0}
+  description: 
+  shapeCells:
+  - {x: 0, y: 0}
