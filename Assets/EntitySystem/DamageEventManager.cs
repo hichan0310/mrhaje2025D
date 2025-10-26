@@ -17,9 +17,6 @@ namespace EntitySystem
         public string sortingLayerName = "Default";   // 스프라이트 위에 보이게 할 레이어명
         public int sortingOrder = 5000;               // 오더 크게
 
-        [Header("Spawn Offset")]
-        public Vector2 randomOffset = new Vector2(0.3f, 0.3f);
-
         public void Awake()
         {
             if (Instance == null) Instance = this;
@@ -32,13 +29,8 @@ namespace EntitySystem
             if (dmgEvent == null || dmgEvent.realDmg <= 0 || dmgEvent.target == null || dmgDisplay == null)
                 return;
 
-            // 타겟 근처 랜덤 위치(월드좌표)
-            var off = new Vector3(
-                Random.Range(-randomOffset.x, randomOffset.x),
-                Random.Range(-randomOffset.y, randomOffset.y),
-                0f
-            );
-            var spawnPos = dmgEvent.target.transform.position + off;
+            // 타겟 위치 기준으로 스폰 (랜덤 오프셋은 DamageDisplay에서 처리)
+            var spawnPos = dmgEvent.target.transform.position;
 
             // 인스턴스 생성(월드 스페이스)
             var inst = Instantiate(dmgDisplay, spawnPos, Quaternion.identity, worldRoot);

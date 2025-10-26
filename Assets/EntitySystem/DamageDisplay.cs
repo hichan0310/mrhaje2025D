@@ -19,6 +19,9 @@ namespace EntitySystem
         [SerializeField] private float normalFontSize = 4f;
         [SerializeField] private float critFontSize = 6f;
 
+        [Header("Spawn Offset")]
+        [SerializeField] private Vector2 randomOffset = new Vector2(0.3f, 0.3f);
+
         [Header("Rendering (World Text)")]
         [SerializeField] private bool isUIOverlay = false; 
         [SerializeField] private string sortingLayerName = "Default";
@@ -43,8 +46,8 @@ namespace EntitySystem
                 }
 
 
-                float x = Random.Range(-0.3f, 0.3f);
-                float y = Random.Range(-0.3f, 0.3f);
+                float x = Random.Range(-randomOffset.x, randomOffset.x);
+                float y = Random.Range(-randomOffset.y, randomOffset.y);
                 var worldPos = value.target.transform.position + new Vector3(x, y, 0f);
 
                 if (isUIOverlay)
