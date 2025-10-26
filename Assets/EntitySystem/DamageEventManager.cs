@@ -23,19 +23,17 @@ namespace EntitySystem
             else Destroy(gameObject);
         }
 
-        // ReSharper disable Unity.PerformanceAnalysis
         public void TriggerDmgTakeEvent(DamageTakeEvent dmgEvent)
         {
             if (dmgEvent == null || dmgEvent.realDmg <= 0 || dmgEvent.target == null || dmgDisplay == null)
                 return;
 
-            // 타겟 위치 기준으로 스폰 (랜덤 오프셋은 DamageDisplay에서 처리)
             var spawnPos = dmgEvent.target.transform.position;
 
-            // 인스턴스 생성(월드 스페이스)
+
             var inst = Instantiate(dmgDisplay, spawnPos, Quaternion.identity, worldRoot);
 
-            // 월드 텍스트가 가려지지 않도록 정렬 보정
+
             var mr = inst.GetComponent<MeshRenderer>();
             if (mr != null)
             {
@@ -43,7 +41,6 @@ namespace EntitySystem
                 mr.sortingOrder = sortingOrder;
             }
 
-            // 내용 세팅(폰트/색/페이드 등은 DamageDisplay에서 처리)
             inst.dmgEvent = dmgEvent;
         }
     }
