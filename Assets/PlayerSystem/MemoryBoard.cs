@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EntitySystem;
+using PlayerSystem.Effects;
 using UnityEngine;
 
 namespace PlayerSystem
@@ -153,6 +154,8 @@ namespace PlayerSystem
         private readonly List<MemoryPieceRuntime> runtimePieces = new();
         private readonly List<MemoryReinforcementRuntime> runtimeReinforcements = new();
         private readonly Dictionary<MemoryPieceAsset, MemoryPieceRuntime> runtimeLookup = new();
+        private readonly List<MemoryPieceRuntime> statBuffPieces = new();
+        private readonly List<MemoryPieceRuntime> nonBuffPieces = new();
         private ActionTriggerType boardTrigger = ActionTriggerType.None;
 
         public event Action<MemoryPieceAsset, float>? OnPieceTriggered;
@@ -252,21 +255,29 @@ namespace PlayerSystem
                 return;
             }
 
+            statBuffPieces.Clear();
+            nonBuffPieces.Clear();
+
             foreach (var piece in runtimePieces)
             {
-                if (!CanActivate(piece))
+                if (piece?.Asset?.Effect is ApplyStatBuffEffectAsset)
                 {
-                    continue;
+                    statBuffPieces.Add(piece);
                 }
+                else
+                {
+                    nonBuffPieces.Add(piece);
+                }
+            }
 
-                float power = basePower * piece.Asset.BasePower * piece.PowerMultiplier * CalculateReinforcementMultiplier(piece);
-                if (TryConsumeResource(piece.Asset))
-                {
-                    context?.SetCurrentPiece(piece.Asset, power);
-                    piece.Asset.Effect?.trigger(entity, power);
-                    piece.SetCooldown();
-                    OnPieceTriggered?.Invoke(piece.Asset, power);
-                }
+            foreach (var piece in statBuffPieces)
+            {
+                TriggerRuntimePiece(piece, entity, basePower, context);
+            }
+
+            foreach (var piece in nonBuffPieces)
+            {
+                TriggerRuntimePiece(piece, entity, basePower, context);
             }
         }
 
@@ -445,6 +456,30 @@ namespace PlayerSystem
             }
 
             return 1f + bonusPercent / 100f;
+        }
+
+        private void TriggerRuntimePiece(MemoryPieceRuntime runtime, Entity entity, float basePower, MemoryTriggerContext? context)
+        {
+            if (runtime?.Asset == null)
+            {
+                return;
+            }
+
+            if (!CanActivate(runtime))
+            {
+                return;
+            }
+
+            float power = basePower * runtime.Asset.BasePower * runtime.PowerMultiplier * CalculateReinforcementMultiplier(runtime);
+            if (!TryConsumeResource(runtime.Asset))
+            {
+                return;
+            }
+
+            context?.SetCurrentPiece(runtime.Asset, power);
+            runtime.Asset.Effect?.trigger(entity, power);
+            runtime.SetCooldown();
+            OnPieceTriggered?.Invoke(runtime.Asset, power);
         }
 
         private bool IsPlacementValid(MemoryPieceAsset asset, Vector2Int origin)
