@@ -259,7 +259,7 @@ namespace PlayerSystem
                     continue;
                 }
 
-                float power = basePower * piece.Asset.BasePower * piece.PowerMultiplier * CalculateReinforcementMultiplier(piece);
+                float power = basePower * piece.Asset.BasePower * piece.PowerMultiplier * CalculateReinforcementMultiplier();
                 if (TryConsumeResource(piece.Asset))
                 {
                     context?.SetCurrentPiece(piece.Asset, power);
@@ -433,15 +433,17 @@ namespace PlayerSystem
             return pool.TryConsume(asset.ResourceCost);
         }
 
-        private float CalculateReinforcementMultiplier(MemoryPieceRuntime runtime)
+        private float CalculateReinforcementMultiplier()
+        {
+            return GetBoardReinforcementMultiplier();
+        }
+
+        public float GetBoardReinforcementMultiplier()
         {
             float bonusPercent = 0f;
             foreach (var reinforcement in runtimeReinforcements)
             {
-                if (runtime.OccupiedCells.Overlaps(reinforcement.OccupiedCells))
-                {
-                    bonusPercent += reinforcement.Asset.BonusPercent;
-                }
+                bonusPercent += reinforcement.Asset.BonusPercent;
             }
 
             return 1f + bonusPercent / 100f;

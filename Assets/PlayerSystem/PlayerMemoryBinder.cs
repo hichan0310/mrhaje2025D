@@ -129,25 +129,35 @@ namespace PlayerSystem
             return true;
         }
 
-        public void Trigger(ActionTriggerType triggerType, float basePower = 1f)
+        public void Trigger(ActionTriggerType triggerType, float basePower = 1f, Action<MemoryTriggerContext?>? afterTrigger = null)
         {
             if (!player)
             {
+                afterTrigger?.Invoke(null);
                 return;
             }
 
             triggerType = NormalizeTrigger(triggerType);
             if (!boardLookup.TryGetValue(triggerType, out var board))
             {
+                afterTrigger?.Invoke(null);
                 return;
             }
 
             float power = Mathf.Max(0f, basePower * globalPowerScale);
             var context = new MemoryTriggerContext(this, triggerType, board, power);
             currentContext = context;
-            board.Trigger(triggerType, player, power, context);
-            context.Complete();
-            currentContext = null;
+
+            try
+            {
+                board.Trigger(triggerType, player, power, context);
+                afterTrigger?.Invoke(context);
+            }
+            finally
+            {
+                context.Complete();
+                currentContext = null;
+            }
         }
 
         public bool TryPlaceInventoryPiece(ActionTriggerType trigger, MemoryPieceInventoryItem item, Vector2Int origin, bool locked = false)

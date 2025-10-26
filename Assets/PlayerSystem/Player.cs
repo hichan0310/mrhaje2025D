@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using EntitySystem;
 using EntitySystem.Events;
@@ -98,11 +99,11 @@ namespace PlayerSystem
             base.Update();
         }
 
-        private void ActivateMemory(ActionTriggerType triggerType, float power)
+        private void ActivateMemory(ActionTriggerType triggerType, float power, Action<MemoryTriggerContext?>? continuation = null)
         {
             if (memoryBinder)
             {
-                memoryBinder.Trigger(triggerType, power);
+                memoryBinder.Trigger(triggerType, power, continuation);
             }
         }
 
@@ -258,6 +259,38 @@ namespace PlayerSystem
             bodyCollider.enabled = fallThroughTimer <= 0f;
         }
 
+        private float ResolveReinforcementMultiplier(ActionTriggerType triggerType, MemoryTriggerContext? context)
+        {
+            if (context != null)
+            {
+                return context.Board?.GetBoardReinforcementMultiplier() ?? 1f;
+            }
+
+            if (memoryBinder && memoryBinder.TryGetBoard(triggerType, out var board))
+            {
+                return board.GetBoardReinforcementMultiplier();
+            }
+
+            return 1f;
+        }
+
+        private void SpawnDefaultProjectile(MemoryTriggerContext? context)
+        {
+            if (!defaultProjectile || !firePoint)
+            {
+                return;
+            }
+
+            float direction = Mathf.Sign(transform.localScale.x);
+            Vector2 dir = new Vector2(direction, 0f);
+            var instance = Instantiate(defaultProjectile, firePoint.position, Quaternion.identity);
+            float basePower = context?.BasePower ?? 1f;
+            float reinforcementMultiplier = ResolveReinforcementMultiplier(ActionTriggerType.BasicAttack, context);
+            float projectilePower = basePower * reinforcementMultiplier;
+            instance.Initialize(this, dir, projectilePower, 0f);
+            context?.ApplyToProjectile(instance);
+        }
+
         private void TryFire()
         {
             if (fireTimer > 0f)
@@ -265,14 +298,16 @@ namespace PlayerSystem
                 return;
             }
 
-            ActivateMemory(ActionTriggerType.BasicAttack, 1f);
-
-            if (defaultProjectile && firePoint)
+            bool projectileSpawned = false;
+            ActivateMemory(ActionTriggerType.BasicAttack, 1f, context =>
             {
-                float direction = Mathf.Sign(transform.localScale.x);
-                Vector2 dir = new Vector2(direction, 0f);
-                var instance = Instantiate(defaultProjectile, firePoint.position, Quaternion.identity);
-                instance.Initialize(this, dir, 1f, 0f);
+                projectileSpawned = true;
+                SpawnDefaultProjectile(context);
+            });
+
+            if (!projectileSpawned)
+            {
+                SpawnDefaultProjectile(null);
             }
 
             fireTimer = fireCooldown;
@@ -285,8 +320,19 @@ namespace PlayerSystem
                 return;
             }
 
-            ActivateMemory(ActionTriggerType.HeavyAttack, 1f);
-            fallbackSkillEffect?.trigger(this, 1f);
+            bool effectTriggered = false;
+            ActivateMemory(ActionTriggerType.HeavyAttack, 1f, context =>
+            {
+                effectTriggered = true;
+                float power = context?.BasePower ?? 1f;
+                fallbackSkillEffect?.trigger(this, power);
+            });
+
+            if (!effectTriggered)
+            {
+                fallbackSkillEffect?.trigger(this, 1f);
+            }
+
             skillTimer = skillCooldown;
         }
 
@@ -297,8 +343,19 @@ namespace PlayerSystem
                 return;
             }
 
-            ActivateMemory(ActionTriggerType.Ultimate, 2f);
-            fallbackUltimateEffect?.trigger(this, 2f);
+            bool effectTriggered = false;
+            ActivateMemory(ActionTriggerType.Ultimate, 2f, context =>
+            {
+                effectTriggered = true;
+                float power = context?.BasePower ?? 2f;
+                fallbackUltimateEffect?.trigger(this, power);
+            });
+
+            if (!effectTriggered)
+            {
+                fallbackUltimateEffect?.trigger(this, 2f);
+            }
+
             ultimateTimer = ultimateCooldown;
         }
 
