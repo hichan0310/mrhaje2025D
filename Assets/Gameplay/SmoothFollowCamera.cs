@@ -22,6 +22,22 @@ namespace Gameplay
         [Tooltip("Maximum speed of the camera when moving towards the target position.")]
         [SerializeField] [Min(0f)] private float maxPositionSpeed = 40f;
 
+        [Header("Vertical Tracking")]
+        [Tooltip("If enabled the camera only slowly follows vertical movement while the target remains within the screen.")]
+        [SerializeField] private bool limitVerticalTracking = true;
+
+        [Tooltip("How far the target can move vertically (in world units) before the camera starts catching up quickly.")]
+        [SerializeField] [Min(0f)] private float verticalDeadZone = 1.5f;
+
+        [Tooltip("Smooth time for the vertical catch-up when the target leaves the dead zone.")]
+        [SerializeField] [Min(0.01f)] private float verticalCatchUpSmoothTime = 0.35f;
+
+        [Tooltip("Maximum speed when catching up vertically. Set to 0 to remove the limit.")]
+        [SerializeField] [Min(0f)] private float verticalCatchUpMaxSpeed = 12f;
+
+        [Tooltip("Maximum speed while the target is inside the dead zone. Set to 0 to keep the current height completely fixed.")]
+        [SerializeField] [Min(0f)] private float verticalIdleSpeed = 0.5f;
+
         [Header("Look Ahead")]
         [Tooltip("If enabled, the camera adds a small offset in the direction the target is moving.")]
         [SerializeField] private bool enableLookAhead = true;
@@ -40,6 +56,7 @@ namespace Gameplay
         private Vector3 lookAheadVelocity;
         private Vector3 lastTargetPosition;
         private bool hasLastTargetPosition;
+        private float verticalVelocity;
 
         private void Awake()
         {
@@ -75,7 +92,42 @@ namespace Gameplay
             }
 
             Vector3 desiredPosition = targetPosition + positionOffset + currentLookAhead;
-            transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref positionVelocity, positionSmoothTime, maxPositionSpeed <= 0f ? Mathf.Infinity : maxPositionSpeed, deltaTime);
+            Vector3 currentPosition = transform.position;
+
+            float maxSpeed = maxPositionSpeed <= 0f ? Mathf.Infinity : maxPositionSpeed;
+
+            currentPosition.x = Mathf.SmoothDamp(currentPosition.x, desiredPosition.x, ref positionVelocity.x, positionSmoothTime, maxSpeed, deltaTime);
+            currentPosition.z = Mathf.SmoothDamp(currentPosition.z, desiredPosition.z, ref positionVelocity.z, positionSmoothTime, maxSpeed, deltaTime);
+
+            if (limitVerticalTracking)
+            {
+                positionVelocity.y = 0f;
+                float deltaY = desiredPosition.y - currentPosition.y;
+                float absDeltaY = Mathf.Abs(deltaY);
+                float catchUpMaxSpeed = verticalCatchUpMaxSpeed <= 0f ? Mathf.Infinity : verticalCatchUpMaxSpeed;
+
+                if (absDeltaY > verticalDeadZone)
+                {
+                    currentPosition.y = Mathf.SmoothDamp(currentPosition.y, desiredPosition.y, ref verticalVelocity, verticalCatchUpSmoothTime, catchUpMaxSpeed, deltaTime);
+                }
+                else if (verticalIdleSpeed > 0f)
+                {
+                    float step = verticalIdleSpeed * deltaTime;
+                    currentPosition.y = Mathf.MoveTowards(currentPosition.y, desiredPosition.y, step);
+                    verticalVelocity = 0f;
+                }
+                else
+                {
+                    verticalVelocity = 0f;
+                }
+            }
+            else
+            {
+                currentPosition.y = Mathf.SmoothDamp(currentPosition.y, desiredPosition.y, ref positionVelocity.y, positionSmoothTime, maxSpeed, deltaTime);
+                verticalVelocity = 0f;
+            }
+
+            transform.position = currentPosition;
         }
 
         /// <summary>
@@ -97,6 +149,7 @@ namespace Gameplay
             {
                 hasLastTargetPosition = false;
             }
+            verticalVelocity = 0f;
         }
 
         private void UpdateLookAhead(Vector3 targetPosition, float deltaTime)
@@ -121,6 +174,11 @@ namespace Gameplay
                 desiredLookAhead = speed > 0.01f
                     ? planarVelocity.normalized * Mathf.Min(lookAheadDistance, speed * lookAheadResponsiveness)
                     : Vector3.zero;
+
+                if (limitVerticalTracking)
+                {
+                    desiredLookAhead.y = 0f;
+                }
 
                 currentLookAhead = Vector3.SmoothDamp(currentLookAhead, desiredLookAhead, ref lookAheadVelocity, lookAheadSmoothTime, Mathf.Infinity, deltaTime);
             }
@@ -154,6 +212,10 @@ namespace Gameplay
             lookAheadSmoothTime = Mathf.Max(0.01f, lookAheadSmoothTime);
             maxPositionSpeed = Mathf.Max(0f, maxPositionSpeed);
             lookAheadDistance = Mathf.Max(0f, lookAheadDistance);
+            verticalDeadZone = Mathf.Max(0f, verticalDeadZone);
+            verticalCatchUpSmoothTime = Mathf.Max(0.01f, verticalCatchUpSmoothTime);
+            verticalCatchUpMaxSpeed = Mathf.Max(0f, verticalCatchUpMaxSpeed);
+            verticalIdleSpeed = Mathf.Max(0f, verticalIdleSpeed);
         }
 #endif
     }
