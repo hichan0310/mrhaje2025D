@@ -23,6 +23,7 @@ namespace PlayerSystem
         [SerializeField] private Transform groundCheck = null;
         [SerializeField] private float groundCheckRadius = 0.2f;
         [SerializeField] private LayerMask groundMask = -1;
+        [SerializeField] private LayerMask dropPlatformMask = 0;
         [SerializeField] private float fallThroughDuration = 0.35f;
 
         [Header("Combat")]
@@ -78,7 +79,9 @@ namespace PlayerSystem
         private bool wasGrounded;
         private bool isDashing;
         private bool isDodging;
+        private bool isFallingThrough;
         private float dashDirection = 1f;
+        private readonly List<Collider2D> fallingThroughPlatforms = new List<Collider2D>();
 
         protected override void Start()
         {
@@ -116,7 +119,9 @@ namespace PlayerSystem
         {
             wasGrounded = grounded;
             Vector3 origin = groundCheck ? groundCheck.position : transform.position;
-            grounded = Physics2D.OverlapCircle(origin, groundCheckRadius, groundMask);
+            bool onGround = Physics2D.OverlapCircle(origin, groundCheckRadius, groundMask);
+            bool onDropPlatform = !isFallingThrough && Physics2D.OverlapCircle(origin, groundCheckRadius, dropPlatformMask);
+            grounded = onGround || onDropPlatform;
 
             if (grounded)
             {
@@ -136,26 +141,32 @@ namespace PlayerSystem
                 transform.localScale = new Vector3(Mathf.Sign(horizontalInput), 1f, 1f);
             }
 
-            if (Input.GetKeyDown(jumpKey))
+            bool downHeld = Input.GetKey(downKey);
+            bool jumpPressed = Input.GetKeyDown(jumpKey);
+
+            if (jumpPressed)
             {
-                jumpBufferTimer = jumpBuffer;
+                if (downHeld)
+                {
+                    jumpBufferTimer = 0f;
+                    FallThrough();
+                }
+                else
+                {
+                    jumpBufferTimer = jumpBuffer;
+                }
             }
             else
             {
                 jumpBufferTimer = Mathf.Max(0f, jumpBufferTimer - deltaTime);
             }
 
-            if (jumpBufferTimer > 0f && (grounded || coyoteTimerValue > 0f))
+            if (!downHeld && jumpBufferTimer > 0f && (grounded || coyoteTimerValue > 0f))
             {
                 jumpQueued = true;
                 jumpBufferTimer = 0f;
                 coyoteTimerValue = 0f;
                 ActivateMemory(ActionTriggerType.Jump, 1f);
-            }
-
-            if (Input.GetKey(downKey) && Input.GetKeyDown(jumpKey))
-            {
-                FallThrough();
             }
 
             if (Input.GetKeyDown(fireKey))
@@ -250,12 +261,17 @@ namespace PlayerSystem
 
         private void HandleFallThrough()
         {
-            if (!bodyCollider)
+            if (!bodyCollider || !isFallingThrough)
             {
                 return;
             }
 
-            bodyCollider.enabled = fallThroughTimer <= 0f;
+            if (fallThroughTimer > 0f)
+            {
+                return;
+            }
+
+            ResetFallThroughState();
         }
 
         private void TryFire()
@@ -361,8 +377,62 @@ namespace PlayerSystem
 
         private void FallThrough()
         {
+            if (!bodyCollider || isFallingThrough)
+            {
+                return;
+            }
+
+            Vector3 origin = groundCheck ? groundCheck.position : transform.position;
+            Collider2D[] platforms = Physics2D.OverlapCircleAll(origin, groundCheckRadius + 0.05f, dropPlatformMask);
+            if (platforms == null || platforms.Length == 0)
+            {
+                return;
+            }
+
+            foreach (var platform in platforms)
+            {
+                if (!platform || fallingThroughPlatforms.Contains(platform))
+                {
+                    continue;
+                }
+
+                Physics2D.IgnoreCollision(bodyCollider, platform, true);
+                fallingThroughPlatforms.Add(platform);
+            }
+
+            if (fallingThroughPlatforms.Count == 0)
+            {
+                return;
+            }
+
             fallThroughTimer = fallThroughDuration;
+            isFallingThrough = true;
             ActivateMemory(ActionTriggerType.DropDown, 1f);
+        }
+
+        private void ResetFallThroughState()
+        {
+            if (!bodyCollider)
+            {
+                return;
+            }
+
+            foreach (var platform in fallingThroughPlatforms)
+            {
+                if (platform)
+                {
+                    Physics2D.IgnoreCollision(bodyCollider, platform, false);
+                }
+            }
+
+            fallingThroughPlatforms.Clear();
+            isFallingThrough = false;
+            fallThroughTimer = 0f;
+        }
+
+        private void OnDisable()
+        {
+            ResetFallThroughState();
         }
 
         public bool TryInterceptAttack(Entity attacker)
