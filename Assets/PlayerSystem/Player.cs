@@ -141,26 +141,32 @@ namespace PlayerSystem
                 transform.localScale = new Vector3(Mathf.Sign(horizontalInput), 1f, 1f);
             }
 
-            if (Input.GetKeyDown(jumpKey))
+            bool downHeld = Input.GetKey(downKey);
+            bool jumpPressed = Input.GetKeyDown(jumpKey);
+
+            if (jumpPressed)
             {
-                jumpBufferTimer = jumpBuffer;
+                if (downHeld)
+                {
+                    jumpBufferTimer = 0f;
+                    FallThrough();
+                }
+                else
+                {
+                    jumpBufferTimer = jumpBuffer;
+                }
             }
             else
             {
                 jumpBufferTimer = Mathf.Max(0f, jumpBufferTimer - deltaTime);
             }
 
-            if (jumpBufferTimer > 0f && (grounded || coyoteTimerValue > 0f))
+            if (!downHeld && jumpBufferTimer > 0f && (grounded || coyoteTimerValue > 0f))
             {
                 jumpQueued = true;
                 jumpBufferTimer = 0f;
                 coyoteTimerValue = 0f;
                 ActivateMemory(ActionTriggerType.Jump, 1f);
-            }
-
-            if (Input.GetKey(downKey) && Input.GetKeyDown(jumpKey))
-            {
-                FallThrough();
             }
 
             if (Input.GetKeyDown(fireKey))
