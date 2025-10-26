@@ -742,6 +742,7 @@ GameObject:
   - component: {fileID: 475566874}
   - component: {fileID: 475566873}
   - component: {fileID: 475566876}
+  - component: {fileID: 475566877}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -867,6 +868,31 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &475566877
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 475566872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e759280109ffcaa4281b9d3145d0a4d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  positionOffset: {x: 0, y: 2, z: -10}
+  positionSmoothTime: 0.2
+  maxPositionSpeed: 40
+  limitVerticalTracking: 1
+  verticalDeadZone: 1.5
+  verticalCatchUpSmoothTime: 0.35
+  verticalCatchUpMaxSpeed: 12
+  verticalIdleSpeed: 0.5
+  enableLookAhead: 1
+  lookAheadDistance: 2.5
+  lookAheadResponsiveness: 3
+  lookAheadSmoothTime: 0.15
 --- !u!1 &542794432
 GameObject:
   m_ObjectHideFlags: 0
@@ -1065,6 +1091,10 @@ PrefabInstance:
     - target: {fileID: 7300000000000000004, guid: 5f97354d47d445a59dce987467a9aa2e, type: 3}
       propertyPath: m_Offset.y
       value: -0.003164649
+      objectReference: {fileID: 0}
+    - target: {fileID: 7300000000000000005, guid: 5f97354d47d445a59dce987467a9aa2e, type: 3}
+      propertyPath: jumpForce
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 7300000000000000005, guid: 5f97354d47d445a59dce987467a9aa2e, type: 3}
       propertyPath: fallbackUltimateEffect
@@ -2043,7 +2073,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9103754056950766021, guid: 430ff3213a9f47bb9a952ed8b2ea830e, type: 3}
       propertyPath: m_LocalScale.x
-      value: 182.5013
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 9103754056950766021, guid: 430ff3213a9f47bb9a952ed8b2ea830e, type: 3}
       propertyPath: m_LocalScale.y

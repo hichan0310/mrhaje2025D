@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f051a0a0a1444b509c14449ea8475fc4, type: 3}
   m_Name: SampleSpawnProjectileEffect
   m_EditorClassIdentifier: 
-  description: "기본 노란 탄환을 여러 발 발사하는 샘플 이펙트"
+  description: "\uAE30\uBCF8 \uB178\uB780 \uD0C4\uD658\uC744 \uC5EC\uB7EC \uBC1C
+    \uBC1C\uC0AC\uD558\uB294 \uC0D8\uD50C \uC774\uD399\uD2B8"
   projectilePrefab: {fileID: 585103627240126144, guid: 36266858b3c0489180fabadc6c426bb5, type: 3}
   spawnOffset: {x: 0.6, y: 0.1}
   directionOverride: 0
   projectileCount: 3
-  spreadAngle: 12
+  spreadAngle: 8
+  size: 0
