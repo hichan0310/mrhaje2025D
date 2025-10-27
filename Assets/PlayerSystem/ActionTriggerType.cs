@@ -11,10 +11,10 @@ namespace PlayerSystem
     {
         None = 0,
         Jump = 1 << 0,
-        DropDown = 1 << 1,
+        DropDown = 1 << 1,  //이건 뭘 의미하는 거지?
         BasicAttack = 1 << 2,
         HeavyAttack = 1 << 3,
-        Interact = 1 << 4,
+        Interact = 1 << 4,  //이건 뭘 의미하는 거지?
         Dodge = 1 << 5,
         Dash = 1 << 6,
         Hit = 1 << 7,

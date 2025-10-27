@@ -102,6 +102,8 @@ namespace PlayerSystem
             base.Update();
         }
 
+        // TODO
+        // 이렇게 하지 말고 memory board를 event listener에 넣어서 특정 이벤트를 받았을 때 트리거 작동하도록 하기
         private void ActivateMemory(ActionTriggerType triggerType, float power)
         {
             if (memoryBinder)
