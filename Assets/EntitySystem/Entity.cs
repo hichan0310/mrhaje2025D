@@ -48,7 +48,7 @@ namespace EntitySystem
         }
         
 
-        public void eventActive(EventArgs e)
+        public virtual void eventActive(EventArgs e)
         {
             foreach (var listener in listeners.ToList())
             {

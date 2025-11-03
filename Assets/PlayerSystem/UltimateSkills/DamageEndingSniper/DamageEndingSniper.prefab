@@ -146,7 +146,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2545231704971339465}
   - component: {fileID: 1202171385912953757}
-  - component: {fileID: 4195486628758425693}
+  - component: {fileID: 24990660243012214}
   m_Layer: 0
   m_Name: DamageEndingSniper
   m_TagString: Untagged
@@ -185,7 +185,7 @@ MonoBehaviour:
   displayStack: {fileID: 652710979108020425, guid: 1bf9f0bdef4c649499fa440679debfab, type: 3}
   snipeAim: {fileID: 2646877261044568045, guid: 1fa6db532623d5f4d852fa4cbf166ccb, type: 3}
   snipeBullet: {fileID: 658846517599528381, guid: 6b40fdb3c01f60149b882df441b1d7f9, type: 3}
---- !u!114 &4195486628758425693
+--- !u!114 &24990660243012214
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -194,7 +194,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4410729008467070125}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90e0d5f4c1964416a1995da83931e6bb, type: 3}
+  m_Script: {fileID: 11500000, guid: 1f13d0fc4c8a47f98aa765cff8517624, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   skill: {fileID: 1202171385912953757}
@@ -421,4 +421,17 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7529600366298731598}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1202171385912953757}
+        m_TargetAssemblyTypeName: PlayerSystem.UltimateSkills.DamageEndingSniper.DamageEndingSniper,
+          Assembly-CSharp
+        m_MethodName: execute
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

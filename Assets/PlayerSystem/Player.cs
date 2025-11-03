@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using EntitySystem;
 using EntitySystem.Events;
 using EntitySystem.StatSystem;
@@ -15,8 +16,7 @@ namespace PlayerSystem
     [RequireComponent(typeof(PlayerMemoryBinder))]
     public class Player : Entity
     {
-        [Header("Movement")]
-        [SerializeField] private float moveSpeed = 7f;
+        [Header("Movement")] [SerializeField] private float moveSpeed = 7f;
         [SerializeField] private float groundAcceleration = 20f;
         [SerializeField] private float airAcceleration = 12f;
         [SerializeField] private float jumpForce = 16f;
@@ -28,8 +28,7 @@ namespace PlayerSystem
         [SerializeField] private LayerMask dropPlatformMask = 0;
         [SerializeField] private float fallThroughDuration = 0.35f;
 
-        [Header("Combat")]
-        [SerializeField] private Projectile defaultProjectile = null;
+        [Header("Combat")] [SerializeField] private Projectile defaultProjectile = null;
         [SerializeField] private Transform firePoint = null;
         [SerializeField] private float fireCooldown = 0.2f;
         [SerializeField] private TriggerEffectAsset fallbackSkillEffect = null;
@@ -40,20 +39,19 @@ namespace PlayerSystem
         [SerializeField] public Skill skill;
         [SerializeField] public Ultimate ultimate;
 
-        [Header("Mobility")]
-        [SerializeField] private float dashSpeed = 18f;
+        [Header("Mobility")] [SerializeField] private float dashSpeed = 18f;
         [SerializeField] private float dashDuration = 0.2f;
         [SerializeField] private float dashCooldown = 1.2f;
         [SerializeField] private float dodgeDuration = 0.35f;
         [SerializeField] private float dodgeCooldown = 1.5f;
         [SerializeField] private float justDodgeWindow = 0.2f;
 
-        [Header("Interaction")]
-        [SerializeField] private float interactRadius = 1.5f;
+        [Header("Interaction")] [SerializeField]
+        private float interactRadius = 1.5f;
+
         [SerializeField] private LayerMask interactMask = -1;
 
-        [Header("Input")]
-        [SerializeField] private string horizontalAxis = "Horizontal";
+        [Header("Input")] [SerializeField] private string horizontalAxis = "Horizontal";
         [SerializeField] private KeyCode jumpKey = KeyCode.Space;
         [SerializeField] private KeyCode downKey = KeyCode.S;
         [SerializeField] private KeyCode fireKey = KeyCode.J;
@@ -66,7 +64,7 @@ namespace PlayerSystem
         private Rigidbody2D body = null;
         private Collider2D bodyCollider = null;
         private PlayerMemoryBinder memoryBinder = null;
-        
+
         private float fireTimer;
         private float skillTimer;
         private float ultimateTimer;
@@ -102,14 +100,57 @@ namespace PlayerSystem
             this.stat = new EntityStat(this, 10000, 100, 100);
         }
 
-        protected override void Update()
+        private float energyChargeICD = 0;
+
+        public override void eventActive(EventArgs e)
         {
-            float deltaTime = TimeManager.deltaTime;
+            if (e is DamageGiveEvent damagegiveEvent)
+            {
+                var stat = this.stat.calculate();
+                if (energyChargeICD <= 0)
+                {
+                    if (damagegiveEvent.atkTags.Contains(AtkTags.ultimateDamage))
+                    {
+                        this.stat.energy += (int)(10f * stat.energyRecharge);
+                        if(this.stat.energy > 100) this.stat.energy = 100;
+                        energyChargeICD = 0.02f;
+                    }
+                    else if (damagegiveEvent.atkTags.Contains(AtkTags.skillDamage))
+                    {
+                        this.stat.energy += (int)(5f * stat.energyRecharge);
+                        if(this.stat.energy > 100) this.stat.energy = 100;
+                        energyChargeICD = 0.02f;
+                    }
+                    else if (damagegiveEvent.atkTags.Contains(AtkTags.normalAttackDamage))
+                    {
+                        this.stat.energy += (int)(2f * stat.energyRecharge);
+                        if(this.stat.energy > 100) this.stat.energy = 100;
+                        energyChargeICD = 0.02f;
+                    }
+                    else
+                    {
+                        this.stat.energy += (int)(3f * stat.energyRecharge);
+                        if(this.stat.energy > 100) this.stat.energy = 100;
+                        energyChargeICD = 0.02f;
+                    }
+                }
+            }
+
+            base.eventActive(e);
+        }
+
+        protected override void update(float deltaTime)
+        {
             CacheGroundedState();
             ReadInput(deltaTime);
             UpdateTimers(deltaTime);
-            base.Update();
+            energyChargeICD -= deltaTime;
+            if (energyChargeICD < 0) energyChargeICD = 0;
+            
+            base.update(deltaTime);
+            
         }
+
 
         // TODO
         // 이렇게 하지 말고 memory board를 event listener에 넣어서 특정 이벤트를 받았을 때 트리거 작동하도록 하기
@@ -160,7 +201,8 @@ namespace PlayerSystem
             wasGrounded = grounded;
             Vector3 origin = groundCheck ? groundCheck.position : transform.position;
             bool onGround = Physics2D.OverlapCircle(origin, groundCheckRadius, groundMask);
-            bool onDropPlatform = !isFallingThrough && Physics2D.OverlapCircle(origin, groundCheckRadius, dropPlatformMask);
+            bool onDropPlatform =
+                !isFallingThrough && Physics2D.OverlapCircle(origin, groundCheckRadius, dropPlatformMask);
             grounded = onGround || onDropPlatform;
 
             if (grounded)
@@ -319,9 +361,9 @@ namespace PlayerSystem
             }
 
             //ActivateMemory(ActionTriggerType.BasicAttack, 1f);
-            var targetPos=Vector3.zero;
+            var targetPos = Vector3.zero;
             new BasicAttackExecuteEvent(this, targetPos).trigger();
-            
+
             if (defaultProjectile && firePoint)
             {
                 float direction = Mathf.Sign(transform.localScale.x);
@@ -337,7 +379,7 @@ namespace PlayerSystem
 
             fireTimer = fireCooldown;
         }
-        
+
 
         private void TryInteract()
         {
@@ -453,7 +495,7 @@ namespace PlayerSystem
             // return false;
             return isDodging;
         }
-        
+
 
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
