@@ -11,7 +11,7 @@ namespace PlayerSystem
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(Collider2D))]
     [RequireComponent(typeof(PlayerMemoryBinder))]
-    public class Player : Entity, IEntityEventListener
+    public class Player : Entity
     {
         [Header("Movement")]
         [SerializeField] private float moveSpeed = 7f;
@@ -61,7 +61,7 @@ namespace PlayerSystem
         private Rigidbody2D body = null;
         private Collider2D bodyCollider = null;
         private PlayerMemoryBinder memoryBinder = null;
-
+        
         private float fireTimer;
         private float skillTimer;
         private float ultimateTimer;
@@ -90,7 +90,6 @@ namespace PlayerSystem
             body = GetComponent<Rigidbody2D>();
             bodyCollider = GetComponent<Collider2D>();
             memoryBinder = GetComponent<PlayerMemoryBinder>();
-            registerListener(this);
         }
 
         protected override void Update()
@@ -197,7 +196,9 @@ namespace PlayerSystem
                 jumpQueued = true;
                 jumpBufferTimer = 0f;
                 coyoteTimerValue = 0f;
-                ActivateMemory(ActionTriggerType.Jump, 1f);
+                var jumpPower = 1f;
+                //ActivateMemory(ActionTriggerType.Jump, 1f);
+                new JumpEvent(this, jumpPower).trigger();
             }
 
             if (Input.GetKeyDown(fireKey))
@@ -218,11 +219,6 @@ namespace PlayerSystem
             if (Input.GetKeyDown(interactKey))
             {
                 TryInteract();
-            }
-
-            if (Input.GetKeyDown(dashKey))
-            {
-                TryDash();
             }
 
             if (Input.GetKeyDown(dodgeKey))
@@ -312,8 +308,10 @@ namespace PlayerSystem
                 return;
             }
 
-            ActivateMemory(ActionTriggerType.BasicAttack, 1f);
-
+            //ActivateMemory(ActionTriggerType.BasicAttack, 1f);
+            var targetPos=Vector3.zero;
+            new BasicAttackExecuteEvent(this, targetPos).trigger();
+            
             if (defaultProjectile && firePoint)
             {
                 float direction = Mathf.Sign(transform.localScale.x);
@@ -336,7 +334,8 @@ namespace PlayerSystem
                 return;
             }
 
-            ActivateMemory(ActionTriggerType.HeavyAttack, 1f);
+            //ActivateMemory(ActionTriggerType.HeavyAttack, 1f);
+            new HeavyAttackExecuteEvent(this, this.transform.position).trigger();
             fallbackSkillEffect?.trigger(this, 1f);
             skillTimer = skillCooldown;
         }
@@ -348,7 +347,8 @@ namespace PlayerSystem
                 return;
             }
 
-            ActivateMemory(ActionTriggerType.Ultimate, 2f);
+            //ActivateMemory(ActionTriggerType.Ultimate, 2f);
+            new UltimateExecuteEvent(this, this.transform.position).trigger();
             fallbackUltimateEffect?.trigger(this, 2f);
             ultimateTimer = ultimateCooldown;
         }
@@ -375,21 +375,8 @@ namespace PlayerSystem
                     Vector3.Distance(transform.position, b.WorldPosition)));
 
             interactables[0].Interact(this);
-            ActivateMemory(ActionTriggerType.Interact, 1f);
-        }
-
-        private void TryDash()
-        {
-            if (isDashing || dashCooldownTimer > 0f)
-            {
-                return;
-            }
-
-            dashDirection = horizontalInput == 0f ? Mathf.Sign(transform.localScale.x) : Mathf.Sign(horizontalInput);
-            dashTimer = dashDuration;
-            dashCooldownTimer = dashCooldown;
-            isDashing = true;
-            ActivateMemory(ActionTriggerType.Dash, 1f);
+            new InteractionEvent(this, interactables[0]).trigger();
+            //ActivateMemory(ActionTriggerType.Interact, 1f);
         }
 
         private void TryDodge()
@@ -403,7 +390,8 @@ namespace PlayerSystem
             dodgeTimer = dodgeDuration;
             dodgeCooldownTimer = dodgeCooldown;
             perfectDodgeTimer = justDodgeWindow;
-            ActivateMemory(ActionTriggerType.Dodge, 1f);
+            new DodgeEvent(this).trigger();
+            // ActivateMemory(ActionTriggerType.Dodge, 1f);
         }
 
         private void FallThrough()
@@ -438,7 +426,7 @@ namespace PlayerSystem
 
             fallThroughTimer = fallThroughDuration;
             isFallingThrough = true;
-            ActivateMemory(ActionTriggerType.DropDown, 1f);
+            ActivateMemory(ActionTriggerType.DropDown, 1f); // todo: 이건 무슨 이벤트지?
         }
 
         private void ResetFallThroughState()
@@ -466,40 +454,20 @@ namespace PlayerSystem
             ResetFallThroughState();
         }
 
-        public bool TryInterceptAttack(Entity attacker)
+        public bool TryInterceptAttack(Entity attacker, DamageGiveEvent giveEvent)
         {
-            if (isDodging)
-            {
-                float power = perfectDodgeTimer > 0f ? 2f : 1f;
-                ActivateMemory(ActionTriggerType.Dodge, power);
-                isDodging = false;
-                dodgeTimer = 0f;
-                return true;
-            }
-
-            return false;
+            // if (isDodging)
+            // {
+            //     float power = perfectDodgeTimer > 0f ? 2f : 1f;
+            //     isDodging = false;
+            //     dodgeTimer = 0f;
+            //     return true;
+            // }
+            //
+            // return false;
+            return isDodging;
         }
-
-        void IEntityEventListener.eventActive(EventArgs eventArgs)
-        {
-            if (eventArgs is DamageTakeEvent damage && damage.target == this)
-            {
-                float power = Mathf.Max(1f, damage.realDmg / 10f);
-                ActivateMemory(ActionTriggerType.Hit, power);
-            }
-        }
-
-        void IEntityEventListener.registerTarget(Entity target, object args)
-        {
-        }
-
-        void IEntityEventListener.removeSelf()
-        {
-        }
-
-        void IEntityEventListener.update(float deltaTime, Entity target)
-        {
-        }
+        
 
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()

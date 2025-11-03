@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using PlayerSystem;
 using UnityEngine;
 
 namespace EntitySystem.Events
@@ -24,10 +25,20 @@ namespace EntitySystem.Events
 
         public override void trigger()
         {
-            if (attacker)
-                attacker.eventActive(this);
             if (target)
+            {
+                if (attacker)
+                    attacker.eventActive(this);
+                if (target is Player player)
+                {
+                    if (player.TryInterceptAttack(attacker, this))
+                    {
+                        new JustDodgeEvent(player, this).trigger();
+                        return;
+                    }
+                }
                 target.takeDamage(this);
+            }
         }
     }
 }

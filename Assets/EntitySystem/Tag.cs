@@ -10,7 +10,12 @@ namespace EntitySystem
         criticalHit = 1,
         notcriticalHit = 2,
         notTakeEvent = 3,
-        fireball = 4,
+        dodgeImpossible = 4,
+        physicalDamage = 5,
+        electricalDamage = 6,
+        heatDamage = 7,
+        fireball = 60,
+        
     }
 
     public static class Tag

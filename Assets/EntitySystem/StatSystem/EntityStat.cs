@@ -7,76 +7,78 @@ namespace EntitySystem.StatSystem
 {
     public class EntityStat:IStat
     {
-        public float speed { get; set; } = 1;
         public Entity entity{get;set;}
-        private int baseHp { get; }
-        public int addHp { get; set; }
-        public float increaseHp { get; set; }
-
-        public int maxHp
-        {
-            get => (int)(baseHp * (increaseHp / 100 + 1) + addHp);
-        }
-
+        public int maxHp { get; set; }
         public int nowHp { get; protected set; }
 
         private int baseAtk { get; }
         public int addAtk { get; set; }
         public float increaseAtk { get; set; }
-
         private int atk => (int)(baseAtk * (increaseAtk / 100 + 1) + addAtk);
 
         private int baseDef { get; }
         public int addDef { get; set; }
         public float increaseDef { get; set; }
-
         private int def => (int)(baseDef * (increaseDef / 100 + 1) + addDef);
+        
+        public float projectileSpeed { get; set; }
+        public float projectileAmount { get; set; }
+        public float projectilecoolTime { get; set; }
+        public float projectileGuidence { get; set; }
 
         public float crit { get; set; }
         public float critDmg { get; set; }
+        
         public float[] dmgUp { get; set; }
-        public float movePower { get; set; }
-        public float energyRecharge { get; set; }
-
-        // 사실 배열 많이 쓰면 이거 복사할 때 무리가 갈 가능성도 있긴 해서 피증 하나만 하려고 했는데 2d면 딱히 상관 없으려나?
-        public float[] dmgDrain { get; set; }
-        public float[] dmgTakeUp { get; set; }
         public float[] dmgAdd { get; set; }
         
-        public EntityStat(int baseHp, int baseAtk, int baseDef)
+        public float energyRecharge { get; set; }
+        public int energy { get; set; }
+        
+        public float speed { get; set; }
+        public int jumpCount { get; set; }
+        public float jumpPower { get; set; }
+        public float airSpeed { get; set; }
+        public float dodgeLength { get; set; }
+        public float dodgeTime { get; set; }
+        
+        public EntityStat(int hp, int baseAtk, int baseDef)
         {
-            this.baseHp = Mathf.Max(1, baseHp);
+            maxHp = Mathf.Max(1, hp);
+            nowHp = maxHp;
+            
             this.baseAtk = Mathf.Max(0, baseAtk);
             this.baseDef = Mathf.Max(0, baseDef);
-            addHp = 0;
-            increaseHp = 0f;
             addAtk = 0;
             increaseAtk = 0f;
             addDef = 0;
             increaseDef = 0f;
+            
             crit = 0f;
             critDmg = 50f;
+            
             dmgUp = new float[Tag.atkTagCount];
-            dmgTakeUp = new float[Tag.atkTagCount];
-            dmgDrain = new float[Tag.atkTagCount];
             dmgAdd = new float[Tag.atkTagCount];
-            for (int i = 0; i < dmgDrain.Length; i++)
-            {
-                dmgDrain[i] = 1f;
-            }
-
-            movePower = 0f;
-            energyRecharge = 0f;
-            nowHp = maxHp;
+            
+            energyRecharge = 1f;
+            energy = 0;
+            speed = 1;
+            jumpCount = 1;
+            jumpPower = 10f;
+            airSpeed = 10f;
+            dodgeLength = 1f;
+            dodgeTime = 0.3f;
+            
+            projectileSpeed = 10f;
+            projectileAmount = 1f;
+            projectilecoolTime = 5f;
+            projectileGuidence = 0f;
         }
 
         public EntityStat(EntityStat copy)
         {
-            this.speed = copy.speed;
             this.entity = copy.entity;
-            this.baseHp = copy.baseHp;
-            this.addHp = copy.addHp;
-            this.increaseHp = copy.increaseHp;
+            this.maxHp = copy.maxHp;
             this.nowHp = copy.nowHp;
             this.baseAtk = copy.baseAtk;
             this.addAtk = copy.addAtk;
@@ -86,17 +88,25 @@ namespace EntitySystem.StatSystem
             this.increaseDef = copy.increaseDef;
             this.crit = copy.crit;
             this.critDmg = copy.critDmg;
+            
             this.dmgUp = new float[Tag.atkTagCount];
-            this.dmgTakeUp = new float[Tag.atkTagCount];
-            this.dmgDrain = new float[Tag.atkTagCount];
             this.dmgAdd = new float[Tag.atkTagCount];
-
-            this.movePower = copy.movePower;
-            this.energyRecharge = copy.energyRecharge;
             Array.Copy(copy.dmgUp, this.dmgUp, Tag.atkTagCount);
-            Array.Copy(copy.dmgTakeUp, this.dmgTakeUp, Tag.atkTagCount);
             Array.Copy(copy.dmgAdd, this.dmgAdd, Tag.atkTagCount);
-            Array.Copy(copy.dmgDrain, this.dmgDrain, Tag.atkTagCount);
+            
+            this.energyRecharge = copy.energyRecharge;
+            this.energy = copy.energy;
+            this.speed = copy.speed;
+            this.jumpCount = copy.jumpCount;
+            this.jumpPower = copy.jumpPower;
+            this.airSpeed = copy.airSpeed;
+            this.dodgeLength = copy.dodgeLength;
+            this.dodgeTime = copy.dodgeTime;
+            
+            this.projectileSpeed = copy.projectileSpeed;
+            this.projectileAmount = copy.projectileAmount;
+            this.projectilecoolTime = copy.projectilecoolTime;
+            this.projectileGuidence = copy.projectileGuidence;
         }
         
         // 모든 버프에는 교환법칙이 성립한다고 가정
@@ -131,7 +141,7 @@ namespace EntitySystem.StatSystem
         {
             if (changeBuffs.Count > 0) return calculate().calculateTrueDamage(tags, coefficient);
 
-            float dmg = coefficient;
+            float dmg = coefficient*this.atk/100;
             dmg += dmgAdd[(int)AtkTags.all];
             var tagSet = tags ?? AtkTagSet.None;
             foreach (AtkTags atkTag in tagSet)
@@ -150,12 +160,10 @@ namespace EntitySystem.StatSystem
             }
 
             float dmgUpSum = dmgUp[(int)AtkTags.all];
-            dmg = (int)(dmgDrain[(int)AtkTags.all] * dmg);
             foreach (AtkTags atkTag in tagSet)
             {
                 if (atkTag == AtkTags.all) continue;
                 dmgUpSum += dmgUp[(int)atkTag];
-                dmg = (int)(dmgDrain[(int)atkTag] * dmg);
             }
 
             dmg = (int)((dmgUpSum / 100 + 1) * dmg);
@@ -167,14 +175,8 @@ namespace EntitySystem.StatSystem
             if(changeBuffs.Count > 0) return calculate().calculateTakenDamage(tags, damage);
 
             int C = 200;
-            float dmgUpSum = dmgTakeUp[(int)AtkTags.all];
-            var tagSet = tags ?? AtkTagSet.None;
-            foreach (AtkTags atkTag in tagSet)
-            {
-                dmgUpSum += dmgTakeUp[(int)atkTag];
-            }
 
-            return (int)(damage * ((float)(C) / (def + C)) * (dmgUpSum / 100 + 1));
+            return (int)(damage * ((float)(C) / (def + C)));
         }
 
         public void takeDamage(int damage)
