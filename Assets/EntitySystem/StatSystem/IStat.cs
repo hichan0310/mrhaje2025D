@@ -2,6 +2,7 @@
 {
     public interface IStat
     {
+        public Entity entity{get;}
         public void registerBuff(IBuff buff);
         public void removeBuff(IBuff buff);
         

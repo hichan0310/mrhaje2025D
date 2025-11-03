@@ -62,7 +62,7 @@ namespace EnemySystem
 
             if (definition)
             {
-                stat = new EntityStat(definition.BaseHealth, definition.BaseAttack, definition.BaseDefense)
+                stat = new EntityStat(this, definition.BaseHealth, definition.BaseAttack, definition.BaseDefense)
                 {
                     entity = this,
                     speed = definition.MoveSpeed
@@ -73,7 +73,7 @@ namespace EnemySystem
             }
             else
             {
-                stat = new EntityStat(50, 10, 0) { entity = this };
+                stat = new EntityStat(this, 50, 10, 0) { entity = this };
                 sequence = Array.Empty<EnemyDefinition.ActionSequenceEntry>();
             }
 

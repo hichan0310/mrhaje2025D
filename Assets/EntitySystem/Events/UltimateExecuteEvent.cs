@@ -1,4 +1,5 @@
 ﻿
+using PlayerSystem;
 using UnityEngine;
 
 namespace EntitySystem.Events
@@ -6,14 +7,13 @@ namespace EntitySystem.Events
     public class UltimateExecuteEvent:EventArgs
     {
         public Entity entity;
-        public Vector3 targetPos;
-        //Todo:public ??? skill;
+        public Ultimate skill;
 
-        public UltimateExecuteEvent(Entity entity, Vector3 targetPos)
+        public UltimateExecuteEvent(Entity entity, Ultimate skill)
         {
             name=$"UltimateExecuteEvent: {entity.name}";
             this.entity = entity;
-            this.targetPos = targetPos;
+            this.skill = skill;
         }
 
         public override void trigger()

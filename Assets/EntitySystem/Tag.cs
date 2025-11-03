@@ -14,6 +14,9 @@ namespace EntitySystem
         physicalDamage = 5,
         electricalDamage = 6,
         heatDamage = 7,
+        normalAttackDamage=8,
+        skillDamage = 9,
+        ultimateDamage = 10,
         fireball = 60,
         
     }

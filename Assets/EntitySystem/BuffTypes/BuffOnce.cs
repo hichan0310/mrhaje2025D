@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using EntitySystem.Events;
 using EntitySystem.StatSystem;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace EntitySystem.BuffTypes
@@ -14,11 +15,15 @@ namespace EntitySystem.BuffTypes
 
         public virtual void eventActive(EventArgs eventArgs){}
 
+        public interface IHaveTime
+        {
+            public float time { get; }
+        }
         public virtual void registerTarget(Entity target, object args=null)
         {
             if(targets.ContainsKey(target)) return;
             
-            this.targets[target] = -1;
+            this.targets[target] = (args is IHaveTime t) ? t.time : -1;
             target.registerListener(this);
             target.stat.registerBuff(this);
         }

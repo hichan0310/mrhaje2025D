@@ -1,14 +1,17 @@
-﻿namespace EntitySystem.Events
+﻿using PlayerSystem;
+
+namespace EntitySystem.Events
 {
     public class SkillExecuteEvent:EventArgs
     {
         public Entity entity;
-        //Todo:public ??? skill;
+        public Skill skill;
 
-        public SkillExecuteEvent(Entity entity)
+        public SkillExecuteEvent(Entity entity, Skill skill)
         {
             name=$"SkillExecuteEvent: {entity.name}";
             this.entity = entity;
+            this.skill = skill;
         }
 
         public override void trigger()

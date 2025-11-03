@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: EnemyDefinition
   m_EditorClassIdentifier: 
   displayName: Enemy
-  baseHealth: 1000
+  baseHealth: 10000
   baseAttack: 10
-  baseDefense: 0
+  baseDefense: 100
   moveSpeed: 3
   actionSequence:
   - action: {fileID: 11400000, guid: 089c671aec8223e4c9fbe4b5f04e5d93, type: 2}

@@ -2,6 +2,8 @@
 {
     public class EmptyStat:IStat
     {
+        public Entity entity => null;
+
         public void registerBuff(IBuff buff)
         {
             

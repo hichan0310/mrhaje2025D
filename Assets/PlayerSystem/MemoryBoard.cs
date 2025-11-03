@@ -46,6 +46,7 @@ namespace PlayerSystem
                 {
                     OccupiedCells.Add(origin + offset);
                 }
+
                 CooldownRemaining = 0f;
             }
 
@@ -145,8 +146,9 @@ namespace PlayerSystem
             }
         }
 
-        [Header("Board Settings")]
-        [SerializeField] private Vector2Int gridSize = new Vector2Int(6, 6);
+        [Header("Board Settings")] [SerializeField]
+        private Vector2Int gridSize = new Vector2Int(6, 6);
+
         [SerializeField] private List<MemoryResourcePool> resources = new();
         [SerializeField] private List<MemoryPiecePlacement> startingPieces = new();
         [SerializeField] private List<MemoryReinforcementPlacement> reinforcementZones = new();
@@ -175,7 +177,8 @@ namespace PlayerSystem
             buffer.Clear();
             foreach (var runtime in runtimePieces)
             {
-                buffer.Add(new MemoryPiecePlacementInfo(runtime.Asset, runtime.Origin, runtime.PowerMultiplier, runtime.Locked, runtime.OccupiedCells));
+                buffer.Add(new MemoryPiecePlacementInfo(runtime.Asset, runtime.Origin, runtime.PowerMultiplier,
+                    runtime.Locked, runtime.OccupiedCells));
             }
         }
 
@@ -183,7 +186,8 @@ namespace PlayerSystem
         {
             if (asset && runtimeLookup.TryGetValue(asset, out var runtime))
             {
-                info = new MemoryPiecePlacementInfo(runtime.Asset, runtime.Origin, runtime.PowerMultiplier, runtime.Locked, runtime.OccupiedCells);
+                info = new MemoryPiecePlacementInfo(runtime.Asset, runtime.Origin, runtime.PowerMultiplier,
+                    runtime.Locked, runtime.OccupiedCells);
                 return true;
             }
 
@@ -225,7 +229,8 @@ namespace PlayerSystem
             foreach (var placement in startingPieces)
             {
                 if (!placement.piece) continue;
-                TryAddPieceInternal(placement.piece, placement.origin, placement.powerMultiplier, placement.locked, true);
+                TryAddPieceInternal(placement.piece, placement.origin, placement.powerMultiplier, placement.locked,
+                    true);
             }
 
             foreach (var reinforcement in reinforcementZones)
@@ -248,7 +253,8 @@ namespace PlayerSystem
             }
         }
 
-        public void Trigger(ActionTriggerType triggerType, Entity entity, float basePower, MemoryTriggerContext? context)
+        public void Trigger(ActionTriggerType triggerType, Entity entity, float basePower,
+            MemoryTriggerContext? context)
         {
             if (!MatchesTrigger(triggerType) || runtimePieces.Count == 0)
             {
@@ -286,7 +292,8 @@ namespace PlayerSystem
             return TryAddPieceInternal(asset, origin, multiplier, locked, false);
         }
 
-        private bool TryAddPieceInternal(MemoryPieceAsset asset, Vector2Int origin, float multiplier, bool locked, bool initializing)
+        private bool TryAddPieceInternal(MemoryPieceAsset asset, Vector2Int origin, float multiplier, bool locked,
+            bool initializing)
         {
             if (!asset)
             {
@@ -458,7 +465,8 @@ namespace PlayerSystem
             return 1f + bonusPercent / 100f;
         }
 
-        private void TriggerRuntimePiece(MemoryPieceRuntime runtime, Entity entity, float basePower, MemoryTriggerContext? context)
+        private void TriggerRuntimePiece(MemoryPieceRuntime runtime, Entity entity, float basePower,
+            MemoryTriggerContext? context)
         {
             if (runtime?.Asset == null)
             {
@@ -470,7 +478,8 @@ namespace PlayerSystem
                 return;
             }
 
-            float power = basePower * runtime.Asset.BasePower * runtime.PowerMultiplier * CalculateReinforcementMultiplier(runtime);
+            float power = basePower * runtime.Asset.BasePower * runtime.PowerMultiplier *
+                          CalculateReinforcementMultiplier(runtime);
             if (!TryConsumeResource(runtime.Asset))
             {
                 return;
@@ -505,9 +514,10 @@ namespace PlayerSystem
         {
             return cell.x >= 0 && cell.y >= 0 && cell.x < gridSize.x && cell.y < gridSize.y;
         }
-        
-        public void recieveEvent(EntitySystem.Events.EventArgs eventArgs){
-            throw new NotImplementedException();
+
+        public void recieveEvent(EntitySystem.Events.EventArgs eventArgs)
+        {
+            
         }
     }
 }

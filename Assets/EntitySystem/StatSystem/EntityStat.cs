@@ -41,9 +41,11 @@ namespace EntitySystem.StatSystem
         public float airSpeed { get; set; }
         public float dodgeLength { get; set; }
         public float dodgeTime { get; set; }
+        public float skillCooldownDecrease { get; set; }
         
-        public EntityStat(int hp, int baseAtk, int baseDef)
+        public EntityStat(Entity entity, int hp, int baseAtk, int baseDef)
         {
+            this.entity = entity;
             maxHp = Mathf.Max(1, hp);
             nowHp = maxHp;
             
@@ -73,6 +75,7 @@ namespace EntitySystem.StatSystem
             projectileAmount = 1f;
             projectilecoolTime = 5f;
             projectileGuidence = 0f;
+            skillCooldownDecrease = 1f;
         }
 
         public EntityStat(EntityStat copy)
@@ -107,6 +110,7 @@ namespace EntitySystem.StatSystem
             this.projectileAmount = copy.projectileAmount;
             this.projectilecoolTime = copy.projectilecoolTime;
             this.projectileGuidence = copy.projectileGuidence;
+            this.skillCooldownDecrease = copy.skillCooldownDecrease;
         }
         
         // 모든 버프에는 교환법칙이 성립한다고 가정

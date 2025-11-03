@@ -10,6 +10,7 @@ namespace EntitySystem
     public class Entity : MonoBehaviour
     {
         public EntityStat stat;
+        public HpBar.HpBar hpBar;
         public Animator animator { get; private set; }
         
         private List<IEntityEventListener> listeners = new List<IEntityEventListener>();
@@ -18,10 +19,13 @@ namespace EntitySystem
         {
             animator = GetComponent<Animator>();
             TimeManager.registrarEntity(this);
+            hpBar = Instantiate(hpBar);
+            hpBar.target = this.transform;
         }
 
         protected virtual void Update()
         {
+            hpBar.ratio=(float)stat.nowHp/stat.maxHp;
             update(TimeManager.deltaTime);
         }
 

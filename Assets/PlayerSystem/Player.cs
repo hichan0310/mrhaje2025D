@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using EntitySystem;
 using EntitySystem.Events;
+using EntitySystem.StatSystem;
 using GameBackend;
 using PlayerSystem.Effects;
+using PlayerSystem.Skills.ElectricShock;
 using PlayerSystem.Weapons;
 using UnityEngine;
 
@@ -34,6 +36,9 @@ namespace PlayerSystem
         [SerializeField] private TriggerEffectAsset fallbackUltimateEffect = null;
         [SerializeField] private float skillCooldown = 5f;
         [SerializeField] private float ultimateCooldown = 12f;
+
+        [SerializeField] public Skill skill;
+        [SerializeField] public Ultimate ultimate;
 
         [Header("Mobility")]
         [SerializeField] private float dashSpeed = 18f;
@@ -90,6 +95,11 @@ namespace PlayerSystem
             body = GetComponent<Rigidbody2D>();
             bodyCollider = GetComponent<Collider2D>();
             memoryBinder = GetComponent<PlayerMemoryBinder>();
+            skill = Instantiate(skill);
+            skill.registerTarget(this);
+            ultimate = Instantiate(ultimate);
+            ultimate.registerTarget(this);
+            this.stat = new EntityStat(this, 10000, 100, 100);
         }
 
         protected override void Update()
@@ -208,12 +218,12 @@ namespace PlayerSystem
 
             if (Input.GetKeyDown(skillKey))
             {
-                TrySkill();
+                this.skill.execute();
             }
 
             if (Input.GetKeyDown(ultimateKey))
             {
-                TryUltimate();
+                this.ultimate.execute();
             }
 
             if (Input.GetKeyDown(interactKey))
@@ -317,6 +327,7 @@ namespace PlayerSystem
                 float direction = Mathf.Sign(transform.localScale.x);
                 Vector2 dir = new Vector2(direction, 0f);
                 var instance = Instantiate(defaultProjectile, firePoint.position, Quaternion.identity);
+                Debug.Log(instance);
                 instance.Initialize(this, dir, 1f, 0f);
                 if (MemoryTriggerContext.TryGetActive(this, out var context))
                 {
@@ -326,32 +337,7 @@ namespace PlayerSystem
 
             fireTimer = fireCooldown;
         }
-
-        private void TrySkill()
-        {
-            if (skillTimer > 0f)
-            {
-                return;
-            }
-
-            //ActivateMemory(ActionTriggerType.HeavyAttack, 1f);
-            new HeavyAttackExecuteEvent(this, this.transform.position).trigger();
-            fallbackSkillEffect?.trigger(this, 1f);
-            skillTimer = skillCooldown;
-        }
-
-        private void TryUltimate()
-        {
-            if (ultimateTimer > 0f)
-            {
-                return;
-            }
-
-            //ActivateMemory(ActionTriggerType.Ultimate, 2f);
-            new UltimateExecuteEvent(this, this.transform.position).trigger();
-            fallbackUltimateEffect?.trigger(this, 2f);
-            ultimateTimer = ultimateCooldown;
-        }
+        
 
         private void TryInteract()
         {

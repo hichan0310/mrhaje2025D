@@ -18,7 +18,6 @@ namespace PlayerSystem.Weapons
         [SerializeField] private bool destroyOnAnyCollision = true;
         [SerializeField] private float size = 1f;
 
-        private Entity owner;
         private Vector2 direction;
         private float remainingLife;
         private float powerMultiplier = 1f;
@@ -26,7 +25,7 @@ namespace PlayerSystem.Weapons
         private float knockbackForce = 0f;
         private float recoilForce = 0f;
         private IStat stat;
-        private AtkTagSet atkTag;
+        private AtkTagSet atkTag=new AtkTagSet().Add(AtkTags.physicalDamage, AtkTags.normalAttackDamage);
 
         private void Awake()
         {
@@ -46,8 +45,7 @@ namespace PlayerSystem.Weapons
 
         public void Initialize(Entity owner, Vector2 direction, float power, float size)
         {
-            stat = this.owner.stat.calculate();
-            this.owner = owner;
+            stat = owner.stat.calculate();
             this.direction = direction.sqrMagnitude > 0f ? direction.normalized : Vector2.right;
             this.powerMultiplier = Mathf.Max(0.1f, power);
             remainingLife = lifeTime;
@@ -74,14 +72,14 @@ namespace PlayerSystem.Weapons
             }
 
             var entity = other.GetComponentInParent<Entity>();
-            if (entity != null && entity != owner)
+            if (entity != null && entity != stat.entity)
             {
                 // calculateTrueDamage를 하면 tag에 criticalHit 추가될 수 있어서 복제해둬야 합니다 
                 var tag = new AtkTagSet(this.atkTag);
                 // 공격력, 피해증가, 크리티컬 등 자동 적용됩니다
                 int damage = stat.calculateTrueDamage(tag, 100);
                 // projectile 형식이 아닌 공격이 들어올 수 있어서 저스트 회피는 이 안에서 처리하게 바꿔놨어요
-                new DamageGiveEvent(damage, Vector3.zero, owner, entity, tag).trigger();
+                new DamageGiveEvent(damage, Vector3.zero, stat.entity, entity, tag).trigger();
 
                 // 넉백은 DamageGiveEvent의 force에서 전달만 하고 target에서 알아서 처리하게 하기
                 // if (knockbackForce > 0f && entity.TryGetComponent(out Rigidbody2D targetBody))
