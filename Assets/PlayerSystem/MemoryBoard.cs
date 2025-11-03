@@ -505,5 +505,9 @@ namespace PlayerSystem
         {
             return cell.x >= 0 && cell.y >= 0 && cell.x < gridSize.x && cell.y < gridSize.y;
         }
+        
+        public void recieveEvent(EntitySystem.Events.EventArgs eventArgs){
+            throw new NotImplementedException();
+        }
     }
 }

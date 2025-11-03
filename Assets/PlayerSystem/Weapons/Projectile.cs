@@ -77,7 +77,7 @@ namespace PlayerSystem.Weapons
             if (entity != null && entity != owner)
             {
                 // calculateTrueDamage를 하면 tag에 criticalHit 추가될 수 있어서 복제해둬야 합니다 
-                var tag = new AtkTagSet(this.atkTag);   
+                var tag = new AtkTagSet(this.atkTag);
                 // 공격력, 피해증가, 크리티컬 등 자동 적용됩니다
                 int damage = stat.calculateTrueDamage(tag, 100);
                 // projectile 형식이 아닌 공격이 들어올 수 있어서 저스트 회피는 이 안에서 처리하게 바꿔놨어요

@@ -1,15 +1,17 @@
 using System;
 using System.Collections.Generic;
 using EntitySystem;
+using EntitySystem.Events;
 using GameBackend;
 using UnityEngine;
+using EventArgs = EntitySystem.Events.EventArgs;
 
 namespace PlayerSystem
 {
     /// <summary>
     /// Component that wires serialized memory boards to runtime player actions.
     /// </summary>
-    public class PlayerMemoryBinder : MonoBehaviour
+    public class PlayerMemoryBinder : MonoBehaviour, IEntityEventListener
     {
         [Serializable]
         private class StartingInventoryEntry
@@ -73,6 +75,7 @@ namespace PlayerSystem
 
             BuildBoards();
             InitializeInventory();
+            this.registerTarget(this.player);
         }
 
         private void OnDisable()
@@ -105,11 +108,7 @@ namespace PlayerSystem
 
         private void Update()
         {
-            float deltaTime = TimeManager.deltaTime;
-            foreach (var board in boardLookup.Values)
-            {
-                board.Tick(deltaTime);
-            }
+            // IEventListener이기 때문에 필요 없습니다. update는 주 타겟에 의존하여 돌아가게 됩니다. 
         }
 
         private void LateUpdate()
@@ -443,6 +442,32 @@ namespace PlayerSystem
             {
                 currentContext.Complete();
                 currentContext = null;
+            }
+        }
+
+        public void eventActive(EventArgs eventArgs)
+        {
+            foreach (var board in boardLookup.Values)
+            {
+                board.recieveEvent(eventArgs);
+            }
+        }
+
+        public void registerTarget(Entity target, object args = null)
+        {
+            target.registerListener(this);
+        }
+
+        public void removeSelf()
+        {
+            player.removeListener(this);
+        }
+
+        public void update(float deltaTime, Entity target)
+        {
+            foreach (var board in boardLookup.Values)
+            {
+                board.Tick(deltaTime);
             }
         }
     }
