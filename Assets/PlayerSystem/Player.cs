@@ -5,6 +5,7 @@ using EntitySystem.Events;
 using EntitySystem.StatSystem;
 using GameBackend;
 using PlayerSystem.Effects;
+using PlayerSystem.Effects.EnergyGun;
 using PlayerSystem.Skills.ElectricShock;
 using PlayerSystem.Weapons;
 using UnityEngine;
@@ -16,6 +17,8 @@ namespace PlayerSystem
     [RequireComponent(typeof(PlayerMemoryBinder))]
     public class Player : Entity
     {
+        [SerializeField] private SimpleEnergyGunEffect temp;
+        
         [Header("Movement")] [SerializeField] private float moveSpeed = 7f;
         [SerializeField] private float groundAcceleration = 20f;
         [SerializeField] private float airAcceleration = 12f;
@@ -374,7 +377,7 @@ namespace PlayerSystem
                     context.ApplyToProjectile(instance);
                 }
             }
-
+            this.temp.trigger(this, 1);
             fireTimer = fireCooldown;
         }
 
@@ -510,3 +513,4 @@ namespace PlayerSystem
 #endif
     }
 }
+

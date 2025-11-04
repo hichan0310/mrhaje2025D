@@ -17,6 +17,7 @@ namespace EntitySystem
         normalAttackDamage=8,
         skillDamage = 9,
         ultimateDamage = 10,
+        triggerEffectDamage = 11,
         fireball = 60,
         
     }
