@@ -111,27 +111,25 @@ namespace PlayerSystem
                 {
                     if (damagegiveEvent.atkTags.Contains(AtkTags.ultimateDamage))
                     {
-                        this.stat.energy += (int)(10f * stat.energyRecharge);
+                        this.stat.energy += (int)(5f * stat.energyRecharge);
                         if(this.stat.energy > 100) this.stat.energy = 100;
-                        energyChargeICD = 0.02f;
                     }
                     else if (damagegiveEvent.atkTags.Contains(AtkTags.skillDamage))
                     {
-                        this.stat.energy += (int)(5f * stat.energyRecharge);
+                        this.stat.energy += (int)(2.5f * stat.energyRecharge);
                         if(this.stat.energy > 100) this.stat.energy = 100;
-                        energyChargeICD = 0.02f;
                     }
                     else if (damagegiveEvent.atkTags.Contains(AtkTags.normalAttackDamage))
                     {
-                        this.stat.energy += (int)(2f * stat.energyRecharge);
+                        this.stat.energy += (int)(1f * stat.energyRecharge);
                         if(this.stat.energy > 100) this.stat.energy = 100;
-                        energyChargeICD = 0.02f;
+                        energyChargeICD = 0.2f;
                     }
                     else
                     {
-                        this.stat.energy += (int)(3f * stat.energyRecharge);
+                        this.stat.energy += (int)(1.5f * stat.energyRecharge);
                         if(this.stat.energy > 100) this.stat.energy = 100;
-                        energyChargeICD = 0.02f;
+                        energyChargeICD = 0.2f;
                     }
                 }
             }

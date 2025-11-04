@@ -11,7 +11,7 @@ namespace PlayerSystem.UltimateSkills.DamageEndingSniper
     {
         private Collider2D collider2D;
         private HashSet<Entity> targets;
-        private AtkTagSet tags=new AtkTagSet().Add(AtkTags.heatDamage, AtkTags.ultimateDamage);
+        private AtkTagSet tags=new AtkTagSet().Add(AtkTags.heatDamage, AtkTags.ultimateDamage, AtkTags.criticalHit);
         public IStat stat { get; set; }
         public Dictionary<Entity, DisplayStack> stack { get; set; }
         private float timer = 0;
@@ -39,7 +39,7 @@ namespace PlayerSystem.UltimateSkills.DamageEndingSniper
             float coef = 200;
             if (stack.ContainsKey(target))
             {
-                coef+=1.5f*stack[target].stack;
+                coef+=2.5f*stack[target].stack;
             }
 
             var tag = new AtkTagSet(tags);
