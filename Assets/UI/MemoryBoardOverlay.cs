@@ -1,735 +1,573 @@
+// self-building lightweight editor overlay for Memory Board
+// Drop-in ready: if any UI refs are missing, it will auto-build them at runtime.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using PlayerSystem;
-using InventoryItem = PlayerSystem.PlayerMemoryBinder.MemoryPieceInventoryItem;
 
-namespace UI
+public class MemoryBoardOverlay : MonoBehaviour
 {
-    /// <summary>
-    /// Controller that renders the player's memory board and inventory, allowing the player
-    /// to arrange pieces visually.
-    /// </summary>
-    public class MemoryBoardOverlay : MonoBehaviour
+    [Header("UI (optional: will be auto-built if left empty)")]
+    [SerializeField] private CanvasGroup canvasGroup;
+    [SerializeField] private RectTransform tabsRoot;               // (옵션)
+    [SerializeField] private Button tabButtonPrefab;               // (옵션)
+    [SerializeField] private RectTransform gridRoot;               // GridLayoutGroup 필요(자동 생성됨)
+    [SerializeField] private Image cellPrefab;                     // 없으면 런타임에 기본 셀 프리팹 생성
+    [SerializeField] private TMP_Text title;
+    [SerializeField] private TMP_Dropdown paletteDropdown;         // (옵션)
+    [SerializeField] private Button rotateLeftBtn;                 // (옵션)
+    [SerializeField] private Button rotateRightBtn;                // (옵션)
+    [SerializeField] private TMP_Text stateLabel;
+
+    [Header("Inventory UI (optional: will be auto-built if left empty)")]
+    [SerializeField] private ScrollRect inventoryScroll;
+    [SerializeField] private RectTransform inventoryContent;
+    [SerializeField] private Button inventoryItemButtonPrefab;     // 없으면 런타임에 기본 버튼 프리팹 생성
+
+    // ─────────────────────────────────────────────────────────────────────────────
+
+    private PlayerMemoryBinder binder;
+    private Vector2Int boardSize;
+    private readonly Dictionary<Vector2Int, Image> cellMap = new();
+    private readonly List<PlayerMemoryBinder.PlacementInfo> tmpPlacements = new();
+
+    // 선택된 인벤토리 아이템
+    private MemoryPieceAsset selectedAsset;
+    private float selectedMultiplier = 1f;
+
+    // 인벤토리 View 캐싱
+    private readonly List<Button> invButtons = new();
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // ⭐️ 편의 헬퍼: 어디서든 한 줄로 열기
+    public static MemoryBoardOverlay ShowForPlayer(Player player)
     {
-        private sealed class InventoryItemComparer : IEqualityComparer<InventoryItem>
-        {
-            public static readonly InventoryItemComparer Instance = new InventoryItemComparer();
-
-            public bool Equals(InventoryItem x, InventoryItem y) => ItemsEqual(x, y);
-
-            public int GetHashCode(InventoryItem obj)
-            {
-                int assetHash = obj.Asset ? obj.Asset.GetInstanceID() : 0;
-                int multiplierHash = Mathf.RoundToInt(obj.PowerMultiplier * 1000f);
-                return (assetHash * 397) ^ multiplierHash;
-            }
-        }
-
-        [Header("UI References")]
-        [SerializeField] private CanvasGroup canvasGroup = null;
-        [SerializeField] private RectTransform boardGridRoot = null;
-        [SerializeField] private MemoryBoardCellView cellPrefab = null;
-        [SerializeField] private RectTransform boardTabsRoot = null;
-        [SerializeField] private Button boardTabButtonPrefab = null;
-        [SerializeField] private ScrollRect inventoryScrollRect = null;
-        [SerializeField] private RectTransform inventoryContentRoot = null;
-        [SerializeField] private VerticalLayoutGroup inventoryLayoutGroup = null;
-        [SerializeField] private MemoryPieceInventoryItemView inventoryItemPrefab = null;
-        [SerializeField] private Button closeButton = null;
-        [SerializeField] private TMP_Text selectedPieceLabel = null;
-
-        [Header("Visual Settings")]
-        [SerializeField] private Color emptyCellColor = new Color(0.15f, 0.15f, 0.15f, 0.8f);
-        [SerializeField] private Color occupiedCellColor = new Color(0.36f, 0.68f, 0.94f, 0.9f);
-        [SerializeField] private Color originCellColor = new Color(0.94f, 0.74f, 0.36f, 0.95f);
-        [SerializeField] private Color reinforcementColor = new Color(0.5f, 0.9f, 0.6f, 0.6f);
-        [SerializeField] private Color activeTabColor = Color.white;
-        [SerializeField] private Color inactiveTabColor = new Color(0.35f, 0.35f, 0.35f, 1f);
-        [SerializeField] private float inventoryItemSpacing = 50f;
-        [SerializeField] private float inventoryPaddingTop = 12f;
-        [SerializeField] private float inventoryPaddingBottom = 12f;
-
-        private readonly Dictionary<Vector2Int, MemoryBoardCellView> cellLookup = new();
-        private readonly List<MemoryBoardCellView> cellViews = new();
-        private readonly List<MemoryPieceInventoryItemView> inventoryViews = new();
-        private readonly List<MemoryBoard.MemoryPiecePlacementInfo> placementBuffer = new();
-        private readonly List<MemoryBoard.MemoryReinforcementInfo> reinforcementBuffer = new();
-        private readonly Dictionary<Vector2Int, MemoryPieceAsset> cellOccupants = new();
-        private readonly Dictionary<MemoryPieceAsset, MemoryBoard.MemoryPiecePlacementInfo> pieceLookup = new();
-        private readonly Dictionary<ActionTriggerType, Button> boardTabButtons = new();
-
-        private PlayerMemoryBinder boundBinder = null;
-        private InventoryItem? selectedItem = null;
-        private ActionTriggerType displayedTrigger = ActionTriggerType.None;
-
-        private void Awake()
-        {
-            HideImmediate();
-            if (closeButton)
-            {
-                closeButton.onClick.AddListener(Close);
-            }
-
-            ConfigureScrollRect();
-            ConfigureInventoryLayoutGroup();
-            ConfigureBoardTabsLayout();
-        }
-
-        private void OnDestroy()
-        {
-            if (closeButton)
-            {
-                closeButton.onClick.RemoveListener(Close);
-            }
-
-            DetachBinder();
-        }
-
-        public void Open(PlayerMemoryBinder binder)
-        {
-            if (!binder)
-            {
-                return;
-            }
-
-            if (!gameObject.activeSelf)
-            {
-                gameObject.SetActive(true);
-            }
-
-            AttachBinder(binder);
-            Show();
-        }
-
-        public void Close()
-        {
-            Hide();
-            DetachBinder();
-        }
-
-
-private void ConfigureBoardTabsLayout()
-{
-    if (!boardTabsRoot) return;
-
-    // Vertical Layout Group 추가 또는 가져오기
-    var layout = boardTabsRoot.GetComponent<VerticalLayoutGroup>();
-    if (!layout)
-        layout = boardTabsRoot.gameObject.AddComponent<VerticalLayoutGroup>();
-
-    layout.spacing = 12f; // 버튼 간격
-    layout.childAlignment = TextAnchor.UpperCenter;
-    layout.childControlWidth = true;
-    layout.childControlHeight = true;
-    layout.childForceExpandWidth = true;  // 폭 꽉 채우기 (글씨 안 짤림)
-    layout.childForceExpandHeight = false;
-
-    // 컨텐츠 사이즈 맞추기
-    var fitter = boardTabsRoot.GetComponent<ContentSizeFitter>();
-    if (!fitter)
-        fitter = boardTabsRoot.gameObject.AddComponent<ContentSizeFitter>();
-
-    fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-    fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-}
-
-
-        private void AttachBinder(PlayerMemoryBinder binder)
-        {
-            if (boundBinder == binder)
-            {
-                RefreshAll();
-                return;
-            }
-
-            DetachBinder();
-            boundBinder = binder;
-            boundBinder.InventoryChanged += HandleInventoryChanged;
-            boundBinder.BoardChanged += HandleBoardChanged;
-            boundBinder.ActiveBoardChanged += HandleActiveBoardChanged;
-
-            displayedTrigger = boundBinder.ActiveTrigger;
-            RebuildBoardTabs();
-            RebuildBoardGrid();
-            RefreshAll();
-            UpdateBoardTabVisuals();
-        }
-
-        private static void PrepareBoardTabButton(RectTransform rect)
-        {
-            if (!rect) return;
-
-            rect.anchorMin = new Vector2(0, 1);
-            rect.anchorMax = new Vector2(1, 1);
-            rect.pivot = new Vector2(0.5f, 1f);
-
-            rect.anchoredPosition = Vector2.zero;
-            rect.localScale = Vector3.one;
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
-        }
-
-
-        private void DetachBinder()
-        {
-            if (boundBinder == null)
-            {
-                return;
-            }
-
-            boundBinder.InventoryChanged -= HandleInventoryChanged;
-            boundBinder.BoardChanged -= HandleBoardChanged;
-            boundBinder.ActiveBoardChanged -= HandleActiveBoardChanged;
-            boundBinder = null;
-            selectedItem = null;
-            displayedTrigger = ActionTriggerType.None;
-            UpdateSelectedPieceLabel();
-            ClearBoardTabs();
-        }
-
-        private void HandleInventoryChanged()
-        {
-            RefreshInventory();
-        }
-
-        private void HandleBoardChanged(ActionTriggerType trigger)
-        {
-            if (trigger == displayedTrigger)
-            {
-                RefreshBoard();
-            }
-        }
-
-        private void HandleActiveBoardChanged(ActionTriggerType trigger)
-        {
-            displayedTrigger = trigger;
-            RebuildBoardGrid();
-            RefreshBoard();
-            UpdateBoardTabVisuals();
-            UpdateSelectedPieceLabel();
-        }
-
-        private void RefreshAll()
-        {
-            RefreshInventory();
-            RefreshBoard();
-        }
-
-        private void RebuildBoardGrid()
-        {
-            foreach (var view in cellViews)
-            {
-                if (view)
-                {
-                    view.Clicked -= HandleCellClicked;
-                    Destroy(view.gameObject);
-                }
-            }
-
-            cellViews.Clear();
-            cellLookup.Clear();
-
-            if (!boundBinder)
-            {
-                return;
-            }
-
-            if (displayedTrigger == ActionTriggerType.None)
-            {
-                displayedTrigger = boundBinder.ActiveTrigger;
-            }
-
-            if (!boundBinder.TryGetBoard(displayedTrigger, out var board) || board == null)
-            {
-                return;
-            }
-
-            Vector2Int size = board.GridSize;
-            ConfigureBoardLayout(size);
-            for (int y = size.y - 1; y >= 0; y--)
-            {
-                for (int x = 0; x < size.x; x++)
-                {
-                    var cell = Instantiate(cellPrefab, boardGridRoot);
-                    cell.Initialize(new Vector2Int(x, y));
-                    cell.SetColors(emptyCellColor, occupiedCellColor, originCellColor, reinforcementColor);
-                    cell.Clicked += HandleCellClicked;
-                    cellViews.Add(cell);
-                    cellLookup[cell.Coordinates] = cell;
-                }
-            }
-        }
-
-        private void RebuildBoardTabs()
-        {
-            ClearBoardTabs();
-
-            if (!boardTabsRoot || !boardTabButtonPrefab || !boundBinder)
-            {
-                return;
-            }
-
-            foreach (var trigger in boundBinder.AvailableTriggers)
-            {
-                var button = Instantiate(boardTabButtonPrefab, boardTabsRoot);
-                PrepareBoardTabButton(button.transform as RectTransform);
-
-                var le = button.GetComponent<LayoutElement>();
-                if (!le) le = button.gameObject.AddComponent<LayoutElement>();
-                le.preferredHeight = 54f;
-                le.preferredWidth =120f;// ← 원하는 크기로 조절 (40~64 사이 추천)
-                le.minHeight = 40f;
-                var label = button.GetComponentInChildren<TMP_Text>();
-                if (label)
-                {
-                    label.enableAutoSizing = true;      // 글자수가 늘어나도 알아서 조정
-                    label.fontSizeMin = 18f;
-                    label.fontSizeMax = 28f;
-                    label.text = FormatTriggerLabel(trigger);
-                }
-
-                ActionTriggerType captured = trigger;
-                button.onClick.AddListener(() => OnBoardTabClicked(captured));
-                boardTabButtons[captured] = button;
-            }
-            LayoutRebuilder.ForceRebuildLayoutImmediate(boardTabsRoot);
-            UpdateBoardTabVisuals();
-        }
-
-        private void ClearBoardTabs()
-        {
-            foreach (var pair in boardTabButtons)
-            {
-                if (pair.Value)
-                {
-                    pair.Value.onClick.RemoveAllListeners();
-                    Destroy(pair.Value.gameObject);
-                }
-            }
-
-            boardTabButtons.Clear();
-        }
-
-        private void UpdateBoardTabVisuals()
-        {
-            ActionTriggerType active = boundBinder ? boundBinder.ActiveTrigger : ActionTriggerType.None;
-            foreach (var pair in boardTabButtons)
-            {
-                if (!pair.Value)
-                {
-                    continue;
-                }
-
-                bool isActive = pair.Key == active;
-                pair.Value.interactable = !isActive;
-
-                if (pair.Value.targetGraphic)
-                {
-                    pair.Value.targetGraphic.color = isActive ? activeTabColor : inactiveTabColor;
-                }
-
-                var label = pair.Value.GetComponentInChildren<TMP_Text>();
-                if (label)
-                {
-                    label.color = isActive ? activeTabColor : inactiveTabColor;
-                }
-            }
-        }
-
-        private void OnBoardTabClicked(ActionTriggerType trigger)
-        {
-            if (!boundBinder)
-            {
-                return;
-            }
-
-            boundBinder.SetActiveBoard(trigger);
-        }
-
-        private static string FormatTriggerLabel(ActionTriggerType trigger)
-        {
-            if (trigger == ActionTriggerType.None)
-            {
-                return "None";
-            }
-
-            string name = trigger.ToString();
-            if (string.IsNullOrEmpty(name))
-            {
-                return string.Empty;
-            }
-
-            var builder = new StringBuilder(name.Length + 4);
-            for (int i = 0; i < name.Length; i++)
-            {
-                char c = name[i];
-                if (i > 0 && char.IsUpper(c))
-                {
-                    builder.Append(' ');
-                }
-
-                builder.Append(c);
-            }
-
-            return builder.ToString();
-        }
-
-        private void ConfigureBoardLayout(Vector2Int size)
-        {
-            if (!boardGridRoot)
-            {
-                return;
-            }
-
-            var layout = boardGridRoot.GetComponent<GridLayoutGroup>();
-            if (!layout)
-            {
-                return;
-            }
-
-            layout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            layout.constraintCount = Mathf.Max(1, size.x);
-        }
-
-        private void RefreshInventory()
-        {
-            ConfigureInventoryLayoutGroup();
-
-            if (!boundBinder)
-            {
-                foreach (var view in inventoryViews)
-                {
-                    view.gameObject.SetActive(false);
-                }
-                selectedItem = null;
-                UpdateSelectedPieceLabel();
-                return;
-            }
-
-            var grouped = boundBinder.Inventory
-                .Where(item => item.Asset)
-                .GroupBy(item => item, InventoryItemComparer.Instance)
-                .Select(group => new { Item = group.Key, Count = group.Count() })
-                .OrderBy(group => group.Item.Asset.DisplayName)
-                .ThenBy(group => group.Item.PowerMultiplier)
-                .ToList();
-
-            if (selectedItem.HasValue && !grouped.Any(g => ItemsEqual(g.Item, selectedItem.Value)))
-            {
-                selectedItem = null;
-            }
-
-            EnsureInventoryViewCount(grouped.Count);
-
-            for (int i = 0; i < inventoryViews.Count; i++)
-            {
-                if (i < grouped.Count)
-                {
-                    var entry = grouped[i];
-                    var view = inventoryViews[i];
-                    view.gameObject.SetActive(true);
-                    view.Bind(entry.Item.Asset, entry.Item.PowerMultiplier, entry.Count);
-                    view.SetSelected(selectedItem.HasValue && ItemsEqual(selectedItem.Value, entry.Item));
-                }
-                else
-                {
-                    inventoryViews[i].gameObject.SetActive(false);
-                }
-            }
-
-            UpdateSelectedPieceLabel();
-        }
-
-        private void EnsureInventoryViewCount(int count)
-        {
-            while (inventoryViews.Count < count)
-            {
-                var view = Instantiate(inventoryItemPrefab, inventoryContentRoot);
-                view.Initialize(HandleInventoryItemClicked);
-                view.Bind(null, 1f, 0);
-                ConfigureInventoryItemRect(view.transform as RectTransform);
-                inventoryViews.Add(view);
-            }
-        }
-
-        private void RefreshBoard()
-        {
-            foreach (var cell in cellViews)
-            {
-                if (cell)
-                {
-                    cell.Clear();
-                }
-            }
-
-            cellOccupants.Clear();
-            pieceLookup.Clear();
-
-            if (!boundBinder)
-            {
-                return;
-            }
-
-            if (displayedTrigger == ActionTriggerType.None)
-            {
-                displayedTrigger = boundBinder.ActiveTrigger;
-            }
-
-            if (!boundBinder.TryGetBoard(displayedTrigger, out var board) || board == null)
-            {
-                return;
-            }
-
-            board.GetReinforcementPlacements(reinforcementBuffer);
-            foreach (var info in reinforcementBuffer)
-            {
-                foreach (var cellPos in info.OccupiedCells)
-                {
-                    if (cellLookup.TryGetValue(cellPos, out var cell))
-                    {
-                        cell.SetReinforced(true, info.Zone ? info.Zone.BonusPercent : 0f);
-                    }
-                }
-            }
-
-            board.GetPiecePlacements(placementBuffer);
-            foreach (var placement in placementBuffer)
-            {
-                if (!placement.Asset)
-                {
-                    continue;
-                }
-
-                pieceLookup[placement.Asset] = placement;
-                foreach (var cellPos in placement.OccupiedCells)
-                {
-                    if (!cellLookup.TryGetValue(cellPos, out var cell))
-                    {
-                        continue;
-                    }
-
-                    bool isOrigin = cellPos == placement.Origin;
-                    cell.SetPiece(placement.Asset, placement.PowerMultiplier, placement.Locked, isOrigin);
-                    cellOccupants[cellPos] = placement.Asset;
-                }
-            }
-        }
-
-        private void HandleInventoryItemClicked(MemoryPieceInventoryItemView view)
-        {
-            if (!view || !view.HasAsset)
-            {
-                return;
-            }
-
-            var item = new InventoryItem(view.Asset, view.Multiplier);
-            if (selectedItem.HasValue && ItemsEqual(selectedItem.Value, item))
-            {
-                selectedItem = null;
-            }
-            else
-            {
-                selectedItem = item;
-            }
-
-            RefreshInventory();
-        }
-
-        private void HandleCellClicked(MemoryBoardCellView cell)
-        {
-            if (!boundBinder || cell == null)
-            {
-                return;
-            }
-
-            if (cellOccupants.TryGetValue(cell.Coordinates, out var occupant) && occupant)
-            {
-                if (pieceLookup.TryGetValue(occupant, out var placement) && placement.Locked)
-                {
-                    return;
-                }
-
-                boundBinder.RemovePiece(occupant);
-                return;
-            }
-
-            if (!selectedItem.HasValue)
-            {
-                return;
-            }
-
-            var item = selectedItem.Value;
-            bool placed = boundBinder.TryPlaceInventoryPiece(displayedTrigger, item, cell.Coordinates, false);
-            if (placed && !boundBinder.HasInventoryPiece(item))
-            {
-                selectedItem = null;
-                RefreshInventory();
-            }
-        }
-
-        private static void ResetChildRectForLayout(RectTransform rect)
-        {
-            if (!rect) return;
-            rect.anchorMin = new Vector2(0, 1);
-            rect.anchorMax = new Vector2(0, 1);
-            rect.pivot = new Vector2(0, 1);
-            rect.anchoredPosition = Vector2.zero;
-            rect.localScale = Vector3.one;
-            rect.offsetMin = rect.offsetMax = Vector2.zero;
-        }
-
-        private void ConfigureScrollRect()
-        {
-            if (!inventoryScrollRect)
-            {
-                return;
-            }
-
-            inventoryScrollRect.horizontal = false;
-            inventoryScrollRect.vertical = true;
-            inventoryScrollRect.movementType = ScrollRect.MovementType.Clamped;
-
-            if (inventoryContentRoot)
-            {
-                inventoryScrollRect.content = inventoryContentRoot;
-            }
-        }
-
-        private void ConfigureInventoryLayoutGroup()
-        {
-            if (!inventoryContentRoot)
-            {
-                return;
-            }
-
-            if (!inventoryLayoutGroup)
-            {
-                inventoryLayoutGroup = inventoryContentRoot.GetComponent<VerticalLayoutGroup>();
-            }
-
-            if (inventoryLayoutGroup)
-            {
-                var padding = inventoryLayoutGroup.padding;
-                padding.top = Mathf.RoundToInt(Mathf.Max(0f, inventoryPaddingTop));
-                padding.bottom = Mathf.RoundToInt(Mathf.Max(0f, inventoryPaddingBottom));
-                inventoryLayoutGroup.padding = padding;
-                inventoryLayoutGroup.spacing = 50f;
-                inventoryLayoutGroup.childAlignment = TextAnchor.UpperCenter;
-                inventoryLayoutGroup.childControlHeight = true;
-                inventoryLayoutGroup.childControlWidth = true;
-                inventoryLayoutGroup.childForceExpandHeight = false;
-                inventoryLayoutGroup.childForceExpandWidth = true;
-            }
-
-            var fitter = inventoryContentRoot.GetComponent<ContentSizeFitter>();
-            if (fitter)
-            {
-                fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-                fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            }
-
-            if (inventoryScrollRect && inventoryScrollRect.content != inventoryContentRoot)
-            {
-                inventoryScrollRect.content = inventoryContentRoot;
-            }
-        }
-
-        private static void ConfigureInventoryItemRect(RectTransform rect)
-        {
-            if (!rect)
-            {
-                return;
-            }
-
-            rect.anchorMin = new Vector2(0f, 1f);
-            rect.anchorMax = new Vector2(1f, 1f);
-            rect.pivot = new Vector2(0.5f, 1f);
-            rect.anchoredPosition = Vector2.zero;
-            rect.offsetMin = new Vector2(0f, rect.offsetMin.y);
-            rect.offsetMax = new Vector2(0f, rect.offsetMax.y);
-            rect.localScale = Vector3.one;
-        }
-
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-            ConfigureScrollRect();
-            ConfigureInventoryLayoutGroup();
-            ConfigureBoardTabsLayout();
-
-            if (!Application.isPlaying)
-            {
-                if (inventoryContentRoot)
-                {
-                    LayoutRebuilder.MarkLayoutForRebuild(inventoryContentRoot);
-                }
-            }
-        }
+        if (!player) return null;
+        var binder = player.GetComponent<PlayerMemoryBinder>();
+        if (!binder) { Debug.LogWarning("[Overlay] PlayerMemoryBinder not found on Player."); return null; }
+
+        var overlay = EnsureSingleton();
+        overlay.Open(binder);
+        return overlay;
+    }
+
+    public static MemoryBoardOverlay EnsureSingleton()
+    {
+        // 비활성 포함 탐색
+#if UNITY_2020_1_OR_NEWER
+        var overlay = FindObjectOfType<MemoryBoardOverlay>(true);
+#else
+        var all = Resources.FindObjectsOfTypeAll<MemoryBoardOverlay>();
+        var overlay = (all != null && all.Length > 0) ? all[0] : null;
 #endif
+        if (overlay) return overlay;
 
-        private void Show()
+        // 없으면 생성
+        var go = new GameObject("MemoryBoardOverlay(Auto)");
+        overlay = go.AddComponent<MemoryBoardOverlay>();
+        overlay.BuildIfNeeded();
+        go.SetActive(false); // Open()에서 보여줌
+        return overlay;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    public void Open(PlayerMemoryBinder b)
+    {
+        BuildIfNeeded(); // 누락된 UI 있으면 자동 생성
+        gameObject.SetActive(true);
+
+        binder = b;
+        if (!binder)
         {
-            if (canvasGroup)
+            Debug.LogWarning("[Overlay] binder is null");
+            return;
+        }
+
+        // 보드 크기
+        boardSize = binder.BoardSize;
+
+        // 이벤트 구독
+        binder.InventoryChanged += OnInventoryChanged;
+        binder.BoardChanged += OnBoardChanged;
+
+        BuildGrid();
+        RefreshBoard();
+        RefreshInventory();
+
+        Show();
+    }
+
+    public void Close()
+    {
+        if (binder != null)
+        {
+            binder.InventoryChanged -= OnInventoryChanged;
+            binder.BoardChanged -= OnBoardChanged;
+        }
+        Hide();
+        gameObject.SetActive(false);
+    }
+
+    private void Update()
+    {
+        // 간단한 닫기 단축키
+        if (canvasGroup && canvasGroup.interactable && Input.GetKeyDown(KeyCode.Escape))
+            Close();
+    }
+
+    private void OnDestroy() => Close();
+
+    private void OnInventoryChanged() => RefreshInventory();
+    private void OnBoardChanged() => RefreshBoard();
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    private void Show()
+    {
+        if (!canvasGroup) return;
+        canvasGroup.alpha = 1f;
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = true;
+    }
+
+    private void Hide()
+    {
+        if (!canvasGroup) return;
+        canvasGroup.alpha = 0f;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // MemoryBoardOverlay.cs 의 BuildGrid() 교체/보강
+    private void BuildGrid()
+    {
+        if (binder == null)
+            return;
+
+        // 1) boardSize 보정 (0이면 안전 기본값)
+        boardSize = binder.BoardSize;
+        if (boardSize.x < 1 || boardSize.y < 1)
+            boardSize = new Vector2Int(8, 6);
+
+        // 2) 기존 셀 정리
+        foreach (var kv in cellMap)
+            if (kv.Value) Destroy(kv.Value.gameObject);
+        cellMap.Clear();
+
+        // 3) GridLayoutGroup 확보(+없으면 추가)
+        var grid = gridRoot ? gridRoot.GetComponent<GridLayoutGroup>() : null;
+        if (!gridRoot)
+        {
+            // gridRoot가 비어있으면 즉석 생성
+            var g = new GameObject("GridRoot", typeof(RectTransform), typeof(GridLayoutGroup));
+            g.transform.SetParent(transform, false);
+            gridRoot = g.GetComponent<RectTransform>();
+        }
+        if (!grid)
+            grid = gridRoot.gameObject.GetComponent<GridLayoutGroup>() ?? gridRoot.gameObject.AddComponent<GridLayoutGroup>();
+
+        // 4) gridRoot 기본 레이아웃 보정(너무 작으면 화면에 보이게)
+        var rt = gridRoot;
+        // 부모 안에서 넓게 차도록 (필요시 조정)
+        if (rt.anchorMin == rt.anchorMax) { rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one; }
+        if (Mathf.Abs(rt.rect.width) < 10f || Mathf.Abs(rt.rect.height) < 10f)
+        {
+            // 상하/좌우 여백(픽셀) 강제
+            rt.offsetMin = new Vector2(180, 200);
+            rt.offsetMax = new Vector2(0, -240);
+        }
+
+        // 5) Grid 셋업
+        grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        grid.constraintCount = Mathf.Max(1, boardSize.x);
+        grid.spacing = new Vector2(6, 6);
+
+        // 그리드 폭이 아직 계산 안 됐으면 대략값 사용
+        float gridWidth = rt.rect.width;
+        if (gridWidth < 10f) gridWidth = 900f;
+        float cellW = (gridWidth - grid.spacing.x * (boardSize.x - 1)) / Mathf.Max(1, boardSize.x);
+        cellW = Mathf.Clamp(cellW, 40f, 96f);
+        grid.cellSize = new Vector2(cellW, cellW);
+
+        // 6) 셀 템플릿 보정 (없으면 기본 생성)
+        var template = cellPrefab ? cellPrefab : CreateDefaultCellPrefab();
+
+        // 7) 셀 생성 (반드시 활성화)
+        for (int y = boardSize.y - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < boardSize.x; x++)
             {
-                canvasGroup.alpha = 1f;
-                canvasGroup.blocksRaycasts = true;
-                canvasGroup.interactable = true;
+                var cell = Instantiate(template, gridRoot);
+                cell.gameObject.name = $"Cell({x},{y})";
+                cell.gameObject.SetActive(true); // ★ 중요: 템플릿이 꺼져도 강제 활성화
+
+                var pos = new Vector2Int(x, y);
+
+                // 클릭 가능 보장
+                var btn = cell.GetComponent<Button>();
+                if (!btn) btn = cell.gameObject.AddComponent<Button>();
+                btn.onClick.RemoveAllListeners();
+                btn.onClick.AddListener(() => OnCellClicked(pos));
+
+                cellMap[pos] = cell;
+                PaintCell(pos, empty: true);
             }
         }
 
-        private void Hide()
-        {
-            HideImmediate();
-        }
+        if (title) title.text = "Memory Board";
+        if (stateLabel) stateLabel.text = "Select from inventory, then click a cell to place.\nClick a placed cell to remove.";
+    }
 
-        private void HideImmediate()
-        {
-            if (canvasGroup)
+
+    private void RefreshBoard()
+    {
+        if (binder == null) return;
+        foreach (var kv in cellMap) PaintCell(kv.Key, empty: true);
+
+        tmpPlacements.Clear();
+        binder.GetPlacements(tmpPlacements);
+
+        foreach (var p in tmpPlacements)
+            foreach (var c in p.Occupied)
+                if (cellMap.TryGetValue(c, out var img))
+                    PaintCell(c, empty: false);
+    }
+
+    private void RefreshInventory()
+    {
+        if (!binder) return;
+        EnsureInventoryBuilt();
+
+        // 기존 버튼 삭제
+        foreach (var b in invButtons)
+            if (b) Destroy(b.gameObject);
+        invButtons.Clear();
+
+        // 같은 Asset+Multiplier 묶어서 수량 표시
+        var grouped = binder.Inventory
+            .Where(i => i.Asset)
+            .GroupBy(i => new { i.Asset, Mul = Mathf.RoundToInt(i.PowerMultiplier * 1000f) })
+            .Select(g => new
             {
-                canvasGroup.alpha = 0f;
-                canvasGroup.blocksRaycasts = false;
-                canvasGroup.interactable = false;
-            }
-        }
+                Asset = g.First().Asset,
+                Mult = g.First().PowerMultiplier,
+                Count = g.Count()
+            })
+            .OrderBy(e => e.Asset.DisplayName)
+            .ThenBy(e => e.Mult)
+            .ToList();
 
-        private void UpdateSelectedPieceLabel()
+        foreach (var entry in grouped)
         {
-            if (!selectedPieceLabel)
+            var btn = Instantiate(inventoryItemButtonPrefab, inventoryContent);
+            var label = btn.GetComponentInChildren<TMP_Text>();
+            if (!label)
             {
-                return;
-            }
-
-            string boardLabel = boundBinder
-                ? FormatTriggerLabel(displayedTrigger == ActionTriggerType.None ? boundBinder.ActiveTrigger : displayedTrigger)
-                : "None";
-
-            if (selectedItem.HasValue)
-            {
-                var item = selectedItem.Value;
-                string multiplierText = Mathf.Approximately(item.PowerMultiplier, 1f)
-                    ? string.Empty
-                    : $" ×{item.PowerMultiplier:0.##}";
-                selectedPieceLabel.text = $"선택된 메모리 ({boardLabel}): {item.Asset.DisplayName}{multiplierText}";
+                // TMP가 없다면 일반 Text 찾기
+                var legacyLabel = btn.GetComponentInChildren<Text>();
+                if (legacyLabel)
+                    legacyLabel.text = MakeInvLabel(entry.Asset, entry.Mult, entry.Count);
             }
             else
             {
-                selectedPieceLabel.text = $"선택된 메모리가 없습니다 ({boardLabel})";
+                label.text = MakeInvLabel(entry.Asset, entry.Mult, entry.Count);
             }
-        }
 
-        private static bool ItemsEqual(InventoryItem a, InventoryItem b)
-        {
-            if (a.Asset != b.Asset)
+            btn.onClick.AddListener(() =>
             {
-                return false;
-            }
+                selectedAsset = entry.Asset;
+                selectedMultiplier = entry.Mult;
+                if (stateLabel)
+                {
+                    var mulTxt = Mathf.Approximately(selectedMultiplier, 1f) ? "" : $" ×{selectedMultiplier:0.##}";
+                    stateLabel.text = $"Selected: {selectedAsset.DisplayName}{mulTxt}\nClick a cell to place.";
+                }
+            });
 
-            return Mathf.Abs(a.PowerMultiplier - b.PowerMultiplier) < 0.001f;
+            invButtons.Add(btn);
         }
+
+        // 스크롤 지정
+        inventoryScroll.content = inventoryContent;
+    }
+
+    private string MakeInvLabel(MemoryPieceAsset asset, float mult, int count)
+    {
+        var mulTxt = Mathf.Approximately(mult, 1f) ? "" : $" ×{mult:0.##}";
+        return $"{asset.DisplayName}{mulTxt}  (x{count})";
+    }
+
+    private void OnCellClicked(Vector2Int pos)
+    {
+        if (binder == null) return;
+
+        // 이미 배치가 있으면 제거
+        if (binder.RemovePlacementAt(pos))
+        {
+            RefreshBoard();
+            return;
+        }
+
+        // 선택된 인벤토리 없으면 무시
+        if (!selectedAsset) return;
+
+        // 배치 시도
+        if (binder.TryPlaceFromInventory(selectedAsset, selectedMultiplier, pos, out var placed))
+        {
+            RefreshBoard();
+
+            // 한 개밖에 없었으면 선택 해제
+            var stillHas = binder.Inventory.Any(i => i.Asset == selectedAsset);
+            if (!stillHas)
+            {
+                selectedAsset = null;
+                selectedMultiplier = 1f;
+                if (stateLabel) stateLabel.text = "Select from inventory, then click a cell to place.";
+            }
+        }
+    }
+
+    private void PaintCell(Vector2Int pos, bool empty)
+    {
+        if (!cellMap.TryGetValue(pos, out var img) || !img) return;
+        img.color = empty ? new Color(0.16f, 0.16f, 0.16f, 0.9f) : new Color(0.36f, 0.68f, 0.94f, 0.9f);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // 🔧 자동 빌더 (필수 구성요소가 비어 있으면 만들어줌)
+    private void BuildIfNeeded()
+    {
+        // EventSystem 보장
+        EnsureEventSystem();
+
+        // Canvas/CanvasGroup 보장
+        var root = transform as RectTransform;
+        var canvas = GetComponentInParent<Canvas>();
+        if (!canvas)
+        {
+            var cgo = new GameObject("Canvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            cgo.layer = gameObject.layer;
+            canvas = cgo.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            cgo.GetComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            cgo.GetComponent<CanvasScaler>().referenceResolution = new Vector2(1920, 1080);
+            transform.SetParent(cgo.transform, false);
+        }
+
+        if (!canvasGroup)
+            canvasGroup = gameObject.GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+
+        // 루트 리지드 레이아웃
+        var rootRT = transform as RectTransform;
+        if (rootRT)
+        {
+            rootRT.anchorMin = Vector2.zero;
+            rootRT.anchorMax = Vector2.one;
+            rootRT.offsetMin = Vector2.zero;
+            rootRT.offsetMax = Vector2.zero;
+        }
+
+        // 상단 헤더 만들기 (타이틀/드롭다운/상태라벨/회전버튼)
+        BuildHeaderIfMissing(canvas.transform);
+
+        // 좌측 탭(옵션)
+        if (!tabsRoot)
+        {
+            var tabs = new GameObject("TabsRoot", typeof(RectTransform), typeof(VerticalLayoutGroup), typeof(ContentSizeFitter));
+            tabs.transform.SetParent(transform, false);
+            var rt = tabs.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0, 0);
+            rt.anchorMax = new Vector2(0, 1);
+            rt.pivot = new Vector2(0, 1);
+            rt.sizeDelta = new Vector2(160, 0);
+            tabsRoot = rt;
+
+            var v = tabs.GetComponent<VerticalLayoutGroup>();
+            v.childControlHeight = true; v.childControlWidth = true;
+            v.childForceExpandHeight = false; v.childForceExpandWidth = true;
+            v.spacing = 8f; v.childAlignment = TextAnchor.UpperCenter;
+
+            var fit = tabs.GetComponent<ContentSizeFitter>();
+            fit.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            fit.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        }
+
+        // 중앙 보드 그리드
+        if (!gridRoot)
+        {
+            var g = new GameObject("GridRoot", typeof(RectTransform), typeof(GridLayoutGroup));
+            g.transform.SetParent(transform, false);
+            var rt = g.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0, 0);
+            rt.anchorMax = new Vector2(1, 1);
+            rt.offsetMin = new Vector2(180, 120);   // 좌측 탭/하단 인벤토리 여백
+            rt.offsetMax = new Vector2(0, -240);
+            gridRoot = rt;
+
+            var grid = g.GetComponent<GridLayoutGroup>();
+            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            grid.constraintCount = 8;
+            grid.spacing = new Vector2(6, 6);
+            grid.cellSize = new Vector2(64, 64);
+        }
+
+        // 하단 인벤토리 스크롤뷰
+        EnsureInventoryBuilt();
+
+        // 기본 셀 프리팹
+        if (!cellPrefab)
+            cellPrefab = CreateDefaultCellPrefab();
+
+        // 기본 인벤토리 버튼 프리팹
+        if (!inventoryItemButtonPrefab)
+            inventoryItemButtonPrefab = CreateDefaultInventoryButtonPrefab();
+    }
+
+    private void BuildHeaderIfMissing(Transform canvas)
+    {
+        if (title && paletteDropdown && stateLabel && rotateLeftBtn && rotateRightBtn)
+            return;
+
+        var header = new GameObject("Header", typeof(RectTransform));
+        header.transform.SetParent(transform, false);
+        var rt = header.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0, 1);
+        rt.anchorMax = new Vector2(1, 1);
+        rt.pivot = new Vector2(0.5f, 1);
+        rt.sizeDelta = new Vector2(0, 100);
+
+        // Title
+        if (!title)
+        {
+            var go = new GameObject("Title", typeof(RectTransform), typeof(TextMeshProUGUI));
+            go.transform.SetParent(header.transform, false);
+            var t = go.GetComponent<TextMeshProUGUI>();
+            t.fontSize = 30; t.alignment = TextAlignmentOptions.MidlineLeft;
+            t.text = "Memory Board";
+            var tr = go.GetComponent<RectTransform>();
+            tr.anchorMin = new Vector2(0, 0);
+            tr.anchorMax = new Vector2(0.5f, 1);
+            tr.offsetMin = new Vector2(20, 0);
+            tr.offsetMax = new Vector2(-10, 0);
+            title = t;
+        }
+
+        // State label
+        if (!stateLabel)
+        {
+            var go = new GameObject("StateLabel", typeof(RectTransform), typeof(TextMeshProUGUI));
+            go.transform.SetParent(header.transform, false);
+            var t = go.GetComponent<TextMeshProUGUI>();
+            t.fontSize = 20; t.alignment = TextAlignmentOptions.MidlineRight;
+            t.text = "Select from inventory, then click a cell to place.";
+            var tr = go.GetComponent<RectTransform>();
+            tr.anchorMin = new Vector2(0.5f, 0);
+            tr.anchorMax = new Vector2(1, 1);
+            tr.offsetMin = new Vector2(10, 0);
+            tr.offsetMax = new Vector2(-20, 0);
+            stateLabel = t;
+        }
+
+        // 간단한 회전 버튼/팔레트는 생략 가능(프로그래머블)
+    }
+
+    private void EnsureInventoryBuilt()
+    {
+        if (inventoryScroll && inventoryContent) return;
+
+        // ScrollView
+        var scrollGO = new GameObject("InventoryScroll", typeof(RectTransform), typeof(ScrollRect), typeof(Image), typeof(Mask));
+        scrollGO.transform.SetParent(transform, false);
+        var srt = scrollGO.GetComponent<RectTransform>();
+        srt.anchorMin = new Vector2(0, 0);
+        srt.anchorMax = new Vector2(1, 0);
+        srt.pivot = new Vector2(0.5f, 0);
+        srt.sizeDelta = new Vector2(0, 200);
+        srt.anchoredPosition = Vector2.zero;
+
+        var viewport = new GameObject("Viewport", typeof(RectTransform), typeof(Image), typeof(Mask));
+        viewport.transform.SetParent(scrollGO.transform, false);
+        var vrt = viewport.GetComponent<RectTransform>();
+        vrt.anchorMin = new Vector2(0, 0);
+        vrt.anchorMax = new Vector2(1, 1);
+        vrt.offsetMin = Vector2.zero; vrt.offsetMax = Vector2.zero;
+
+        var content = new GameObject("Content", typeof(RectTransform), typeof(VerticalLayoutGroup), typeof(ContentSizeFitter));
+        content.transform.SetParent(viewport.transform, false);
+        var crt = content.GetComponent<RectTransform>();
+        crt.anchorMin = new Vector2(0, 1);
+        crt.anchorMax = new Vector2(1, 1);
+        crt.pivot = new Vector2(0.5f, 1);
+        crt.offsetMin = Vector2.zero; crt.offsetMax = Vector2.zero;
+
+        var v = content.GetComponent<VerticalLayoutGroup>();
+        v.childAlignment = TextAnchor.UpperCenter;
+        v.childControlHeight = true; v.childControlWidth = true;
+        v.childForceExpandHeight = false; v.childForceExpandWidth = true;
+        v.spacing = 8f;
+
+        var fit = content.GetComponent<ContentSizeFitter>();
+        fit.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+        fit.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        var scroll = scrollGO.GetComponent<ScrollRect>();
+        scroll.content = crt;
+        scroll.horizontal = false; scroll.vertical = true;
+        scroll.movementType = ScrollRect.MovementType.Clamped;
+
+        // 기본 색/마스크
+        var bg = scrollGO.GetComponent<Image>(); bg.color = new Color(0, 0, 0, 0.35f);
+        var vpImg = viewport.GetComponent<Image>(); vpImg.color = new Color(0, 0, 0, 0.25f);
+        var vpMask = viewport.GetComponent<Mask>(); vpMask.showMaskGraphic = false;
+
+        inventoryScroll = scroll;
+        inventoryContent = crt;
+    }
+
+    private Image CreateDefaultCellPrefab()
+    {
+        var go = new GameObject("CellPrefab(Image+Button)", typeof(RectTransform), typeof(Image), typeof(Button));
+        var img = go.GetComponent<Image>();
+        img.color = new Color(0.16f, 0.16f, 0.16f, 0.9f);
+        // 프리팹처럼 쓸 임시 오브젝트 (씬에 보이면 거슬리니 비활성)
+        go.SetActive(false);
+        return img;
+    }
+
+    private Button CreateDefaultInventoryButtonPrefab()
+    {
+        var go = new GameObject("InventoryItemButton", typeof(RectTransform), typeof(Image), typeof(Button));
+        var img = go.GetComponent<Image>(); img.color = new Color(0.2f, 0.2f, 0.2f, 0.9f);
+
+        var labelGO = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+        labelGO.transform.SetParent(go.transform, false);
+        var t = labelGO.GetComponent<TextMeshProUGUI>();
+        t.fontSize = 24;
+        t.alignment = TextAlignmentOptions.MidlineLeft;
+        t.text = "Item";
+        var rt = labelGO.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0, 0); rt.anchorMax = new Vector2(1, 1);
+        rt.offsetMin = new Vector2(16, 8); rt.offsetMax = new Vector2(-16, -8);
+
+        go.SetActive(false);
+        return go.GetComponent<Button>();
+    }
+
+    private static void EnsureEventSystem()
+    {
+#if UNITY_2020_1_OR_NEWER
+        var es = FindObjectOfType<EventSystem>(true);
+#else
+        var all = Resources.FindObjectsOfTypeAll<EventSystem>();
+        var es = (all != null && all.Length > 0) ? all[0] : null;
+#endif
+        if (es) return;
+        var go = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+        DontDestroyOnLoad(go);
     }
 }

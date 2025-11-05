@@ -11,7 +11,8 @@ namespace EntitySystem.Events
         public Entity target { get; set; }
         public Vector3 force { get; set; }
         public AtkTagSet atkTags { get; set; }
-        
+        public float knockbackForce;
+
 
         public DamageGiveEvent(int trueDmg, Vector3 force, Entity attacker, Entity target, AtkTagSet atkTags)
         {
@@ -21,6 +22,7 @@ namespace EntitySystem.Events
             this.attacker = attacker;
             this.target = target;
             this.atkTags = atkTags ?? AtkTagSet.None;
+
         }
 
         public override void trigger()

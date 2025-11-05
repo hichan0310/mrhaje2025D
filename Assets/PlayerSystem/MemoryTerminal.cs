@@ -1,5 +1,5 @@
+// Assets/PlayerSystem/MemoryTerminal.cs
 using UnityEngine;
-using UI;
 
 namespace PlayerSystem
 {
@@ -9,13 +9,13 @@ namespace PlayerSystem
         private struct MemoryGrant
         {
             public MemoryPieceAsset piece;
-            public Vector2Int position;
-            [Range(0.1f, 5f)] public float powerMultiplier;
+            public float powerMultiplier;
         }
 
         [SerializeField] private MemoryGrant[] grants = new MemoryGrant[0];
         [SerializeField] private bool oneTimePickup = true;
         [SerializeField] private bool removeIfExists = false;
+        [Header("Overlay Opening")]
         [SerializeField] private bool openOverlayOnInteract = true;
         [SerializeField] private MemoryBoardOverlay overlayReference = null;
 
@@ -25,54 +25,48 @@ namespace PlayerSystem
 
         public void Interact(Player player)
         {
-            if (!player)
-            {
-                return;
-            }
+            Debug.Log("[MemoryTerminal] Interact called");
 
+            if (!player) return;
             var binder = player.GetComponent<PlayerMemoryBinder>();
-            if (!binder)
-            {
-                return;
-            }
+            if (!binder) return;
 
-            bool canGrant = !(oneTimePickup && granted);
-            bool anyChange = false;
-            if (canGrant)
+            bool changed = false;
+            if (!(oneTimePickup && granted))
             {
-                foreach (var grant in grants)
+                foreach (var g in grants)
                 {
-                    if (!grant.piece)
+                    if (!g.piece) continue;
+
+                    if (removeIfExists)
                     {
-                        continue;
+                        if (binder.RemovePiece(g.piece)) { changed = true; continue; }
                     }
 
-                    if (removeIfExists && binder.ContainsPiece(grant.piece))
-                    {
-                        if (binder.RemovePiece(grant.piece))
-                        {
-                            anyChange = true;
-                        }
-                        continue;
-                    }
-
-                    float multiplier = grant.powerMultiplier <= 0f ? 1f : grant.powerMultiplier;
-                    if (binder.TryAddPieceToInventory(grant.piece, multiplier))
-                    {
-                        anyChange = true;
-                    }
+                    if (binder.TryAddPieceToInventory(g.piece, g.powerMultiplier <= 0 ? 1f : g.powerMultiplier))
+                        changed = true;
                 }
 
-                if (anyChange)
-                {
-                    granted = true;
-                }
+                if (changed) granted = true;
             }
 
+            //  Lite 버전 오버레이 열기
             if (openOverlayOnInteract)
             {
-                var overlay = overlayReference ? overlayReference : FindObjectOfType<MemoryBoardOverlay>(true);
-                overlay?.Open(binder);
+                var overlay = overlayReference
+                              ? overlayReference
+                              : FindObjectOfType<MemoryBoardOverlay>(true);
+
+                if (overlay)
+                {
+                    if (!overlay.gameObject.activeSelf)
+                        overlay.gameObject.SetActive(true);
+                    overlay.Open(binder);
+                }
+                else
+                {
+                    Debug.LogWarning("[MemoryTerminal] No MemoryBoardOverlayLite found in scene.");
+                }
             }
         }
     }

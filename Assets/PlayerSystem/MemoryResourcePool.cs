@@ -4,7 +4,7 @@ using UnityEngine;
 namespace PlayerSystem
 {
     /// <summary>
-    /// Runtime resource pool used by the memory board. Pieces can consume these resources instead of cooldowns.
+    /// Runtime resource pool used by the memory system.
     /// </summary>
     [Serializable]
     public class MemoryResourcePool
@@ -44,14 +44,10 @@ namespace PlayerSystem
         public bool TryConsume(float cost)
         {
             if (resourceType == MemoryResourceType.None || cost <= 0f)
-            {
                 return true;
-            }
 
             if (currentAmount < cost)
-            {
                 return false;
-            }
 
             currentAmount -= cost;
             return true;

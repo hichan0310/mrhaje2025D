@@ -153,15 +153,6 @@ namespace PlayerSystem
         }
 
 
-        // TODO
-        // 이렇게 하지 말고 memory board를 event listener에 넣어서 특정 이벤트를 받았을 때 트리거 작동하도록 하기
-        private void ActivateMemory(ActionTriggerType triggerType, float power)
-        {
-            if (memoryBinder)
-            {
-                memoryBinder.Trigger(triggerType, power);
-            }
-        }
 
         private void FixedUpdate()
         {
@@ -372,10 +363,10 @@ namespace PlayerSystem
                 var instance = Instantiate(defaultProjectile, firePoint.position, Quaternion.identity);
                 Debug.Log(instance);
                 instance.Initialize(this, dir, 1f, 0f);
-                if (MemoryTriggerContext.TryGetActive(this, out var context))
-                {
-                    context.ApplyToProjectile(instance);
-                }
+                //if (MemoryTriggerContext.TryGetActive(this, out var context))
+                //{
+                //    context.ApplyToProjectile(instance);
+                //}
             }
             this.temp.trigger(this, 1);
             fireTimer = fireCooldown;
@@ -455,7 +446,7 @@ namespace PlayerSystem
 
             fallThroughTimer = fallThroughDuration;
             isFallingThrough = true;
-            ActivateMemory(ActionTriggerType.DropDown, 1f); // todo: 이건 무슨 이벤트지?
+            isFallingThrough = true;
         }
 
         private void ResetFallThroughState()

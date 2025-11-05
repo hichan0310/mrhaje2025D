@@ -1,26 +1,25 @@
-﻿using System.Collections.Generic;
+﻿// Assets/PlayerSystem/Triggers/Trigger.cs
 using EntitySystem;
 using EntitySystem.Events;
 using PlayerSystem.Tiling;
+using UnityEngine;
 
 namespace PlayerSystem.Triggers
 {
     /// <summary>
-    /// 트리거 베이스:
-    /// - Board를 보유
-    /// - 보드의 배치에서 ITriggerEffect를 꺼내 실행
-    /// - 이벤트 수신/타겟 등록/업데이트 루프 책임
+    /// - MonoBehaviour로 바꿔서 UnityObject null 비교, isActiveAndEnabled 사용 가능
+    /// - IEntityEventListener 구현
+    /// - Board는 순수 데이터 모델
     /// </summary>
-    public abstract class Trigger : IEntityEventListener
+    public abstract class Trigger : MonoBehaviour, IEntityEventListener
     {
         protected Board board;
         protected Entity owner;
 
-        /// <summary>현재 보드 노출(뷰가 읽는다)</summary>
         public Board Board => board;
 
-        /// <summary>보드 위의 효과 나열(캐스팅 성공한 것만)</summary>
-        protected IEnumerable<ITriggerEffect> EnumerateEffects()
+        /// <summary>보드에 담긴 폴리오미노 중 ITriggerEffect만 열거</summary>
+        protected System.Collections.Generic.IEnumerable<ITriggerEffect> EnumerateEffects()
         {
             if (board == null) yield break;
             var placements = board.Placements;
@@ -31,6 +30,7 @@ namespace PlayerSystem.Triggers
             }
         }
 
+        // ---- IEntityEventListener ----
         public abstract void eventActive(EventArgs eventArgs);
 
         public virtual void registerTarget(Entity target, object args = null)
@@ -44,6 +44,9 @@ namespace PlayerSystem.Triggers
             if (owner != null) owner.removeListener(this);
         }
 
-        public virtual void update(float deltaTime, Entity target) { }
+        public virtual void update(float deltaTime, Entity target)
+        {
+            // 필요하면 파생 트리거에서 오버라이드
+        }
     }
 }

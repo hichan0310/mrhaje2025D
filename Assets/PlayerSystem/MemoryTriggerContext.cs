@@ -1,108 +1,108 @@
-using System;
-using System.Collections.Generic;
-using EntitySystem;
-using PlayerSystem.Weapons;
-using UnityEngine;
+//using System;
+//using System.Collections.Generic;
+//using EntitySystem;
+//using PlayerSystem.Weapons;
+//using UnityEngine;
 
-namespace PlayerSystem
-{
-    /// <summary>
-    /// Runtime context that aggregates enhancements for a single trigger activation.
-    /// </summary>
-    public sealed class MemoryTriggerContext
-    {
-        private readonly List<Action<Projectile, float>> projectileCallbacks = new();
+//namespace PlayerSystem
+//{
+//    /// <summary>
+//    /// Runtime context that aggregates enhancements for a single trigger activation.
+//    /// </summary>
+//    public sealed class MemoryTriggerContext
+//    {
+//        private readonly List<Action<Projectile, float>> projectileCallbacks = new();
 
-        internal MemoryTriggerContext(PlayerMemoryBinder binder, ActionTriggerType trigger, MemoryBoard board, float basePower)
-        {
-            Binder = binder;
-            Trigger = trigger;
-            Board = board;
-            BasePower = basePower;
-        }
+//        internal MemoryTriggerContext(PlayerMemoryBinder binder, ActionTriggerType trigger, MemoryBoard board, float basePower)
+//        {
+//            Binder = binder;
+//            Trigger = trigger;
+//            Board = board;
+//            BasePower = basePower;
+//        }
 
-        public PlayerMemoryBinder Binder { get; }
-        public ActionTriggerType Trigger { get; }
-        public MemoryBoard Board { get; }
-        public float BasePower { get; }
-        public MemoryPieceAsset? CurrentPiece { get; private set; }
-        public float CurrentPiecePower { get; private set; }
-        public float DamageBonusPercent { get; private set; }
-        public float KnockbackForce { get; private set; }
-        public float RecoilForce { get; private set; }
+//        public PlayerMemoryBinder Binder { get; }
 
-        public void AddDamageBonusPercent(float percent)
-        {
-            DamageBonusPercent += percent;
-        }
+//        public Board Board { get; }
+//        public float BasePower { get; }
+//        public MemoryPieceAsset? CurrentPiece { get; private set; }
+//        public float CurrentPiecePower { get; private set; }
+//        public float DamageBonusPercent { get; private set; }
+//        public float KnockbackForce { get; private set; }
+//        public float RecoilForce { get; private set; }
 
-        public void AddKnockbackForce(float force)
-        {
-            KnockbackForce += force;
-        }
+//        public void AddDamageBonusPercent(float percent)
+//        {
+//            DamageBonusPercent += percent;
+//        }
 
-        public void AddRecoilForce(float force)
-        {
-            RecoilForce += force;
-        }
+//        public void AddKnockbackForce(float force)
+//        {
+//            KnockbackForce += force;
+//        }
 
-        public void RegisterProjectileCallback(Action<Projectile, float> callback)
-        {
-            if (callback != null)
-            {
-                projectileCallbacks.Add(callback);
-            }
-        }
+//        public void AddRecoilForce(float force)
+//        {
+//            RecoilForce += force;
+//        }
 
-        internal void SetCurrentPiece(MemoryPieceAsset asset, float power)
-        {
-            CurrentPiece = asset;
-            CurrentPiecePower = power;
-        }
+//        public void RegisterProjectileCallback(Action<Projectile, float> callback)
+//        {
+//            if (callback != null)
+//            {
+//                projectileCallbacks.Add(callback);
+//            }
+//        }
 
-        internal void ApplyToProjectile(Projectile projectile)
-        {
-            if (!projectile)
-            {
-                return;
-            }
+//        internal void SetCurrentPiece(MemoryPieceAsset asset, float power)
+//        {
+//            CurrentPiece = asset;
+//            CurrentPiecePower = power;
+//        }
 
-            projectile.ApplyTriggerEnhancements(DamageBonusPercent, KnockbackForce, RecoilForce);
+//        internal void ApplyToProjectile(Projectile projectile)
+//        {
+//            if (!projectile)
+//            {
+//                return;
+//            }
 
-            foreach (var callback in projectileCallbacks)
-            {
-                try
-                {
-                    callback?.Invoke(projectile, CurrentPiecePower);
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogException(ex);
-                }
-            }
-        }
+//            projectile.ApplyTriggerEnhancements(DamageBonusPercent, KnockbackForce, RecoilForce);
 
-        internal void Complete()
-        {
-            projectileCallbacks.Clear();
-            CurrentPiece = null;
-            CurrentPiecePower = 0f;
-        }
+//            foreach (var callback in projectileCallbacks)
+//            {
+//                try
+//                {
+//                    callback?.Invoke(projectile, CurrentPiecePower);
+//                }
+//                catch (Exception ex)
+//                {
+//                    Debug.LogException(ex);
+//                }
+//            }
+//        }
 
-        public static bool TryGetActive(Entity entity, out MemoryTriggerContext context)
-        {
-            context = null;
-            if (!entity)
-            {
-                return false;
-            }
+//        internal void Complete()
+//        {
+//            projectileCallbacks.Clear();
+//            CurrentPiece = null;
+//            CurrentPiecePower = 0f;
+//        }
 
-            if (!entity.TryGetComponent(out PlayerMemoryBinder binder))
-            {
-                return false;
-            }
+//        public static bool TryGetActive(Entity entity, out MemoryTriggerContext context)
+//        {
+//            context = null;
+//            if (!entity)
+//            {
+//                return false;
+//            }
 
-            return binder.TryGetContext(out context);
-        }
-    }
-}
+//            if (!entity.TryGetComponent(out PlayerMemoryBinder binder))
+//            {
+//                return false;
+//            }
+
+//            return binder.TryGetContext(out context);
+//        }
+//    }
+//}
