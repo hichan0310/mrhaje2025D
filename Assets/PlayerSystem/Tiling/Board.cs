@@ -1,166 +1,122 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace PlayerSystem.Tiling
 {
+    /// <summary>
+    /// 순수 보드 모델: 배치/제거/조회만 담당. 이펙트 실행/타이머/이벤트 로직 없음.
+    /// </summary>
+    [Serializable]
     public sealed class Board
     {
-        public readonly int W, H;
-        private readonly ulong[] rows;
-        private readonly List<Polyomino> _catalog;
-
-        public Board(int width, int height, IEnumerable<Polyomino>? catalog = null)
+        [Serializable]
+        public struct Placement
         {
-            if (width < 1 || height < 1) throw new ArgumentException("Invalid board size");
-            if (width > 64) throw new ArgumentException("Width up to 64 supported (use bool[,] if wider).");
-            W = width; H = height;
-            rows = new ulong[H];
-            _catalog = catalog != null ? new List<Polyomino>(catalog) : new List<Polyomino>();
+            public object polyomino;  // 실제 타입은 Polyomino(또는 그 파생). 모델은 구체 타입에 의존하지 않음.
+            public int stateIndex;    // 회전/반전 등 상태 인덱스
+            public int x;             // 원점 X
+            public int y;             // 원점 Y
         }
 
-        public void RegisterPolyomino(Polyomino p) => _catalog.Add(p);
+        public int Width { get; }
+        public int Height { get; }
 
-        public bool InBounds(int x, int y) => (uint)x < W && (uint)y < H;
+        private readonly List<Placement> _placements = new();
+        public event Action? OnChanged;
 
-        public bool IsFilled(int x, int y) => InBounds(x, y) && (((rows[y] >> x) & 1UL) != 0UL);
-
-        public readonly struct Placement
+        public Board(int width, int height)
         {
-            public readonly Polyomino? Poly;
-            public readonly int StateIndex;
-            public readonly int AnchorX, AnchorY;
-            public readonly (int x, int y)[] Cells;
-            public bool IsValid => Cells != null && Cells.Length > 0;
-            public Placement(Polyomino? poly, int stateIndex, int ax, int ay, (int x, int y)[] cells)
-            { Poly = poly; StateIndex = stateIndex; AnchorX = ax; AnchorY = ay; Cells = cells; }
+            Width = Mathf.Max(1, width);
+            Height = Mathf.Max(1, height);
         }
 
-        public bool Fits(Polyomino poly, int stateIndex, int ax, int ay)
-        {
-            foreach (var c in poly.WorldCells(stateIndex, ax, ay))
-            {
-                if (!InBounds(c.X, c.Y)) return false;
-                if (((rows[c.Y] >> c.X) & 1UL) != 0UL) return false;
-            }
-            return true;
-        }
-
-        public bool TryPlace(Polyomino poly, int stateIndex, int ax, int ay, out Placement placement)
+        /// <summary>배치 시도. 겹침/경계 체크만 수행.</summary>
+        public bool TryPlace(object polyomino, int stateIndex, int ax, int ay, out Placement placement)
         {
             placement = default;
-            if (!Fits(poly, stateIndex, ax, ay)) return false;
+            if (polyomino == null) return false;
 
-            var list = new List<(int x, int y)>();
-            foreach (var c in poly.WorldCells(stateIndex, ax, ay))
+            // 폴리오미노에서 셀 좌표 가져오기(사용처에서 보장)
+            if (!TryGetCells(polyomino, stateIndex, out var cells)) return false;
+
+            // 경계/겹침 체크
+            foreach (var c in cells)
             {
-                rows[c.Y] |= (1UL << c.X);
-                list.Add((c.X, c.Y));
+                int gx = ax + c.x;
+                int gy = ay + c.y;
+                if (gx < 0 || gy < 0 || gx >= Width || gy >= Height) return false;
+
+                if (TryGetPlacementAt(gx, gy, out _)) return false; // 세포 단위 겹침 금지(간단 정책)
             }
-            placement = new Placement(poly, stateIndex, ax, ay, list.ToArray());
+
+            placement = new Placement { polyomino = polyomino, stateIndex = stateIndex, x = ax, y = ay };
+            _placements.Add(placement);
+            OnChanged?.Invoke();
             return true;
         }
 
-        public void Remove(in Placement placement)
+        /// <summary>해당 그리드 좌표에 존재하는 배치를 찾는다(첫 매칭).</summary>
+        public bool TryGetPlacementAt(int gx, int gy, out Placement placement)
         {
-            if (!placement.IsValid) return;
-            foreach (var (x, y) in placement.Cells)
-                if ((uint)x < W && (uint)y < H)
-                    rows[y] &= ~(1UL << x);
-        }
-
-        public bool TryGetPlacementAt(int sx, int sy, out Placement placement)
-        {
-            placement = default;
-            if (!InBounds(sx, sy) || !IsFilled(sx, sy)) return false;
-
-            var stack = new Stack<(int x, int y)>();
-            var visited = new HashSet<(int, int)>();
-            var cells = new List<(int x, int y)>();
-
-            stack.Push((sx, sy));
-            visited.Add((sx, sy));
-
-            while (stack.Count > 0)
+            foreach (var p in _placements)
             {
-                var (x, y) = stack.Pop();
-                cells.Add((x, y));
-
-                var neigh = new (int x, int y)[] { (x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1) };
-                foreach (var (nx, ny) in neigh)
-                    if ((uint)nx < W && (uint)ny < H && IsFilled(nx, ny) && visited.Add((nx, ny)))
-                        stack.Push((nx, ny));
-            }
-
-            int minX = int.MaxValue, minY = int.MaxValue;
-            foreach (var (x, y) in cells) { if (x < minX) minX = x; if (y < minY) minY = y; }
-
-            placement = new Placement(null, -1, minX, minY, cells.ToArray());
-            return true;
-        }
-
-        public Polyomino? getPolyomino(in Placement place)
-        {
-            if (place.Poly != null) return place.Poly;
-            if (!place.IsValid) return null;
-
-            var norm = Normalize(place.Cells);
-            foreach (var poly in _catalog)
-            {
-                var states = poly.States;
-                for (int i = 0; i < states.Count; i++)
+                if (!TryGetCells(p.polyomino, p.stateIndex, out var cells)) continue;
+                foreach (var c in cells)
                 {
-                    var s = states[i];
-                    if (s.Cells.Length != norm.Length) continue;
-                    if (SameShape(s.Cells, norm)) return poly;
+                    if (p.x + c.x == gx && p.y + c.y == gy)
+                    {
+                        placement = p;
+                        return true;
+                    }
                 }
             }
-            return null;
+            placement = default;
+            return false;
         }
 
-        private static bool CellsFit(List<(int x, int y)> cells)
+        /// <summary>배치 제거(좌표 기준).</summary>
+        public bool TryRemoveAt(int gx, int gy, out Placement removed)
         {
-            foreach (var (x, y) in cells)
+            for (int i = 0; i < _placements.Count; i++)
             {
-                if ((uint)x >= 64) return false;
-                if (((uint)y) >= int.MaxValue) return false;
+                var p = _placements[i];
+                if (!TryGetCells(p.polyomino, p.stateIndex, out var cells)) continue;
+                foreach (var c in cells)
+                {
+                    if (p.x + c.x == gx && p.y + c.y == gy)
+                    {
+                        removed = p;
+                        _placements.RemoveAt(i);
+                        OnChanged?.Invoke();
+                        return true;
+                    }
+                }
             }
-            return true;
+            removed = default;
+            return false;
         }
 
-        private void Fill(IEnumerable<(int x, int y)> cells)
-        {
-            foreach (var (x, y) in cells)
-                if ((uint)x < W && (uint)y < H)
-                    rows[y] |= (1UL << x);
-        }
+        /// <summary>배치 나열(읽기전용 스냅샷 용).</summary>
+        public IReadOnlyList<Placement> Placements => _placements;
 
-        private static Cell[] Normalize((int x, int y)[] cells)
+        /// <summary>배치에서 폴리오미노 원본 꺼내기.</summary>
+        public object getPolyomino(in Placement p) => p.polyomino;
+
+        // --- Polyomino로부터 셀을 얻는 어댑터(구현체에 맞게 수정) ---
+        private static bool TryGetCells(object poly, int state, out IReadOnlyList<Vector2Int> cells)
         {
-            int minX = int.MaxValue, minY = int.MaxValue;
-            for (int i = 0; i < cells.Length; i++)
+            // 예시) Polyomino가 다음 시그니처를 가진다고 가정:
+            // IReadOnlyList<Vector2Int> GetCells(int stateIndex)
+            var m = poly.GetType().GetMethod("GetCells", new[] { typeof(int) });
+            if (m != null)
             {
-                var (x, y) = cells[i];
-                if (x < minX) minX = x;
-                if (y < minY) minY = y;
+                cells = (IReadOnlyList<Vector2Int>)m.Invoke(poly, new object[] { state });
+                return cells != null;
             }
 
-            var n = new Cell[cells.Length];
-            for (int i = 0; i < cells.Length; i++)
-            {
-                var (x, y) = cells[i];
-                n[i] = new Cell(x - minX, y - minY);
-            }
-
-            Array.Sort(n, (a, b) => a.Y != b.Y ? a.Y - b.Y : a.X - b.X);
-            return n;
-        }
-
-        private static bool SameShape(Tiling.Cell[] stateCells, Tiling.Cell[] norm)
-        {
-            if (stateCells.Length != norm.Length) return false;
-            for (int i = 0; i < norm.Length; i++)
-                if (stateCells[i].X != norm[i].X || stateCells[i].Y != norm[i].Y) return false;
-            return true;
+            cells = null;
+            return false;
         }
     }
 }
