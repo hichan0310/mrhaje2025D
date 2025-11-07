@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: StatBuffEffect
   m_EditorClassIdentifier: 
   description: 
-  attackIncreasePercent: 100
+  attackIncreasePercent: 1e+18
   duration: 2

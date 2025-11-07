@@ -1108,7 +1108,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7300000000000000006, guid: 5f97354d47d445a59dce987467a9aa2e, type: 3}
       propertyPath: boards.Array.data[1].id
-      value: Dash
+      value: JumpEvent
       objectReference: {fileID: 0}
     - target: {fileID: 7300000000000000006, guid: 5f97354d47d445a59dce987467a9aa2e, type: 3}
       propertyPath: triggerBoards.Array.size
@@ -1117,6 +1117,10 @@ PrefabInstance:
     - target: {fileID: 7300000000000000006, guid: 5f97354d47d445a59dce987467a9aa2e, type: 3}
       propertyPath: boards.Array.data[0].board.eventKey
       value: BasicAttackExecuteEvent
+      objectReference: {fileID: 0}
+    - target: {fileID: 7300000000000000006, guid: 5f97354d47d445a59dce987467a9aa2e, type: 3}
+      propertyPath: boards.Array.data[1].board.eventKey
+      value: JumpEvent
       objectReference: {fileID: 0}
     - target: {fileID: 7300000000000000006, guid: 5f97354d47d445a59dce987467a9aa2e, type: 3}
       propertyPath: triggerBoards.Array.data[0].trigger

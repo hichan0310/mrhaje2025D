@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
-
-namespace EntitySystem.Events
+﻿namespace EntitySystem.Events
 {
-    public class DamageTakeEvent : EventArgs
+    public class DamageTakeEvent : EventArgs, IEntityInfo, IDamageInfo
     {
         public int realDmg { get; set; }
         public Entity attacker { get; }
         public Entity target { get; }
         public AtkTagSet atkTags { get; }
 
+        // IEntityInfo
+        public Entity entity => target;
+
+        // IDamageInfo
+        public int damage => realDmg;
 
         public DamageTakeEvent(int realDmg, Entity attacker, Entity target, AtkTagSet atkTags)
         {
@@ -21,9 +24,6 @@ namespace EntitySystem.Events
 
         public override void trigger()
         {
-            // UnityEngine.Debug.Log($"[DmgTake.trigger] atkTags? {(atkTags == null ? "null" : "ok")}, " +
-            //           $"Manager.Instance? {(DamageEventManager.Instance == null ? "null" : "ok")}, " +
-            //           $"target? {(target == null ? "null" : "ok")}");
             if (atkTags != null && atkTags.Contains(AtkTags.notTakeEvent)) return;
 
             DamageEventManager.Instance?.TriggerDmgTakeEvent(this);

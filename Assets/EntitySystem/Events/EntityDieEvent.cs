@@ -1,20 +1,21 @@
 ﻿namespace EntitySystem.Events
 {
-    public class EntityDieEvent:EventArgs
+    public class EntityDieEvent : EventArgs, IEntityInfo
     {
         public Entity attacker { get; }
-        public Entity entity { get; }
+        public Entity entity { get; }   // IEntityInfo
+
         public EntityDieEvent(Entity entity, Entity attacker)
         {
-            name="EntityDieEvent";
+            name = "EntityDieEvent";
             this.entity = entity;
             this.attacker = attacker;
         }
 
         public override void trigger()
         {
-            entity.eventActive(this);
-            attacker.eventActive(this);
+            entity?.eventActive(this);
+            attacker?.eventActive(this);
         }
     }
 }
