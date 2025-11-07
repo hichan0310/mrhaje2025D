@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace PlayerSystem.Tiling
 {
-    public abstract class Polyomino:MonoBehaviour
+    // (x,y) 정수 좌표
+    public readonly struct Cell
     {
-        // 추상 폴리오미노: 서브클래스가 기본 모양과 피봇만 정하면
-        // 회전 상태(0/90/180/270)를 자동 사전계산합니다(대칭은 중복 제거).
+        public readonly int X, Y;
+        public Cell(int x, int y) { X = x; Y = y; }
+    }
+
+    // Polyomino: 일반 클래스 (MonoBehaviour 아님)
+    public abstract class Polyomino
+    {
         public sealed class State : IEquatable<State>
         {
             public readonly Cell[] Cells;  // 좌상단(0,0) 기준으로 정규화된 오프셋들
@@ -37,7 +42,7 @@ namespace PlayerSystem.Tiling
         }
 
         public string Name { get; }
-        public IReadOnlyList<State> States => _states;
+        public IReadOnlyList<State> States => _states;   // ✅ 제네릭 표기 수정
         private readonly List<State> _states = new(4);
 
         protected Polyomino(string name)
@@ -64,19 +69,18 @@ namespace PlayerSystem.Tiling
                 {
                     int rx = x - pivot.x;
                     int ry = y - pivot.y;
-                    // 시계 기준 회전
+
                     int nx, ny;
                     switch (r)
                     {
-                        case 0: nx = rx;  ny = ry;  break;      // 0°
-                        case 1: nx = ry;  ny = -rx; break;      // 90°
-                        case 2: nx = -rx; ny = -ry; break;      // 180°
-                        default: nx = -ry; ny = rx;  break;      // 270°
+                        case 0: nx = rx; ny = ry; break; // 0°
+                        case 1: nx = ry; ny = -rx; break; // 90°
+                        case 2: nx = -rx; ny = -ry; break; // 180°
+                        default: nx = -ry; ny = rx; break; // 270°
                     }
                     tmp.Add(new Cell(nx, ny));
                 }
 
-                // 좌상단(0,0)으로 당기기 + 정렬
                 int minX = int.MaxValue, minY = int.MaxValue, maxX = int.MinValue, maxY = int.MinValue;
                 foreach (var c in tmp) { if (c.X < minX) minX = c.X; if (c.Y < minY) minY = c.Y; if (c.X > maxX) maxX = c.X; if (c.Y > maxY) maxY = c.Y; }
                 int w = maxX - minX + 1, h = maxY - minY + 1;
@@ -109,5 +113,31 @@ namespace PlayerSystem.Tiling
             var s = _states[stateIndex % _states.Count];
             foreach (var c in s.Cells) yield return new Cell(ax + c.X, ay + c.Y);
         }
+    }
+
+    // -------------------- 모양 서브클래스 예시 --------------------
+
+    // 5칸 L 펜토미노
+    public sealed class L5 : Polyomino
+    {
+        public L5() : base("L5") { }
+        protected override (int x, int y)[] BaseCells() => new[] { (0, 0), (0, 1), (0, 2), (0, 3), (1, 3) };
+        protected override (int x, int y) Pivot() => (0, 2);
+    }
+
+    // 6칸 I 헥소미노
+    public sealed class I6 : Polyomino
+    {
+        public I6() : base("I6") { }
+        protected override (int x, int y)[] BaseCells() => new[] { (0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5) };
+        protected override (int x, int y) Pivot() => (0, 2);
+    }
+
+    // 6칸 U 형태 예시
+    public sealed class U6 : Polyomino
+    {
+        public U6() : base("U6") { }
+        protected override (int x, int y)[] BaseCells() => new[] { (0, 0), (2, 0), (0, 1), (2, 1), (0, 2), (1, 2) };
+        protected override (int x, int y) Pivot() => (1, 1);
     }
 }

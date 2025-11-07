@@ -9,8 +9,9 @@ namespace PlayerSystem
     public class MemoryPieceAsset : ScriptableObject
     {
         [SerializeField] private string displayName = "Memory Piece";
-        [FormerlySerializedAs("triggerType")]
-        [SerializeField] private ActionTriggerType allowedTriggers = ActionTriggerType.All;
+
+        // (구) allowedTriggers 제거됨. Trigger/Board 타입 호환성 제약은 더 이상 사용하지 않습니다.
+
         [SerializeField] private TriggerEffectAsset effect = null;
         [SerializeField] private float basePower = 1f;
         [SerializeField] private float cooldownSeconds = 0f;
@@ -23,24 +24,21 @@ namespace PlayerSystem
         [SerializeField] private List<Vector2Int> shapeCells = new() { Vector2Int.zero };
 
         public string DisplayName => displayName;
-        public ActionTriggerType AllowedTriggers => allowedTriggers == ActionTriggerType.None ? ActionTriggerType.All : allowedTriggers;
-        public bool IsTriggerAllowed(ActionTriggerType trigger)
-        {
-            if (trigger == ActionTriggerType.None)
-            {
-                return true;
-            }
 
-            return AllowedTriggers.HasFlag(trigger);
-        }
+        // TriggerEffectAsset은 프로젝트 내에 존재하므로 유지
         public TriggerEffectAsset Effect => effect;
+
         public float BasePower => basePower;
         public float CooldownSeconds => Mathf.Max(0f, cooldownSeconds);
+
         public MemoryResourceType ResourceType => resourceType;
         public float ResourceCost => Mathf.Max(0f, resourceCost);
+
         public bool IsCore => isCore;
+
         public Sprite Icon => icon;
         public string Description => description;
+
         public IReadOnlyList<Vector2Int> ShapeCells => shapeCells;
     }
 }

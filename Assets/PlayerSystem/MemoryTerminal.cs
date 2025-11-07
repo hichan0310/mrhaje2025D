@@ -71,9 +71,17 @@ namespace PlayerSystem
 
             if (openOverlayOnInteract)
             {
+                // MemoryBoardOverlay 또는 TestMemoryBoardOverlay 중 실제 사용 클래스로 교체
                 var overlay = overlayReference ? overlayReference : FindObjectOfType<MemoryBoardOverlay>(true);
-                overlay?.Open(binder);
+                if (!overlay)
+                {
+                    var go = new GameObject("RuntimeMemoryOverlay");
+                    overlay = go.AddComponent<MemoryBoardOverlay>(); // 또는 TestMemoryBoardOverlay
+                }
+                overlay.Open(binder);
             }
+
+
         }
     }
 }

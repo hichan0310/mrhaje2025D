@@ -155,13 +155,13 @@ namespace PlayerSystem
 
         // TODO
         // 이렇게 하지 말고 memory board를 event listener에 넣어서 특정 이벤트를 받았을 때 트리거 작동하도록 하기
-        private void ActivateMemory(ActionTriggerType triggerType, float power)
-        {
-            if (memoryBinder)
-            {
-                memoryBinder.Trigger(triggerType, power);
-            }
-        }
+        //private void ActivateMemory(ActionTriggerType triggerType, float power)
+        //{
+        //    if (memoryBinder)
+        //    {
+        //        memoryBinder.Trigger(triggerType, power);
+        //    }
+        //}
 
         private void FixedUpdate()
         {
@@ -455,7 +455,7 @@ namespace PlayerSystem
 
             fallThroughTimer = fallThroughDuration;
             isFallingThrough = true;
-            ActivateMemory(ActionTriggerType.DropDown, 1f); // todo: 이건 무슨 이벤트지?
+            new DropDownEvent(this, 1f).trigger();
         }
 
         private void ResetFallThroughState()

@@ -1,15 +1,18 @@
+// Assets/PlayerSystem/PlayerMemoryBinder.cs
 using System;
 using System.Collections.Generic;
 using EntitySystem;
 using EntitySystem.Events;
-using GameBackend;
 using UnityEngine;
+// using PlayerSystem.Triggers; // (없어도 동작합니다. PowerPolicies가 필요없다면 제외)
 using EventArgs = EntitySystem.Events.EventArgs;
 
 namespace PlayerSystem
 {
     /// <summary>
-    /// Component that wires serialized memory boards to runtime player actions.
+    /// 이벤트 기반 라우팅 버전의 메모리 바인더.
+    /// - 각 보드의 EventKey와 들어온 EventArgs의 런타임 타입이 일치할 때만 해당 보드를 실행
+    /// - 인벤토리/배치/제거/조회 및 UI 이벤트 유지
     /// </summary>
     public class PlayerMemoryBinder : MonoBehaviour, IEntityEventListener
     {
@@ -17,13 +20,13 @@ namespace PlayerSystem
         private class StartingInventoryEntry
         {
             [SerializeField] internal MemoryPieceAsset piece = null;
-            [SerializeField] [Range(0.1f, 10f)] internal float powerMultiplier = 1f;
+            [SerializeField, Range(0.1f, 10f)] internal float powerMultiplier = 1f;
         }
 
         [Serializable]
-        private class TriggerBoardEntry
+        private class BoardEntry
         {
-            [SerializeField] internal ActionTriggerType trigger = ActionTriggerType.BasicAttack;
+            [SerializeField] internal string id = "Board";
             [SerializeField] internal MemoryBoard board = new();
         }
 
@@ -39,436 +42,278 @@ namespace PlayerSystem
             }
         }
 
+        [Header("Refs")]
         [SerializeField] private Player player = null;
-        [SerializeField] private List<TriggerBoardEntry> triggerBoards = new();
+
+        [Header("Boards (one per event)")]
+        [SerializeField] private List<BoardEntry> boards = new();
+
+        [Header("Global Power Scale")]
         [SerializeField] private float globalPowerScale = 1f;
+
+        [Header("Starting Inventory")]
         [SerializeField] private List<StartingInventoryEntry> startingInventory = new();
 
+        // ===== 오버레이/외부에서 쓰는 공개 상태 =====
         public IReadOnlyList<MemoryPieceInventoryItem> Inventory => inventoryPieces;
-        public IReadOnlyList<ActionTriggerType> AvailableTriggers => triggerOrder;
-        public ActionTriggerType ActiveTrigger => activeTrigger;
-        public MemoryBoard? ActiveBoard => TryGetBoard(activeTrigger, out var board) ? board : null;
-        internal MemoryTriggerContext? CurrentContext => currentContext;
+        public int ActiveBoardIndex => activeBoardIndex;
+        public MemoryBoard ActiveBoard => (activeBoardIndex >= 0 && activeBoardIndex < boardList.Count)
+            ? boardList[activeBoardIndex]
+            : null;
+        public int BoardCount => boardList.Count;
 
-        public event Action? InventoryChanged;
-        public event Action<ActionTriggerType>? BoardChanged;
-        public event Action<ActionTriggerType>? ActiveBoardChanged;
+        // ===== UI용 이벤트 =====
+        public event Action InventoryChanged;
+        public event Action BoardListChanged;
+        public event Action<int> ActiveBoardChanged;
+        public event Action<int> BoardChanged; // index of changed board
 
+        // ===== 내부 상태 =====
         private readonly List<MemoryPieceInventoryItem> inventoryPieces = new();
-        private readonly Dictionary<ActionTriggerType, MemoryBoard> boardLookup = new();
-        private readonly Dictionary<ActionTriggerType, Action<MemoryPieceAsset>> boardAddHandlers = new();
-        private readonly Dictionary<ActionTriggerType, Action<MemoryPieceAsset>> boardRemoveHandlers = new();
-        private readonly List<ActionTriggerType> triggerOrder = new();
-        private readonly Dictionary<MemoryPieceAsset, ActionTriggerType> pieceOwnership = new();
+        private readonly List<MemoryBoard> boardList = new();
+        private readonly Dictionary<MemoryPieceAsset, int> pieceOwnership = new(); // asset -> board index
         private readonly List<MemoryBoard.MemoryPiecePlacementInfo> placementBuffer = new();
 
-        private MemoryTriggerContext? currentContext = null;
-        private MemoryTriggerContext? pendingContextCompletion = null;
-        private ActionTriggerType activeTrigger = ActionTriggerType.None;
+        private int activeBoardIndex = -1;
+
+        // 1 프레임용 컨텍스트 (Projectile 보정 등에 사용)
+        private MemoryTriggerContext _currentContext;
 
         private void Awake()
         {
-            if (!player)
-            {
-                player = GetComponent<Player>();
-            }
+            if (!player) player = GetComponent<Player>();
 
             BuildBoards();
             InitializeInventory();
-            this.registerTarget(this.player);
-        }
 
-        private void OnDisable()
-        {
-            CompleteCurrentContext(force: true);
+            // 플레이어 이벤트 리스너 등록
+            registerTarget(player);
         }
 
         private void OnDestroy()
         {
-            CompleteCurrentContext(force: true);
-            foreach (var pair in boardLookup)
-            {
-                if (boardAddHandlers.TryGetValue(pair.Key, out var addHandler))
-                {
-                    pair.Value.OnPieceAdded -= addHandler;
-                }
-
-                if (boardRemoveHandlers.TryGetValue(pair.Key, out var removeHandler))
-                {
-                    pair.Value.OnPieceRemoved -= removeHandler;
-                }
-            }
-
-            boardLookup.Clear();
-            boardAddHandlers.Clear();
-            boardRemoveHandlers.Clear();
-            triggerOrder.Clear();
+            boardList.Clear();
             pieceOwnership.Clear();
         }
 
-        private void Update()
+        // ====================== Public board helpers ======================
+        public bool TryGetBoard(int index, out MemoryBoard board)
         {
-            // IEventListener이기 때문에 필요 없습니다. update는 주 타겟에 의존하여 돌아가게 됩니다. 
-        }
-
-        private void LateUpdate()
-        {
-            CompleteCurrentContext();
-        }
-
-        public bool TryGetBoard(ActionTriggerType trigger, out MemoryBoard board)
-        {
-            trigger = NormalizeTrigger(trigger);
-            return boardLookup.TryGetValue(trigger, out board);
-        }
-
-        public bool SetActiveBoard(ActionTriggerType trigger)
-        {
-            trigger = NormalizeTrigger(trigger);
-            if (!boardLookup.ContainsKey(trigger))
+            if (index >= 0 && index < boardList.Count)
             {
-                return false;
-            }
-
-            if (activeTrigger == trigger)
-            {
+                board = boardList[index];
                 return true;
             }
+            board = null;
+            return false;
+        }
 
-            activeTrigger = trigger;
-            ActiveBoardChanged?.Invoke(activeTrigger);
+        public bool SetActiveBoard(int index)
+        {
+            if (index < 0 || index >= boardList.Count) return false;
+            if (activeBoardIndex == index) return true;
+            activeBoardIndex = index;
+            ActiveBoardChanged?.Invoke(activeBoardIndex);
             return true;
         }
 
-        public void Trigger(ActionTriggerType triggerType, float basePower = 1f)
-        {
-            CompleteCurrentContext();
-
-            if (!player)
-            {
-                return;
-            }
-
-            triggerType = NormalizeTrigger(triggerType);
-            if (!boardLookup.TryGetValue(triggerType, out var board))
-            {
-                return;
-            }
-
-            float power = Mathf.Max(0f, basePower * globalPowerScale);
-            var context = new MemoryTriggerContext(this, triggerType, board, power);
-            currentContext = context;
-            board.Trigger(triggerType, player, power, context);
-            pendingContextCompletion = context;
-        }
-
-        public bool TryPlaceInventoryPiece(ActionTriggerType trigger, MemoryPieceInventoryItem item, Vector2Int origin, bool locked = false)
-        {
-            trigger = NormalizeTrigger(trigger);
-            if (!boardLookup.TryGetValue(trigger, out var board))
-            {
-                return false;
-            }
-
-            if (!item.Asset || !item.Asset.IsTriggerAllowed(trigger))
-            {
-                return false;
-            }
-
-            if (pieceOwnership.ContainsKey(item.Asset))
-            {
-                return false;
-            }
-
-            int index = FindInventoryIndex(item.Asset, item.PowerMultiplier, true);
-            if (index < 0)
-            {
-                return false;
-            }
-
-            var entry = inventoryPieces[index];
-            if (!board.TryAddPiece(entry.Asset, origin, entry.PowerMultiplier, locked))
-            {
-                return false;
-            }
-
-            inventoryPieces.RemoveAt(index);
-            InventoryChanged?.Invoke();
-            return true;
-        }
-
+        // ====================== Inventory ======================
         public bool TryPlaceInventoryPiece(MemoryPieceInventoryItem item, Vector2Int origin, bool locked = false)
         {
-            return TryPlaceInventoryPiece(activeTrigger, item, origin, locked);
+            var board = ActiveBoard;
+            if (board == null) return false;
+            if (!item.Asset) return false;
+            if (pieceOwnership.ContainsKey(item.Asset)) return false;
+
+            int idx = FindInventoryIndex(item.Asset, item.PowerMultiplier, true);
+            if (idx < 0) return false;
+
+            var entry = inventoryPieces[idx];
+            if (!board.TryAddPiece(entry.Asset, origin, entry.PowerMultiplier, locked)) return false;
+
+            pieceOwnership[entry.Asset] = activeBoardIndex;
+            inventoryPieces.RemoveAt(idx);
+            InventoryChanged?.Invoke();
+            BoardChanged?.Invoke(activeBoardIndex);
+            return true;
         }
 
-        public bool RemovePiece(ActionTriggerType trigger, MemoryPieceAsset asset)
+        public bool TryPlaceInventoryPiece(int boardIndex, MemoryPieceInventoryItem item, Vector2Int origin, bool locked = false)
         {
-            trigger = NormalizeTrigger(trigger);
-            if (!asset)
-            {
-                return false;
-            }
+            if (!TryGetBoard(boardIndex, out var board)) return false;
+            if (!item.Asset) return false;
+            if (pieceOwnership.ContainsKey(item.Asset)) return false;
 
-            if (!boardLookup.TryGetValue(trigger, out var board))
-            {
-                return false;
-            }
+            int idx = FindInventoryIndex(item.Asset, item.PowerMultiplier, true);
+            if (idx < 0) return false;
 
-            if (!board.TryGetPlacement(asset, out var placement))
-            {
-                return false;
-            }
+            var entry = inventoryPieces[idx];
+            if (!board.TryAddPiece(entry.Asset, origin, entry.PowerMultiplier, locked)) return false;
 
-            if (!board.RemovePiece(asset))
-            {
-                return false;
-            }
-
-            inventoryPieces.Add(new MemoryPieceInventoryItem(placement.Asset, placement.PowerMultiplier));
+            pieceOwnership[entry.Asset] = boardIndex;
+            inventoryPieces.RemoveAt(idx);
             InventoryChanged?.Invoke();
+            BoardChanged?.Invoke(boardIndex);
             return true;
         }
 
         public bool RemovePiece(MemoryPieceAsset asset)
         {
-            if (!asset)
-            {
-                return false;
-            }
+            if (!asset) return false;
+            if (!pieceOwnership.TryGetValue(asset, out var bIndex)) return false;
+            if (!TryGetBoard(bIndex, out var board)) return false;
 
-            if (!pieceOwnership.TryGetValue(asset, out var trigger))
-            {
-                return false;
-            }
+            if (!board.TryGetPlacement(asset, out var placement)) return false;
+            if (!board.RemovePiece(asset)) return false;
 
-            return RemovePiece(trigger, asset);
+            inventoryPieces.Add(new MemoryPieceInventoryItem(placement.Asset, placement.PowerMultiplier));
+            pieceOwnership.Remove(asset);
+            InventoryChanged?.Invoke();
+            BoardChanged?.Invoke(bIndex);
+            return true;
         }
 
         public bool TryAddPieceToInventory(MemoryPieceAsset asset, float multiplier = 1f)
         {
-            if (!asset)
-            {
-                return false;
-            }
-
+            if (!asset) return false;
             inventoryPieces.Add(new MemoryPieceInventoryItem(asset, multiplier));
             InventoryChanged?.Invoke();
             return true;
         }
 
         public bool HasInventoryPiece(MemoryPieceInventoryItem item)
-        {
-            return FindInventoryIndex(item.Asset, item.PowerMultiplier, true) >= 0;
-        }
+            => FindInventoryIndex(item.Asset, item.PowerMultiplier, true) >= 0;
 
         public bool ContainsPiece(MemoryPieceAsset asset)
-        {
-            return asset && pieceOwnership.ContainsKey(asset);
-        }
+            => asset && pieceOwnership.ContainsKey(asset);
 
-        internal bool TryGetContext(out MemoryTriggerContext context)
-        {
-            if (currentContext != null)
-            {
-                context = currentContext;
-                return true;
-            }
-
-            context = null;
-            return false;
-        }
-
+        // ====================== Build / Init ======================
         private void BuildBoards()
         {
-            boardLookup.Clear();
-            triggerOrder.Clear();
+            boardList.Clear();
             pieceOwnership.Clear();
-            boardAddHandlers.Clear();
-            boardRemoveHandlers.Clear();
 
-            foreach (var entry in triggerBoards)
+            for (int i = 0; i < boards.Count; i++)
             {
-                if (entry == null || entry.board == null)
-                {
-                    continue;
-                }
+                var entry = boards[i];
+                if (entry == null || entry.board == null) continue;
 
-                ActionTriggerType trigger = NormalizeTrigger(entry.trigger);
-                if (trigger == ActionTriggerType.None || boardLookup.ContainsKey(trigger))
-                {
-                    continue;
-                }
+                // 파워 정책 주입: 없으면 null → 보드 내부에서 기본값 1f 사용
+                // entry.board.Initialize(this, PlayerSystem.Triggers.PowerPolicies.Select);
+                entry.board.Initialize(this, _ => 1f);
 
-                entry.board.Initialize(this, trigger);
-                boardLookup[trigger] = entry.board;
-                triggerOrder.Add(trigger);
-
-                Action<MemoryPieceAsset> addedHandler = asset => HandleBoardPieceAdded(trigger, asset);
-                Action<MemoryPieceAsset> removedHandler = asset => HandleBoardPieceRemoved(trigger, asset);
-                boardAddHandlers[trigger] = addedHandler;
-                boardRemoveHandlers[trigger] = removedHandler;
-                entry.board.OnPieceAdded += addedHandler;
-                entry.board.OnPieceRemoved += removedHandler;
+                boardList.Add(entry.board);
             }
 
+            // 기존 배치 소유권 복원
             placementBuffer.Clear();
-            foreach (var pair in boardLookup)
+            for (int bi = 0; bi < boardList.Count; bi++)
             {
-                pair.Value.GetPiecePlacements(placementBuffer);
+                var b = boardList[bi];
+                b.GetPiecePlacements(placementBuffer);
                 foreach (var placement in placementBuffer)
-                {
-                    if (placement.Asset)
-                    {
-                        pieceOwnership[placement.Asset] = pair.Key;
-                    }
-                }
+                    if (placement.Asset) pieceOwnership[placement.Asset] = bi;
             }
 
-            if (triggerOrder.Count > 0)
-            {
-                activeTrigger = triggerOrder[0];
-            }
-            else
-            {
-                activeTrigger = ActionTriggerType.None;
-            }
+            activeBoardIndex = boardList.Count > 0 ? 0 : -1;
+            BoardListChanged?.Invoke();
+            if (activeBoardIndex >= 0) ActiveBoardChanged?.Invoke(activeBoardIndex);
         }
 
         private void InitializeInventory()
         {
             inventoryPieces.Clear();
-            foreach (var entry in startingInventory)
-            {
-                if (entry == null || !entry.piece)
-                {
-                    continue;
-                }
+            foreach (var s in startingInventory)
+                if (s != null && s.piece)
+                    inventoryPieces.Add(new MemoryPieceInventoryItem(s.piece, s.powerMultiplier));
 
-                inventoryPieces.Add(new MemoryPieceInventoryItem(entry.piece, entry.powerMultiplier));
-            }
-
-            if (inventoryPieces.Count > 0)
-            {
-                InventoryChanged?.Invoke();
-            }
-        }
-
-        private void HandleBoardPieceAdded(ActionTriggerType trigger, MemoryPieceAsset asset)
-        {
-            if (asset)
-            {
-                pieceOwnership[asset] = trigger;
-            }
-
-            BoardChanged?.Invoke(trigger);
-        }
-
-        private void HandleBoardPieceRemoved(ActionTriggerType trigger, MemoryPieceAsset asset)
-        {
-            if (asset)
-            {
-                pieceOwnership.Remove(asset);
-            }
-
-            BoardChanged?.Invoke(trigger);
+            if (inventoryPieces.Count > 0) InventoryChanged?.Invoke();
         }
 
         private int FindInventoryIndex(MemoryPieceAsset asset, float multiplier, bool strictMultiplier)
         {
-            if (!asset)
-            {
-                return -1;
-            }
-
+            if (!asset) return -1;
             const float epsilon = 0.001f;
             for (int i = 0; i < inventoryPieces.Count; i++)
             {
                 var entry = inventoryPieces[i];
-                if (entry.Asset != asset)
-                {
-                    continue;
-                }
-
+                if (entry.Asset != asset) continue;
                 if (!strictMultiplier || Mathf.Abs(entry.PowerMultiplier - multiplier) < epsilon)
-                {
                     return i;
-                }
             }
-
             return -1;
         }
 
-        private static ActionTriggerType NormalizeTrigger(ActionTriggerType trigger)
+        // ====================== IEntityEventListener ======================
+        public void eventActive(EventArgs e)
         {
-            if (trigger == ActionTriggerType.None)
+            if (e == null || boardList.Count == 0) return;
+
+            // 1) 1프레임 컨텍스트 생성 (보드 이펙트가 Projectile 보정 등에 사용)
+            _currentContext = new MemoryTriggerContext(this, ActiveBoard, Mathf.Max(0f, 1f * globalPowerScale));
+
+            // 2) 보드 라우팅: 각 보드의 EventKey와 e의 타입명이 일치할 때만 실행
+            for (int i = 0; i < boardList.Count; i++)
             {
-                return ActionTriggerType.None;
+                var b = boardList[i];
+                if (b == null) continue;
+                if (!b.Matches(e)) continue;          // ← 핵심: eventKey 매칭
+                b.recieveEvent(e);
+                BoardChanged?.Invoke(i);              // UI 갱신
             }
 
-            foreach (ActionTriggerType value in Enum.GetValues(typeof(ActionTriggerType)))
-            {
-                if (value == ActionTriggerType.None)
-                {
-                    continue;
-                }
-
-                if (trigger.HasFlag(value))
-                {
-                    return value;
-                }
-            }
-
-            return ActionTriggerType.None;
-        }
-
-        private void CompleteCurrentContext(bool force = false)
-        {
-            if (pendingContextCompletion != null)
-            {
-                var context = pendingContextCompletion;
-                pendingContextCompletion = null;
-                context.Complete();
-
-                if (ReferenceEquals(currentContext, context))
-                {
-                    currentContext = null;
-                }
-
-                return;
-            }
-
-            if (force && currentContext != null)
-            {
-                currentContext.Complete();
-                currentContext = null;
-            }
-        }
-
-        public void eventActive(EventArgs eventArgs)
-        {
-            foreach (var board in boardLookup.Values)
-            {
-                board.recieveEvent(eventArgs);
-            }
+            // 3) 컨텍스트 회수
+            _currentContext?.Complete();
+            _currentContext = null;
         }
 
         public void registerTarget(Entity target, object args = null)
         {
-            target.registerListener(this);
+            if (target) target.registerListener(this);
         }
 
         public void removeSelf()
         {
-            player.removeListener(this);
+            if (player) player.removeListener(this);
         }
 
         public void update(float deltaTime, Entity target)
         {
-            foreach (var board in boardLookup.Values)
+            for (int i = 0; i < boardList.Count; i++)
+                boardList[i].Tick(deltaTime);
+        }
+
+        // ====================== 구 API 호환 션트 ======================
+        /// <summary>컨텍스트 조회(Projectile 보정 등).</summary>
+        public bool TryGetContext(out MemoryTriggerContext ctx)
+        {
+            ctx = _currentContext;
+            return ctx != null;
+        }
+
+        /// <summary>
+        /// 구 코드 호환용 Trigger(삭제 예정).
+        /// ActionTriggerType 대신 dummy object를 받으며, 이벤트 파이프라인으로 변환합니다.
+        /// </summary>
+        [Obsolete("Use eventActive(EventArgs) with a proper EventArgs instance instead.")]
+        public void Trigger(object removedEnum, float basePower = 1f)
+        {
+            if (!player) return;
+            var e = new BinderPowerEvent(player, Mathf.Max(0f, basePower * globalPowerScale));
+            eventActive(e);
+        }
+
+        private sealed class BinderPowerEvent : EventArgs, IEntityInfo, IPercentInfo
+        {
+            public Entity entity { get; }
+            public float percent { get; }
+            public BinderPowerEvent(Entity target, float power)
             {
-                board.Tick(deltaTime);
+                name = "BinderPowerEvent";
+                entity = target;
+                percent = power;
             }
+            public override void trigger() { /* no-op */ }
         }
     }
 }
