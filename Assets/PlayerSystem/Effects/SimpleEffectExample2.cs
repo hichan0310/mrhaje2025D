@@ -22,14 +22,5 @@ namespace PlayerSystem.Effects
             var dmg=stat.calculateTrueDamage(tag, 100*power);
             f.damage = new(dmg, Vector3.zero, entity, null, tag);
         }
-
-        public SimpleEffectExample2(string name) : base(name)
-        {
-        }
-
-        protected override (int x, int y)[] BaseCells()
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

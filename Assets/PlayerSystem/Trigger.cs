@@ -12,8 +12,38 @@ namespace PlayerSystem
         protected Entity entity { get; set; }
         protected List<ITriggerEffect> effects { get; set; } = new List<ITriggerEffect>();
         public abstract void eventActive(EventArgs eventArgs);
-        public abstract void registerTarget(Entity target, object args = null);
-        public abstract void removeSelf();
+
+        public void registerTarget(Entity target, object args = null)
+        {
+            this.entity = target;
+            target.registerListener(this);
+        }
+
+        public void removeSelf()
+        {
+            this.entity.removeListener(this);
+        }
         public abstract void update(float deltaTime, Entity target);
+
+        // public bool tryAddEffect<T>(T effect, int stateIndex, int ax, int ay, out Board.Placement placement)
+        //     where T : Polyomino, ITriggerEffect
+        // {
+        //     return this.board.TryPlace(effect, stateIndex, ax, ay, out placement);
+        // }
+        //
+        // public bool tryRemoveEffect<T>(int ax, int ay, out T effect) where T : Polyomino, ITriggerEffect
+        // {
+        //     if (board.TryGetPlacementAt(ax, ay, out var placement))
+        //     {
+        //         var poly = board.getPolyomino(in placement);
+        //         if (poly is ITriggerEffect t)
+        //         {
+        //             effect = (T)t;
+        //             return true;
+        //         }
+        //     }
+        //     effect = null;
+        //     return false;
+        // }
     }
 }

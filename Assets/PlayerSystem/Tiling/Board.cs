@@ -1,166 +1,172 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
+using UnityEngine;
 
 namespace PlayerSystem.Tiling
 {
-    public sealed class Board
+    public abstract class Board : MonoBehaviour
     {
-        public readonly int W, H;
-        private readonly ulong[] rows;
-        private readonly List<Polyomino> _catalog;
+        public GameObject BackgroundUIObject;
+        protected Dictionary<(int x, int y), Polyomino> polyominos = new();
 
-        public Board(int width, int height, IEnumerable<Polyomino>? catalog = null)
+        // 프리뷰 상태
+        [SerializeField] private Polyomino selected;
+        [SerializeField] private int searchRadius = 8;
+        [SerializeField] private bool limitPreviewToBoard = true;
+        private int previewX, previewY;
+        private bool hasPreview;
+
+        protected abstract Vector3 cellPos2Real(int x, int y);
+
+        // 기본 6x6
+        protected virtual bool isOnBoard(int x, int y)
         {
-            if (width < 1 || height < 1) throw new ArgumentException("Invalid board size");
-            if (width > 64) throw new ArgumentException("Width up to 64 supported (use bool[,] if wider).");
-            W = width; H = height;
-            rows = new ulong[H];
-            _catalog = catalog != null ? new List<Polyomino>(catalog) : new List<Polyomino>();
+            return 0 <= x && x < 6 && 0 <= y && y < 6;
         }
 
-        public void RegisterPolyomino(Polyomino p) => _catalog.Add(p);
-
-        public bool InBounds(int x, int y) => (uint)x < W && (uint)y < H;
-
-        public bool IsFilled(int x, int y) => InBounds(x, y) && (((rows[y] >> x) & 1UL) != 0UL);
-
-        public readonly struct Placement
+        protected virtual Cell? GetCellByPos(int mouseX, int mouseY)
         {
-            public readonly Polyomino? Poly;
-            public readonly int StateIndex;
-            public readonly int AnchorX, AnchorY;
-            public readonly (int x, int y)[] Cells;
-            public bool IsValid => Cells != null && Cells.Length > 0;
-            public Placement(Polyomino? poly, int stateIndex, int ax, int ay, (int x, int y)[] cells)
-            { Poly = poly; StateIndex = stateIndex; AnchorX = ax; AnchorY = ay; Cells = cells; }
+            return null;
         }
 
-        public bool Fits(Polyomino poly, int stateIndex, int ax, int ay)
+        // x, y 위치에 Polyomino의 (0,0) 피벗을 두고 배치 시도
+        public void tryAddPolyomino(Polyomino polyomino, int x, int y)
         {
-            foreach (var c in poly.WorldCells(stateIndex, ax, ay))
+            if (polyomino == null || polyomino.cells == null || polyomino.cells.Count == 0) return;
+            if (polyominos.ContainsKey((x, y))) return;
+
+            // 경계 및 타겟 좌표 수집
+            var targets = new List<(int gx, int gy)>(polyomino.cells.Count);
+            foreach (var c in polyomino.cells)
             {
-                if (!InBounds(c.X, c.Y)) return false;
-                if (((rows[c.Y] >> c.X) & 1UL) != 0UL) return false;
-            }
-            return true;
-        }
-
-        public bool TryPlace(Polyomino poly, int stateIndex, int ax, int ay, out Placement placement)
-        {
-            placement = default;
-            if (!Fits(poly, stateIndex, ax, ay)) return false;
-
-            var list = new List<(int x, int y)>();
-            foreach (var c in poly.WorldCells(stateIndex, ax, ay))
-            {
-                rows[c.Y] |= (1UL << c.X);
-                list.Add((c.X, c.Y));
-            }
-            placement = new Placement(poly, stateIndex, ax, ay, list.ToArray());
-            return true;
-        }
-
-        public void Remove(in Placement placement)
-        {
-            if (!placement.IsValid) return;
-            foreach (var (x, y) in placement.Cells)
-                if ((uint)x < W && (uint)y < H)
-                    rows[y] &= ~(1UL << x);
-        }
-
-        public bool TryGetPlacementAt(int sx, int sy, out Placement placement)
-        {
-            placement = default;
-            if (!InBounds(sx, sy) || !IsFilled(sx, sy)) return false;
-
-            var stack = new Stack<(int x, int y)>();
-            var visited = new HashSet<(int, int)>();
-            var cells = new List<(int x, int y)>();
-
-            stack.Push((sx, sy));
-            visited.Add((sx, sy));
-
-            while (stack.Count > 0)
-            {
-                var (x, y) = stack.Pop();
-                cells.Add((x, y));
-
-                var neigh = new (int x, int y)[] { (x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1) };
-                foreach (var (nx, ny) in neigh)
-                    if ((uint)nx < W && (uint)ny < H && IsFilled(nx, ny) && visited.Add((nx, ny)))
-                        stack.Push((nx, ny));
+                int gx = x + c.x, gy = y + c.y;
+                if (!isOnBoard(gx, gy)) return;
+                targets.Add((gx, gy));
             }
 
-            int minX = int.MaxValue, minY = int.MaxValue;
-            foreach (var (x, y) in cells) { if (x < minX) minX = x; if (y < minY) minY = y; }
-
-            placement = new Placement(null, -1, minX, minY, cells.ToArray());
-            return true;
-        }
-
-        public Polyomino? getPolyomino(in Placement place)
-        {
-            if (place.Poly != null) return place.Poly;
-            if (!place.IsValid) return null;
-
-            var norm = Normalize(place.Cells);
-            foreach (var poly in _catalog)
+            // 기존 배치와 겹침 검사
+            foreach (var kv in polyominos)
             {
-                var states = poly.States;
-                for (int i = 0; i < states.Count; i++)
+                var pivot = kv.Key;
+                var other = kv.Value;
+                if (other == null || other.cells == null) continue;
+
+                foreach (var oc in other.cells)
                 {
-                    var s = states[i];
-                    if (s.Cells.Length != norm.Length) continue;
-                    if (SameShape(s.Cells, norm)) return poly;
+                    int ogx = pivot.x + oc.x, ogy = pivot.y + oc.y;
+                    for (int i = 0; i < targets.Count; i++)
+                        if (targets[i].gx == ogx && targets[i].gy == ogy) return;
                 }
+            }
+
+            // 통과하면 등록하고 시각 배치
+            polyominos[(x, y)] = polyomino;
+            polyomino.display(x, y, cellPos2Real);
+        }
+
+        // 전역 좌표에 놓인 폴리오미노 조회
+        public (int x, int y, Polyomino p)? getPolyomino(int x, int y)
+        {
+            foreach (var kv in polyominos)
+            {
+                var pivot = kv.Key;
+                var p = kv.Value;
+                int lx = x - pivot.x, ly = y - pivot.y;
+                if (p != null && p.isPosCell(lx, ly))
+                    return (pivot.x, pivot.y, p);
             }
             return null;
         }
 
-        private static bool CellsFit(List<(int x, int y)> cells)
+        public void openBoard()
         {
-            foreach (var (x, y) in cells)
+            if (BackgroundUIObject) BackgroundUIObject.SetActive(true);
+            foreach (var kv in polyominos)
             {
-                if ((uint)x >= 64) return false;
-                if (((uint)y) >= int.MaxValue) return false;
+                var pivot = kv.Key; var p = kv.Value;
+                if (p != null) p.display(pivot.x, pivot.y, cellPos2Real);
             }
-            return true;
         }
 
-        private void Fill(IEnumerable<(int x, int y)> cells)
+        public void closeBoard()
         {
-            foreach (var (x, y) in cells)
-                if ((uint)x < W && (uint)y < H)
-                    rows[y] |= (1UL << x);
+            foreach (var kv in polyominos)
+            {
+                var p = kv.Value;
+                if (p != null) p.destroy(); // 비활성화
+            }
+            if (BackgroundUIObject) BackgroundUIObject.SetActive(false);
         }
 
-        private static Cell[] Normalize((int x, int y)[] cells)
+        // 프리뷰 시작
+        public void BeginPreview(Polyomino poly)
         {
-            int minX = int.MaxValue, minY = int.MaxValue;
-            for (int i = 0; i < cells.Length; i++)
-            {
-                var (x, y) = cells[i];
-                if (x < minX) minX = x;
-                if (y < minY) minY = y;
-            }
-
-            var n = new Cell[cells.Length];
-            for (int i = 0; i < cells.Length; i++)
-            {
-                var (x, y) = cells[i];
-                n[i] = new Cell(x - minX, y - minY);
-            }
-
-            Array.Sort(n, (a, b) => a.Y != b.Y ? a.Y - b.Y : a.X - b.X);
-            return n;
+            if (selected != null) selected.destroy();
+            selected = poly;
+            hasPreview = false;
         }
 
-        private static bool SameShape(Tiling.Cell[] stateCells, Tiling.Cell[] norm)
+        // 스크린 마우스를 y=0 평면으로 사영
+        protected virtual bool TryScreenToBoardPlane(Vector3 mouseScreen, out Vector3 hitWorld)
         {
-            if (stateCells.Length != norm.Length) return false;
-            for (int i = 0; i < norm.Length; i++)
-                if (stateCells[i].X != norm[i].X || stateCells[i].Y != norm[i].Y) return false;
-            return true;
+            hitWorld = default;
+            var cam = Camera.main;
+            if (!cam) return false;
+
+            var ray = cam.ScreenPointToRay(mouseScreen);
+            var plane = new Plane(Vector3.up, 0f);
+            if (plane.Raycast(ray, out float enter))
+            {
+                hitWorld = ray.GetPoint(enter);
+                return true;
+            }
+            return false;
+        }
+
+        // 가장 가까운 격자 좌표 찾기
+        private bool TryFindSnapCell(Vector3 world, out int gx, out int gy)
+        {
+            float best = float.MaxValue; int bx = 0, by = 0; bool found = false;
+            for (int x = -searchRadius; x <= searchRadius; x++)
+            for (int y = -searchRadius; y <= searchRadius; y++)
+            {
+                if (limitPreviewToBoard && !isOnBoard(x, y)) continue;
+                float d = (cellPos2Real(x, y) - world).sqrMagnitude;
+                if (d < best) { best = d; bx = x; by = y; found = true; }
+            }
+            gx = bx; gy = by; return found;
+        }
+
+        private void Update()
+        {
+            if (selected == null) return;
+
+            if (TryScreenToBoardPlane(Input.mousePosition, out var mouseWorld)
+                && TryFindSnapCell(mouseWorld, out previewX, out previewY))
+            {
+                selected.display(previewX, previewY, cellPos2Real);
+                hasPreview = true;
+            }
+
+            if (hasPreview && Input.GetKeyDown(KeyCode.R))
+            {
+                selected.rotate();
+                selected.display(previewX, previewY, cellPos2Real);
+            }
+
+            if (hasPreview && Input.GetMouseButtonDown(0))
+            {
+                tryAddPolyomino(selected, previewX, previewY);
+                selected = null;
+                hasPreview = false;
+            }
+
+            if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape))
+            {
+                if (selected != null) selected.destroy();
+                selected = null; hasPreview = false;
+            }
         }
     }
 }
