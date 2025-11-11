@@ -5,31 +5,39 @@ using UnityEngine;
 
 namespace PlayerSystem.Tiling
 {
-    public abstract class Board : MonoBehaviour
+    public abstract class Board : Trigger
     {
-        public GameObject BackgroundUIObject;
+        public GameObject BackgroundUIObject { get; set; }
         protected List<(int x, int y, Polyomino p)> polyominos = new();
 
         // 프리뷰 상태
-        [SerializeField] private Polyomino selected;
-        [SerializeField] private int searchRadius = 8;
-        [SerializeField] private bool limitPreviewToBoard = true;
+        [SerializeField] public Polyomino selected;
         private int previewX, previewY;
         private bool hasPreview;
 
         protected abstract Vector3 cellPos2Real(int x, int y);
+
+        public IGetBoardItem getBoardItem { get; set; }
+
+        public bool show { get; set; }
+
+
+        private void Start()
+        {
+            BackgroundUIObject=this.gameObject;
+        }
 
 
         public void click(int x, int y)
         {
             if (this.selected == null)
             {
-                var poly=this.popPolyomino(x, y);
+                var poly = this.popPolyomino(x, y);
                 if (poly != null)
                 {
                     this.selected = poly.Value.p;
-                    Debug.Log(this.selected);
-                    Debug.Log(this.polyominos.Count);
+                    //Debug.Log(this.selected);
+                    //Debug.Log(this.polyominos.Count);
                 }
             }
             else
@@ -38,7 +46,7 @@ namespace PlayerSystem.Tiling
                     this.selected = null;
             }
         }
-        
+
 
         // 기본 6x6
         protected virtual bool isOnBoard(int x, int y)
@@ -71,7 +79,8 @@ namespace PlayerSystem.Tiling
                 {
                     int ogx = pivot.x + oc.x, ogy = pivot.y + oc.y;
                     for (int i = 0; i < targets.Count; i++)
-                        if (targets[i].gx == ogx && targets[i].gy == ogy) return false;
+                        if (targets[i].gx == ogx && targets[i].gy == ogy)
+                            return false;
                 }
             }
 
@@ -84,7 +93,7 @@ namespace PlayerSystem.Tiling
         // 전역 좌표에 놓인 폴리오미노 조회
         public (int x, int y, Polyomino p)? popPolyomino(int x, int y)
         {
-            Debug.Log(this.polyominos.Count);
+            //Debug.Log(this.polyominos.Count);
             foreach (var kv in polyominos)
             {
                 var pivot = (kv.x, kv.y);
@@ -92,11 +101,12 @@ namespace PlayerSystem.Tiling
                 int lx = x - pivot.x, ly = y - pivot.y;
                 if (p != null && p.isPosCell(lx, ly))
                 {
-                    Debug.Log(p.cells.ToString());
+                    //Debug.Log(p.cells.ToString());
                     polyominos.Remove(kv);
                     return (pivot.x, pivot.y, p);
                 }
             }
+
             return null;
         }
 
@@ -105,7 +115,8 @@ namespace PlayerSystem.Tiling
             if (BackgroundUIObject) BackgroundUIObject.SetActive(true);
             foreach (var kv in polyominos)
             {
-                var pivot = (kv.x, kv.y); var p = kv.p;
+                var pivot = (kv.x, kv.y);
+                var p = kv.p;
                 if (p != null) p.display(pivot.x, pivot.y, cellPos2Real);
             }
         }
@@ -117,6 +128,7 @@ namespace PlayerSystem.Tiling
                 var p = kv.p;
                 if (p != null) p.destroy(); // 비활성화
             }
+
             if (BackgroundUIObject) BackgroundUIObject.SetActive(false);
         }
 
@@ -142,53 +154,54 @@ namespace PlayerSystem.Tiling
                 hitWorld = ray.GetPoint(enter);
                 return true;
             }
-            return false;
-        }
 
-        // 가장 가까운 격자 좌표 찾기
-        private bool TryFindSnapCell(Vector3 world, out int gx, out int gy)
-        {
-            float best = float.MaxValue; int bx = 0, by = 0; bool found = false;
-            for (int x = -searchRadius; x <= searchRadius; x++)
-            for (int y = -searchRadius; y <= searchRadius; y++)
-            {
-                if (limitPreviewToBoard && !isOnBoard(x, y)) continue;
-                float d = (cellPos2Real(x, y) - world).sqrMagnitude;
-                if (d < best) { best = d; bx = x; by = y; found = true; }
-            }
-            gx = bx; gy = by; return found;
+            return false;
         }
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.R)) this.selected?.rotate();
-            if (this.selected == null) return;
-
-            var mouse = Input.mousePosition;
-
-            // 1) UI Canvas 모드
-            var canvas = GetComponentInParent<Canvas>();
-            var rt = this.selected.GetComponent<RectTransform>();
-            if (rt != null && canvas != null && canvas.renderMode != RenderMode.WorldSpace)
+            if (show)
             {
-                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                        canvas.transform as RectTransform,
-                        mouse,
-                        canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera,
-                        out var local))
+                this.BackgroundUIObject.SetActive(true);
+                foreach (var poly in polyominos) poly.p.gameObject.SetActive(true);
+                if (Input.GetKeyDown(KeyCode.R)) this.selected?.rotate();
+                if (this.selected == null) return;
+
+                var mouse = Input.mousePosition;
+
+                // 1) UI Canvas 모드
+                var canvas = GetComponentInParent<Canvas>();
+                var rt = this.selected.GetComponent<RectTransform>();
+                if (rt != null && canvas != null && canvas.renderMode != RenderMode.WorldSpace)
                 {
-                    rt.anchoredPosition = local; // 마우스 그대로 따라감
-                }
-                return;
-            }
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                            canvas.transform as RectTransform,
+                            mouse,
+                            canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera,
+                            out var local))
+                    {
+                        rt.anchoredPosition = local; // 마우스 그대로 따라감
+                    }
 
-            // 2) 월드 스페이스 모드
-            if (TryScreenToBoardPlane(mouse, out var hitWorld))
+                    return;
+                }
+
+                // 2) 월드 스페이스 모드
+                if (TryScreenToBoardPlane(mouse, out var hitWorld))
+                {
+                    this.selected.transform.position = hitWorld; // 보드 평면 위로 따라감
+                }
+            }
+            else
             {
-                this.selected.transform.position = hitWorld; // 보드 평면 위로 따라감
+                if (this.selected != null)
+                {
+                    this.getBoardItem.somethingSelected(this.selected);
+                    this.selected = null;
+                }
+                foreach (var poly in polyominos) poly.p.Hide();
+                this.BackgroundUIObject.SetActive(false);
             }
         }
-
-
     }
 }

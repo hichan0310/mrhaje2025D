@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using EntitySystem;
 using UnityEngine;
 
 namespace PlayerSystem.Tiling
 {
     // 이 컴포넌트가 붙은 GameObject 하나가 폴리오미노 전체 모양의 렌더러다.
     // 모델의 피벗이 셀 (0,0) 중심에 오도록 제작돼 있다고 가정한다.
-    public abstract class Polyomino : MonoBehaviour
+    public abstract class Polyomino : MonoBehaviour, ITriggerEffect
     {
         [Tooltip("피벗(0,0)을 기준으로 차지하는 셀 좌표들")] public List<Cell> cells;
 
@@ -16,6 +17,12 @@ namespace PlayerSystem.Tiling
         private void Start()
         {
             this.rt = this.GetComponent<RectTransform>();
+        }
+
+        public void Hide()
+        {
+            // Debug.Log("Asdfasdfasdf");
+            this.gameObject.SetActive(false);
         }
 
 
@@ -29,7 +36,7 @@ namespace PlayerSystem.Tiling
             // 피벗 셀의 월드 위치에 배치 후 오프셋 적용
             var pivotWorld = pos2real(pivotX, pivotY);
             //if (!gameObject.activeSelf) gameObject.SetActive(true);
-            Debug.Log(pivotWorld);
+            //Debug.Log(pivotWorld);
             // transform.position = pivotWorld;
             this.rt.anchoredPosition = pivotWorld;
         }
@@ -90,5 +97,7 @@ namespace PlayerSystem.Tiling
 
             display(bestX, bestY, pos2real);
         }
+
+        public abstract void trigger(Entity entity, float power);
     }
 }

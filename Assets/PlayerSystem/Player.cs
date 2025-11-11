@@ -7,6 +7,7 @@ using GameBackend;
 using PlayerSystem.Effects;
 using PlayerSystem.Effects.EnergyGun;
 using PlayerSystem.Skills.ElectricShock;
+using PlayerSystem.Tiling;
 using PlayerSystem.Weapons;
 using UnityEngine;
 
@@ -61,6 +62,9 @@ namespace PlayerSystem
         [SerializeField] private KeyCode skillKey = KeyCode.K;
         [SerializeField] private KeyCode ultimateKey = KeyCode.L;
         [SerializeField] private KeyCode interactKey = KeyCode.E;
+        [SerializeField] private KeyCode inventoryKey = KeyCode.I;
+        [SerializeField] private Inventory inventory;
+        
         [SerializeField] private KeyCode dashKey = KeyCode.LeftShift;
         [SerializeField] private KeyCode dodgeKey = KeyCode.LeftControl;
 
@@ -277,6 +281,12 @@ namespace PlayerSystem
             if (Input.GetKeyDown(dodgeKey))
             {
                 TryDodge();
+            }
+
+            if (Input.GetKeyUp(inventoryKey))
+            {
+                inventory.gameObject.SetActive(true);
+                inventory.show = true;
             }
         }
 

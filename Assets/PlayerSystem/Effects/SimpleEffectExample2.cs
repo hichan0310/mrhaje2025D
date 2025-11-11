@@ -10,7 +10,7 @@ namespace PlayerSystem.Effects
         public Example2FireBall fireball;
         private AtkTagSet atkTagSet = new AtkTagSet().Add(AtkTags.fireball);
 
-        public void trigger(Entity entity, float power)
+        public override void trigger(Entity entity, float power)
         {
             var f=Instantiate(fireball);
             // 위치, 타겟 방향, 개수 등은 귀찮으니 나중에 설정하자
