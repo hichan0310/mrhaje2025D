@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using PlayerSystem;
+using PlayerSystem.Tiling;
 using InventoryItem = PlayerSystem.PlayerMemoryBinder.MemoryPieceInventoryItem;
 
 namespace UI
@@ -42,6 +43,8 @@ namespace UI
         [SerializeField] private MemoryPieceInventoryItemView inventoryItemPrefab = null;
         [SerializeField] private Button closeButton = null;
         [SerializeField] private TMP_Text selectedPieceLabel = null;
+        [SerializeField] private Button rotateClockwiseButton = null;
+        [SerializeField] private Button rotateCounterClockwiseButton = null;
 
         [Header("Visual Settings")]
         [SerializeField] private Color emptyCellColor = new Color(0.15f, 0.15f, 0.15f, 0.8f);
@@ -65,6 +68,7 @@ namespace UI
 
         private PlayerMemoryBinder boundBinder = null;
         private InventoryItem? selectedItem = null;
+        private int selectedRotationSteps = 0;
         private ActionTriggerType displayedTrigger = ActionTriggerType.None;
 
         private void Awake()
@@ -73,6 +77,16 @@ namespace UI
             if (closeButton)
             {
                 closeButton.onClick.AddListener(Close);
+            }
+
+            if (rotateClockwiseButton)
+            {
+                rotateClockwiseButton.onClick.AddListener(RotateSelectionClockwise);
+            }
+
+            if (rotateCounterClockwiseButton)
+            {
+                rotateCounterClockwiseButton.onClick.AddListener(RotateSelectionCounterClockwise);
             }
 
             ConfigureScrollRect();
@@ -87,7 +101,30 @@ namespace UI
                 closeButton.onClick.RemoveListener(Close);
             }
 
+            if (rotateClockwiseButton)
+            {
+                rotateClockwiseButton.onClick.RemoveListener(RotateSelectionClockwise);
+            }
+
+            if (rotateCounterClockwiseButton)
+            {
+                rotateCounterClockwiseButton.onClick.RemoveListener(RotateSelectionCounterClockwise);
+            }
+
             DetachBinder();
+        }
+
+        private void Update()
+        {
+            if (!selectedItem.HasValue || !IsOverlayInteractable())
+            {
+                return;
+            }
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                RotateSelectedItem(1);
+            }
         }
 
         public void Open(PlayerMemoryBinder binder)
@@ -187,6 +224,7 @@ private void ConfigureBoardTabsLayout()
             boundBinder.ActiveBoardChanged -= HandleActiveBoardChanged;
             boundBinder = null;
             selectedItem = null;
+            selectedRotationSteps = 0;
             displayedTrigger = ActionTriggerType.None;
             UpdateSelectedPieceLabel();
             ClearBoardTabs();
@@ -407,6 +445,7 @@ private void ConfigureBoardTabsLayout()
                     view.gameObject.SetActive(false);
                 }
                 selectedItem = null;
+                selectedRotationSteps = 0;
                 UpdateSelectedPieceLabel();
                 return;
             }
@@ -422,6 +461,7 @@ private void ConfigureBoardTabsLayout()
             if (selectedItem.HasValue && !grouped.Any(g => ItemsEqual(g.Item, selectedItem.Value)))
             {
                 selectedItem = null;
+                selectedRotationSteps = 0;
             }
 
             EnsureInventoryViewCount(grouped.Count);
@@ -531,10 +571,12 @@ private void ConfigureBoardTabsLayout()
             if (selectedItem.HasValue && ItemsEqual(selectedItem.Value, item))
             {
                 selectedItem = null;
+                selectedRotationSteps = 0;
             }
             else
             {
                 selectedItem = item;
+                selectedRotationSteps = 0;
             }
 
             RefreshInventory();
@@ -563,13 +605,40 @@ private void ConfigureBoardTabsLayout()
                 return;
             }
 
+            if (!CanPlaceSelectedItemAt(cell.Coordinates))
+            {
+                return;
+            }
+
             var item = selectedItem.Value;
-            bool placed = boundBinder.TryPlaceInventoryPiece(displayedTrigger, item, cell.Coordinates, false);
+            bool placed = boundBinder.TryPlaceInventoryPiece(displayedTrigger, item, cell.Coordinates, false,
+                selectedRotationSteps);
             if (placed && !boundBinder.HasInventoryPiece(item))
             {
                 selectedItem = null;
+                selectedRotationSteps = 0;
                 RefreshInventory();
             }
+        }
+
+        private bool CanPlaceSelectedItemAt(Vector2Int origin)
+        {
+            if (!boundBinder || !selectedItem.HasValue)
+            {
+                return false;
+            }
+
+            var item = selectedItem.Value;
+            if (!item.Asset)
+            {
+                return false;
+            }
+
+            ActionTriggerType trigger = displayedTrigger == ActionTriggerType.None
+                ? boundBinder.ActiveTrigger
+                : displayedTrigger;
+
+            return boundBinder.CanPlacePiece(trigger, item.Asset, origin, selectedRotationSteps);
         }
 
         private static void ResetChildRectForLayout(RectTransform rect)
@@ -714,7 +783,11 @@ private void ConfigureBoardTabsLayout()
                 string multiplierText = Mathf.Approximately(item.PowerMultiplier, 1f)
                     ? string.Empty
                     : $" ×{item.PowerMultiplier:0.##}";
-                selectedPieceLabel.text = $"선택된 메모리 ({boardLabel}): {item.Asset.DisplayName}{multiplierText}";
+                string rotationText = selectedRotationSteps == 0
+                    ? string.Empty
+                    : $" · 회전 {selectedRotationSteps * 90}°";
+                selectedPieceLabel.text =
+                    $"선택된 메모리 ({boardLabel}): {item.Asset.DisplayName}{multiplierText}{rotationText}";
             }
             else
             {
@@ -730,6 +803,42 @@ private void ConfigureBoardTabsLayout()
             }
 
             return Mathf.Abs(a.PowerMultiplier - b.PowerMultiplier) < 0.001f;
+        }
+
+        private bool IsOverlayInteractable()
+        {
+            if (!isActiveAndEnabled || !gameObject.activeInHierarchy)
+            {
+                return false;
+            }
+
+            if (canvasGroup && (!canvasGroup.interactable || canvasGroup.alpha <= 0f))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private void RotateSelectionClockwise()
+        {
+            RotateSelectedItem(1);
+        }
+
+        private void RotateSelectionCounterClockwise()
+        {
+            RotateSelectedItem(-1);
+        }
+
+        private void RotateSelectedItem(int deltaSteps)
+        {
+            if (!selectedItem.HasValue)
+            {
+                return;
+            }
+
+            selectedRotationSteps = MemoryPieceTilingUtility.NormalizeRotationSteps(selectedRotationSteps + deltaSteps);
+            UpdateSelectedPieceLabel();
         }
     }
 }

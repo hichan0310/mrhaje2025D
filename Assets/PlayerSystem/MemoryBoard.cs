@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EntitySystem;
 using PlayerSystem.Effects;
+using PlayerSystem.Tiling;
 using UnityEngine;
 
 namespace PlayerSystem
@@ -17,6 +18,7 @@ namespace PlayerSystem
             [SerializeField] internal Vector2Int origin = Vector2Int.zero;
             [SerializeField] [Range(0.1f, 10f)] internal float powerMultiplier = 1f;
             [SerializeField] internal bool locked = false;
+            [SerializeField] [Range(0, 3)] internal int rotationSteps = 0;
         }
 
         [Serializable]
@@ -32,20 +34,22 @@ namespace PlayerSystem
             public Vector2Int Origin { get; }
             public bool Locked { get; }
             public float PowerMultiplier { get; }
+            public IReadOnlyList<Cell> LocalCells { get; }
             public HashSet<Vector2Int> OccupiedCells { get; }
             public float CooldownRemaining { get; private set; }
+            public int RotationSteps { get; }
 
-            public MemoryPieceRuntime(MemoryPieceAsset asset, Vector2Int origin, float multiplier, bool locked)
+            public MemoryPieceRuntime(MemoryPieceAsset asset, Vector2Int origin, float multiplier, bool locked,
+                int rotationSteps)
             {
                 Asset = asset;
                 Origin = origin;
                 Locked = locked;
                 PowerMultiplier = multiplier;
+                RotationSteps = MemoryPieceTilingUtility.NormalizeRotationSteps(rotationSteps);
+                LocalCells = asset ? asset.GetTilingCells(RotationSteps) : Array.Empty<Cell>();
                 OccupiedCells = new HashSet<Vector2Int>();
-                foreach (var offset in asset.ShapeCells)
-                {
-                    OccupiedCells.Add(origin + offset);
-                }
+                MemoryPieceTilingUtility.CopyWorldCells(LocalCells, origin, OccupiedCells);
 
                 CooldownRemaining = 0f;
             }
@@ -69,16 +73,15 @@ namespace PlayerSystem
             public MemoryReinforcementZoneAsset Asset { get; }
             public HashSet<Vector2Int> OccupiedCells { get; }
             public Vector2Int Origin { get; }
+            public IReadOnlyList<Cell> LocalCells { get; }
 
             public MemoryReinforcementRuntime(MemoryReinforcementZoneAsset asset, Vector2Int origin)
             {
                 Asset = asset;
                 Origin = origin;
+                LocalCells = asset ? asset.GetTilingCells() : Array.Empty<Cell>();
                 OccupiedCells = new HashSet<Vector2Int>();
-                foreach (var offset in asset.ShapeCells)
-                {
-                    OccupiedCells.Add(origin + offset);
-                }
+                MemoryPieceTilingUtility.CopyWorldCells(LocalCells, origin, OccupiedCells);
             }
         }
 
@@ -88,6 +91,7 @@ namespace PlayerSystem
             public Vector2Int Origin { get; }
             public float PowerMultiplier { get; }
             public bool Locked { get; }
+            public int RotationSteps { get; }
             public IReadOnlyList<Vector2Int> OccupiedCells => occupiedCells;
 
             private readonly Vector2Int[] occupiedCells;
@@ -97,6 +101,7 @@ namespace PlayerSystem
                 Vector2Int origin,
                 float powerMultiplier,
                 bool locked,
+                int rotationSteps,
                 IEnumerable<Vector2Int> occupied)
             {
                 if (asset == null)
@@ -113,6 +118,7 @@ namespace PlayerSystem
                 Origin = origin;
                 PowerMultiplier = powerMultiplier;
                 Locked = locked;
+                RotationSteps = MemoryPieceTilingUtility.NormalizeRotationSteps(rotationSteps);
                 occupiedCells = occupied.ToArray();
             }
         }
@@ -158,6 +164,7 @@ namespace PlayerSystem
         private readonly Dictionary<MemoryPieceAsset, MemoryPieceRuntime> runtimeLookup = new();
         private readonly List<MemoryPieceRuntime> statBuffPieces = new();
         private readonly List<MemoryPieceRuntime> nonBuffPieces = new();
+        private readonly List<Vector2Int> placementCellBuffer = new();
         private ActionTriggerType boardTrigger = ActionTriggerType.None;
 
         public event Action<MemoryPieceAsset, float>? OnPieceTriggered;
@@ -178,7 +185,7 @@ namespace PlayerSystem
             foreach (var runtime in runtimePieces)
             {
                 buffer.Add(new MemoryPiecePlacementInfo(runtime.Asset, runtime.Origin, runtime.PowerMultiplier,
-                    runtime.Locked, runtime.OccupiedCells));
+                    runtime.Locked, runtime.RotationSteps, runtime.OccupiedCells));
             }
         }
 
@@ -187,7 +194,7 @@ namespace PlayerSystem
             if (asset && runtimeLookup.TryGetValue(asset, out var runtime))
             {
                 info = new MemoryPiecePlacementInfo(runtime.Asset, runtime.Origin, runtime.PowerMultiplier,
-                    runtime.Locked, runtime.OccupiedCells);
+                    runtime.Locked, runtime.RotationSteps, runtime.OccupiedCells);
                 return true;
             }
 
@@ -230,7 +237,7 @@ namespace PlayerSystem
             {
                 if (!placement.piece) continue;
                 TryAddPieceInternal(placement.piece, placement.origin, placement.powerMultiplier, placement.locked,
-                    true);
+                    placement.rotationSteps, true);
             }
 
             foreach (var reinforcement in reinforcementZones)
@@ -287,18 +294,26 @@ namespace PlayerSystem
             }
         }
 
-        public bool TryAddPiece(MemoryPieceAsset asset, Vector2Int origin, float multiplier = 1f, bool locked = false)
+        public bool CanPlacePiece(MemoryPieceAsset asset, Vector2Int origin, int rotationSteps = 0)
         {
-            return TryAddPieceInternal(asset, origin, multiplier, locked, false);
+            return IsPlacementValid(asset, origin, rotationSteps);
+        }
+
+        public bool TryAddPiece(MemoryPieceAsset asset, Vector2Int origin, float multiplier = 1f, bool locked = false,
+            int rotationSteps = 0)
+        {
+            return TryAddPieceInternal(asset, origin, multiplier, locked, rotationSteps, false);
         }
 
         private bool TryAddPieceInternal(MemoryPieceAsset asset, Vector2Int origin, float multiplier, bool locked,
-            bool initializing)
+            int rotationSteps, bool initializing)
         {
             if (!asset)
             {
                 return false;
             }
+
+            rotationSteps = MemoryPieceTilingUtility.NormalizeRotationSteps(rotationSteps);
 
             if (!IsTriggerCompatible(asset))
             {
@@ -310,12 +325,12 @@ namespace PlayerSystem
                 return false;
             }
 
-            if (!IsPlacementValid(asset, origin))
+            if (!IsPlacementValid(asset, origin, rotationSteps))
             {
                 return false;
             }
 
-            var runtime = new MemoryPieceRuntime(asset, origin, multiplier, locked);
+            var runtime = new MemoryPieceRuntime(asset, origin, multiplier, locked, rotationSteps);
             runtimePieces.Add(runtime);
             runtimeLookup[asset] = runtime;
 
@@ -327,6 +342,7 @@ namespace PlayerSystem
                     origin = origin,
                     powerMultiplier = multiplier,
                     locked = locked,
+                    rotationSteps = rotationSteps,
                 });
                 OnPieceAdded?.Invoke(asset);
             }
@@ -491,16 +507,22 @@ namespace PlayerSystem
             OnPieceTriggered?.Invoke(runtime.Asset, power);
         }
 
-        private bool IsPlacementValid(MemoryPieceAsset asset, Vector2Int origin)
+        private bool IsPlacementValid(MemoryPieceAsset asset, Vector2Int origin, int rotationSteps)
         {
-            foreach (var offset in asset.ShapeCells)
+            var localCells = asset?.GetTilingCells(rotationSteps);
+            if (localCells == null || localCells.Count == 0)
             {
-                Vector2Int cell = origin + offset;
-                if (!IsInsideBoard(cell))
-                {
-                    return false;
-                }
+                return false;
+            }
 
+            if (!MemoryPieceTilingUtility.FitsInsideBoard(localCells, origin, gridSize))
+            {
+                return false;
+            }
+
+            MemoryPieceTilingUtility.CopyWorldCells(localCells, origin, placementCellBuffer);
+            foreach (var cell in placementCellBuffer)
+            {
                 if (runtimePieces.Any(other => other.OccupiedCells.Contains(cell)))
                 {
                     return false;
@@ -508,11 +530,6 @@ namespace PlayerSystem
             }
 
             return true;
-        }
-
-        private bool IsInsideBoard(Vector2Int cell)
-        {
-            return cell.x >= 0 && cell.y >= 0 && cell.x < gridSize.x && cell.y < gridSize.y;
         }
 
         public void recieveEvent(EntitySystem.Events.EventArgs eventArgs)

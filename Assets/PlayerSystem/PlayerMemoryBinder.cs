@@ -162,7 +162,8 @@ namespace PlayerSystem
             pendingContextCompletion = context;
         }
 
-        public bool TryPlaceInventoryPiece(ActionTriggerType trigger, MemoryPieceInventoryItem item, Vector2Int origin, bool locked = false)
+        public bool TryPlaceInventoryPiece(ActionTriggerType trigger, MemoryPieceInventoryItem item, Vector2Int origin,
+            bool locked = false, int rotationSteps = 0)
         {
             trigger = NormalizeTrigger(trigger);
             if (!boardLookup.TryGetValue(trigger, out var board))
@@ -187,7 +188,7 @@ namespace PlayerSystem
             }
 
             var entry = inventoryPieces[index];
-            if (!board.TryAddPiece(entry.Asset, origin, entry.PowerMultiplier, locked))
+            if (!board.TryAddPiece(entry.Asset, origin, entry.PowerMultiplier, locked, rotationSteps))
             {
                 return false;
             }
@@ -197,9 +198,27 @@ namespace PlayerSystem
             return true;
         }
 
-        public bool TryPlaceInventoryPiece(MemoryPieceInventoryItem item, Vector2Int origin, bool locked = false)
+        public bool CanPlacePiece(ActionTriggerType trigger, MemoryPieceAsset asset, Vector2Int origin,
+            int rotationSteps = 0)
         {
-            return TryPlaceInventoryPiece(activeTrigger, item, origin, locked);
+            trigger = NormalizeTrigger(trigger);
+            if (!asset || !boardLookup.TryGetValue(trigger, out var board))
+            {
+                return false;
+            }
+
+            return board.CanPlacePiece(asset, origin, rotationSteps);
+        }
+
+        public bool CanPlacePiece(MemoryPieceAsset asset, Vector2Int origin, int rotationSteps = 0)
+        {
+            return CanPlacePiece(activeTrigger, asset, origin, rotationSteps);
+        }
+
+        public bool TryPlaceInventoryPiece(MemoryPieceInventoryItem item, Vector2Int origin, bool locked = false,
+            int rotationSteps = 0)
+        {
+            return TryPlaceInventoryPiece(activeTrigger, item, origin, locked, rotationSteps);
         }
 
         public bool RemovePiece(ActionTriggerType trigger, MemoryPieceAsset asset)
