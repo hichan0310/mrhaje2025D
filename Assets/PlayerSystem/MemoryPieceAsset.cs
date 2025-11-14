@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 using PlayerSystem.Effects;
+using PlayerSystem.Tiling;
 
 namespace PlayerSystem
 {
@@ -21,6 +23,7 @@ namespace PlayerSystem
         [TextArea]
         [SerializeField] private string description = string.Empty;
         [SerializeField] private List<Vector2Int> shapeCells = new() { Vector2Int.zero };
+        [NonSerialized] private Cell[][] cachedRotationCells = null;
 
         public string DisplayName => displayName;
         public ActionTriggerType AllowedTriggers => allowedTriggers == ActionTriggerType.None ? ActionTriggerType.All : allowedTriggers;
@@ -42,5 +45,57 @@ namespace PlayerSystem
         public Sprite Icon => icon;
         public string Description => description;
         public IReadOnlyList<Vector2Int> ShapeCells => shapeCells;
+
+        internal IReadOnlyList<Cell> GetTilingCells(int rotationSteps = 0)
+        {
+            EnsureRotationCache();
+            if (cachedRotationCells == null || cachedRotationCells.Length == 0)
+            {
+                return Array.Empty<Cell>();
+            }
+
+            int index = MemoryPieceTilingUtility.NormalizeRotationSteps(rotationSteps);
+            return cachedRotationCells[index] ?? Array.Empty<Cell>();
+        }
+
+        private void OnEnable()
+        {
+            cachedRotationCells = null;
+        }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            cachedRotationCells = null;
+        }
+#endif
+
+        private void EnsureRotationCache()
+        {
+            if (cachedRotationCells != null && cachedRotationCells.Length == 4 &&
+                cachedRotationCells[0] != null && cachedRotationCells[0].Length == shapeCells.Count)
+            {
+                return;
+            }
+
+            if (shapeCells == null || shapeCells.Count == 0)
+            {
+                cachedRotationCells = new[]
+                {
+                    Array.Empty<Cell>(),
+                    Array.Empty<Cell>(),
+                    Array.Empty<Cell>(),
+                    Array.Empty<Cell>(),
+                };
+                return;
+            }
+
+            cachedRotationCells = new Cell[4][];
+            cachedRotationCells[0] = MemoryPieceTilingUtility.CreateShapeSnapshot(shapeCells);
+            for (int i = 1; i < 4; i++)
+            {
+                cachedRotationCells[i] = MemoryPieceTilingUtility.CreateRotatedSnapshot(cachedRotationCells[0], i);
+            }
+        }
     }
 }
