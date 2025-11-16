@@ -39,8 +39,9 @@ namespace EntitySystem.StatSystem
         public int jumpCount { get; set; }
         public float jumpPower { get; set; }
         public float airSpeed { get; set; }
-        public float dodgeLength { get; set; }
+        public float dodgeSpeed { get; set; }
         public float dodgeTime { get; set; }
+        public float dodgeCooldown { get; set; }
         public float skillCooldownDecrease { get; set; }
         
         public EntityStat(Entity entity, int hp, int baseAtk, int baseDef)
@@ -68,8 +69,9 @@ namespace EntitySystem.StatSystem
             jumpCount = 1;
             jumpPower = 10f;
             airSpeed = 10f;
-            dodgeLength = 1f;
+            dodgeSpeed = 10f;
             dodgeTime = 0.3f;
+            dodgeCooldown = 0.7f;
             
             projectileSpeed = 10f;
             projectileAmount = 1f;
@@ -103,8 +105,9 @@ namespace EntitySystem.StatSystem
             this.jumpCount = copy.jumpCount;
             this.jumpPower = copy.jumpPower;
             this.airSpeed = copy.airSpeed;
-            this.dodgeLength = copy.dodgeLength;
+            this.dodgeSpeed = copy.dodgeSpeed;
             this.dodgeTime = copy.dodgeTime;
+            this.dodgeCooldown = copy.dodgeCooldown;
             
             this.projectileSpeed = copy.projectileSpeed;
             this.projectileAmount = copy.projectileAmount;

@@ -1,4 +1,5 @@
-﻿using EntitySystem;
+﻿using System;
+using EntitySystem;
 using EntitySystem.StatSystem;
 using PlayerSystem.Skills;
 using UnityEngine;
@@ -17,10 +18,17 @@ namespace PlayerSystem.Effects.EnergyGun
         public float power { get; set; }
 
         public EnergyBulletHit hit;
-        
-        
+
+        private void Start()
+        {
+            this.timer = 6;
+        }
+
+
         protected override void update(float deltaTime)
         {
+            this.timer -= deltaTime;
+            if (this.timer <= 0) OnTriggerEnter2D(null);
             retargetTimer -= deltaTime;
             if (target == null || !target.isActiveAndEnabled || retargetTimer <= 0f)
             {
@@ -63,9 +71,13 @@ namespace PlayerSystem.Effects.EnergyGun
 
         protected override void OnTriggerEnter2D(Collider2D other)
         {
-            var e = other.gameObject.GetComponent<Entity>();
-            if (e == null) return;
-            if(e==this.stat.entity) return;
+            if (other != null)
+            {
+                var e = other.gameObject.GetComponent<Entity>();
+                if (e == null) return;
+                if (e == this.stat.entity) return;
+            }
+
             var h=Instantiate(hit);
             h.transform.position = this.transform.position;
             h.stat=stat;

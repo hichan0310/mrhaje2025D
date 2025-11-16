@@ -119,74 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &3631212 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1175359057218003335, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &3631214
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3631212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 1
-  arg2: 0
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &26753786 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8461807819809916407, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &26753788
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 26753786}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 4
-  arg2: 4
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &35943822
 GameObject:
   m_ObjectHideFlags: 0
@@ -369,278 +301,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &45678695 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1046487862833945251, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &45678697
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 45678695}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 2
-  arg2: 3
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &48406978 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3536200840587727283, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &48406980
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 48406978}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 2
-  arg2: 0
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &56345205 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5767145179591670599, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &56345207
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 56345205}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 4
-  arg2: 0
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &94433020 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3676684244486611, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &94433022
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 94433020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 5
-  arg2: 0
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &96557160 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5809918221776663183, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &96557162
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 96557160}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 5
-  arg2: 3
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &107670342 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5160920956894955412, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &107670344
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 107670342}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 1
-  arg2: 4
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &114465210 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2392915089279589565, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &114465212
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 114465210}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 0
-  arg2: 1
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &114948735 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9100735623672870552, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &114948737
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 114948735}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 5
-  arg2: 1
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &116375923
 GameObject:
   m_ObjectHideFlags: 0
@@ -743,40 +403,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &123945921 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3595770142937281527, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &123945923
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 123945921}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 1
-  arg2: 1
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &125850053
 GameObject:
   m_ObjectHideFlags: 0
@@ -879,31 +505,44 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!1 &135398546 stripped
+--- !u!1 &137618228
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 3595770142937281527, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &135398548
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 137618232}
+  - component: {fileID: 137618231}
+  - component: {fileID: 137618230}
+  - component: {fileID: 137618229}
+  m_Layer: 5
+  m_Name: BoardSelectImg (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &137618229
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 135398546}
+  m_GameObject: {fileID: 137618228}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
+  m_Script: {fileID: 11500000, guid: 02b5a649b3f443ce8416c4069f51bc91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arg1: 1
-  arg2: 1
+  arg1: 2
   onClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
+      - m_Target: {fileID: 747300682}
+        m_TargetAssemblyTypeName: PlayerSystem.Tiling.Inventory, Assembly-CSharp
+        m_MethodName: setIndex
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -913,40 +552,63 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!1 &140010652 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6751791790965236063, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &140010654
+--- !u!114 &137618230
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 140010652}
+  m_GameObject: {fileID: 137618228}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arg1: 0
-  arg2: 2
-  onClick:
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.19607843}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &137618231
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137618228}
+  m_CullTransparentMesh: 1
+--- !u!224 &137618232
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137618228}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 747300681}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 40, y: 50}
+  m_SizeDelta: {x: 150, y: 80}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &140250278
 GameObject:
   m_ObjectHideFlags: 0
@@ -1242,74 +904,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 181354229}
   m_CullTransparentMesh: 1
---- !u!1 &224261593 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4908429050392498085, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &224261595
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 224261593}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 3
-  arg2: 3
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &226048221 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2392915089279589565, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &226048223
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 226048221}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 0
-  arg2: 1
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &259255479
 GameObject:
   m_ObjectHideFlags: 0
@@ -1414,74 +1008,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 259255479}
   m_CullTransparentMesh: 1
---- !u!1 &263805428 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2539593673844635726, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &263805430
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 263805428}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 3
-  arg2: 1
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &349352214 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7508773693484167045, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &349352216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 349352214}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 2
-  arg2: 2
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &382465969
 GameObject:
   m_ObjectHideFlags: 0
@@ -1688,6 +1214,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PolyominoTestImg (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 3777817610942172042, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
+      propertyPath: energyBullet
+      value: 
+      objectReference: {fileID: -7636538640081984408, guid: 9198e958ee278df48abdeb333f831c36, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1797,45 +1327,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: PolyominoTestImg (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 3777817610942172042, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
+      propertyPath: energyBullet
+      value: 
+      objectReference: {fileID: -7636538640081984408, guid: 9198e958ee278df48abdeb333f831c36, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
---- !u!1 &440112669 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5809918221776663183, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &440112671
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 440112669}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 5
-  arg2: 3
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1001 &449273692
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1941,40 +1441,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7200000000000000001, guid: 503ea2def3914f9f8fc8d12ce7ee2b0c, type: 3}
   m_PrefabInstance: {fileID: 449273692}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &451171326 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5767145179591670599, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &451171328
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 451171326}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 4
-  arg2: 0
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &475566872
 GameObject:
   m_ObjectHideFlags: 0
@@ -2154,31 +1620,44 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1808665182920887003, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
   m_PrefabInstance: {fileID: 2036084551}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &526780836 stripped
+--- !u!1 &496407485
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 4980749163622078552, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &526780838
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 496407489}
+  - component: {fileID: 496407488}
+  - component: {fileID: 496407487}
+  - component: {fileID: 496407486}
+  m_Layer: 5
+  m_Name: BoardSelectImg (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &496407486
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 526780836}
+  m_GameObject: {fileID: 496407485}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
+  m_Script: {fileID: 11500000, guid: 02b5a649b3f443ce8416c4069f51bc91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arg1: 5
-  arg2: 4
+  arg1: 3
   onClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
+      - m_Target: {fileID: 747300682}
+        m_TargetAssemblyTypeName: PlayerSystem.Tiling.Inventory, Assembly-CSharp
+        m_MethodName: setIndex
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2188,6 +1667,63 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &496407487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 496407485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.19607843}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &496407488
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 496407485}
+  m_CullTransparentMesh: 1
+--- !u!224 &496407489
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 496407485}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 747300681}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 40, y: -50}
+  m_SizeDelta: {x: 150, y: 80}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &531574960
 GameObject:
   m_ObjectHideFlags: 0
@@ -2292,6 +1828,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 531574960}
   m_CullTransparentMesh: 1
+--- !u!1 &541304547 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5284806370076414674, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+  m_PrefabInstance: {fileID: 1699523586}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &541304548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 541304547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8bb8498c85d4377a9266039baa3dcfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!224 &541304550 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+  m_PrefabInstance: {fileID: 1699523586}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &542794432
 GameObject:
   m_ObjectHideFlags: 0
@@ -2394,212 +1952,11 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!1 &546636477 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2539593673844635726, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &546636479
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 546636477}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 3
-  arg2: 1
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!4 &546868534 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7200000000000000001, guid: 503ea2def3914f9f8fc8d12ce7ee2b0c, type: 3}
   m_PrefabInstance: {fileID: 1438084891}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &566225149 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5284806370076414674, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &566225150
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 566225149}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a38818936f546468a7d6d921a2026aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selected: {fileID: 0}
---- !u!222 &566225151
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 566225149}
-  m_CullTransparentMesh: 1
---- !u!224 &566225152 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &573689524 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5854602599676728016, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &573689526
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 573689524}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 4
-  arg2: 3
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &582965003 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8199144085766454259, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &582965005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 582965003}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 3
-  arg2: 5
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &585690559 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 904620536054307660, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &585690561
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 585690559}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 0
-  arg2: 4
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &596470284 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9100735623672870552, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &596470286
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 596470284}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 5
-  arg2: 1
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1001 &617738910
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2800,7 +2157,8 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0.8
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7300000000000000006, guid: 5f97354d47d445a59dce987467a9aa2e, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2941,108 +2299,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 620641446}
   m_CullTransparentMesh: 1
---- !u!1 &635786310 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8818402050890907952, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &635786312
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 635786310}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 4
-  arg2: 5
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &635904516 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8724151072006450667, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &635904518
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 635904516}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 1
-  arg2: 5
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &640724208 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4908429050392498085, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &640724210
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 640724208}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 3
-  arg2: 3
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1001 &651704307
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3100,142 +2356,106 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3e3382ae1f0ab9f4d8f1c5ce10944e8b, type: 3}
---- !u!1 &686578336 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2563569981239165090, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &686578338
-MonoBehaviour:
+--- !u!1001 &691500699
+PrefabInstance:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 686578336}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 3
-  arg2: 4
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &695135462 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7216075683961097016, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &695135464
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 695135462}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 2
-  arg2: 4
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &716113306 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6368889154896802733, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &716113308
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 716113306}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 0
-  arg2: 5
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &720330074 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6368889154896802733, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &720330076
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 720330074}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 0
-  arg2: 5
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 747300681}
+    m_Modifications:
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5284806370076414674, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      propertyPath: m_Name
+      value: BoardImg1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5284806370076414674, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1851528083}
+  m_SourcePrefab: {fileID: 100100000, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
 --- !u!1 &747300677
 GameObject:
   m_ObjectHideFlags: 0
@@ -3338,11 +2558,14 @@ RectTransform:
   - {fileID: 2080266494}
   - {fileID: 1887916454}
   - {fileID: 156918731}
-  - {fileID: 8587666012095357129}
-  - {fileID: 566225152}
   - {fileID: 786734021}
   - {fileID: 1263107521}
   - {fileID: 1924157444}
+  - {fileID: 137618232}
+  - {fileID: 496407489}
+  - {fileID: 1068538510}
+  - {fileID: 1851528085}
+  - {fileID: 541304550}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3363,9 +2586,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boards:
-  - {fileID: 8587666012095357130}
-  - {fileID: 566225150}
+  - {fileID: 1851528083}
+  - {fileID: 541304548}
   bag: {fileID: 156918730}
+  boardSelections:
+  - {fileID: 1263107522}
+  - {fileID: 1924157445}
+  - {fileID: 137618229}
+  - {fileID: 496407486}
+  - {fileID: 1068538507}
 --- !u!1 &750264583
 GameObject:
   m_ObjectHideFlags: 0
@@ -3623,45 +2852,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: PolyominoTestImg (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 3777817610942172042, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
+      propertyPath: energyBullet
+      value: 
+      objectReference: {fileID: -7636538640081984408, guid: 9198e958ee278df48abdeb333f831c36, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
---- !u!1 &776022994 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2789986168623853926, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &776022996
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 776022994}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 3
-  arg2: 2
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &780373364
 GameObject:
   m_ObjectHideFlags: 0
@@ -4233,74 +3432,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1808665182920887003, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
   m_PrefabInstance: {fileID: 419886800}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &888550158 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8091970175101402544, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &888550160
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 888550158}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 4
-  arg2: 1
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &913280793 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 418113305927451925, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &913280795
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 913280793}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 4
-  arg2: 2
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &914640132
 GameObject:
   m_ObjectHideFlags: 0
@@ -4679,65 +3810,44 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 966711816}
   m_CullTransparentMesh: 1
---- !u!1 &1023616468 stripped
+--- !u!1 &1068538506
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 6751791790965236063, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1023616470
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1068538510}
+  - component: {fileID: 1068538509}
+  - component: {fileID: 1068538508}
+  - component: {fileID: 1068538507}
+  m_Layer: 5
+  m_Name: BoardSelectImg (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1068538507
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1023616468}
+  m_GameObject: {fileID: 1068538506}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 0
-  arg2: 2
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1034388221 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8091970175101402544, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1034388223
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1034388221}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
+  m_Script: {fileID: 11500000, guid: 02b5a649b3f443ce8416c4069f51bc91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   arg1: 4
-  arg2: 1
   onClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
+      - m_Target: {fileID: 747300682}
+        m_TargetAssemblyTypeName: PlayerSystem.Tiling.Inventory, Assembly-CSharp
+        m_MethodName: setIndex
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4747,351 +3857,63 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!1 &1079356949 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3462080131515466591, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1079356951
+--- !u!114 &1068538508
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1079356949}
+  m_GameObject: {fileID: 1068538506}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arg1: 0
-  arg2: 3
-  onClick:
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.19607843}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1082641284 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6334283141154731473, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1082641286
-MonoBehaviour:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1068538509
+CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1082641284}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 2
-  arg2: 1
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1109738246 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1496279357371805767, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1109738248
-MonoBehaviour:
+  m_GameObject: {fileID: 1068538506}
+  m_CullTransparentMesh: 1
+--- !u!224 &1068538510
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1109738246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 5
-  arg2: 2
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1124735675 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4638441504184045265, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1124735677
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1124735675}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 3
-  arg2: 0
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1148511571 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3319750427604705348, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1148511573
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1148511571}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 1
-  arg2: 3
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1157038856 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5284806370076414674, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1168400647 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8461807819809916407, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1168400649
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1168400647}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 4
-  arg2: 4
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1171468441 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8199144085766454259, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1171468443
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1171468441}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 3
-  arg2: 5
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1189741852 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5854602599676728016, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1189741854
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1189741852}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 4
-  arg2: 3
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1205851126 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2244853805763628723, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1205851128
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1205851126}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 2
-  arg2: 5
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1212851839 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1496279357371805767, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1212851841
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1212851839}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 5
-  arg2: 2
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  m_GameObject: {fileID: 1068538506}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 747300681}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 40, y: -150}
+  m_SizeDelta: {x: 150, y: 80}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1255498584
 GameObject:
   m_ObjectHideFlags: 0
@@ -5451,142 +4273,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1263107520}
   m_CullTransparentMesh: 1
---- !u!1 &1265148360 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4980749163622078552, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1265148362
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1265148360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 5
-  arg2: 4
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1304961235 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2789986168623853926, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1304961237
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1304961235}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 3
-  arg2: 2
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1310737016 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6334283141154731473, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1310737018
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1310737016}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 2
-  arg2: 1
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1407830236 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6030465925622141291, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1407830238
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1407830236}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 0
-  arg2: 0
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1001 &1438084891
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5671,40 +4357,6 @@ PrefabInstance:
       addedObject: {fileID: 382465970}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 503ea2def3914f9f8fc8d12ce7ee2b0c, type: 3}
---- !u!1 &1451332412 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3319750427604705348, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1451332414
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1451332412}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 1
-  arg2: 3
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &1462380335
 GameObject:
   m_ObjectHideFlags: 0
@@ -5857,40 +4509,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1502384765 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1046487862833945251, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1502384767
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1502384765}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 2
-  arg2: 3
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &1539431895
 GameObject:
   m_ObjectHideFlags: 0
@@ -6011,74 +4629,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1808665182920887003, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
   m_PrefabInstance: {fileID: 1579237423}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1556370087 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4638441504184045265, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1556370089
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1556370087}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 3
-  arg2: 0
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1570921077 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6030465925622141291, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1570921079
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1570921077}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 0
-  arg2: 0
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1001 &1579237423
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6183,45 +4733,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: PolyominoTestImg (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 3777817610942172042, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
+      propertyPath: energyBullet
+      value: 
+      objectReference: {fileID: -7636538640081984408, guid: 9198e958ee278df48abdeb333f831c36, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
---- !u!1 &1585269772 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3676684244486611, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1585269774
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1585269772}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 5
-  arg2: 0
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &1593398068
 GameObject:
   m_ObjectHideFlags: 0
@@ -6358,176 +4878,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1593398068}
   m_CullTransparentMesh: 1
---- !u!1 &1594046260 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3536200840587727283, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1594046262
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1594046260}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 2
-  arg2: 0
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1598389704 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 418113305927451925, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1598389706
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1598389704}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 4
-  arg2: 2
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1612717781 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 904620536054307660, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1612717783
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1612717781}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 0
-  arg2: 4
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1654983143 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2563569981239165090, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1654983145
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1654983143}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 3
-  arg2: 4
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1659327731 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5160920956894955412, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1659327733
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1659327731}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 1
-  arg2: 4
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &1669376410
 GameObject:
   m_ObjectHideFlags: 0
@@ -6736,7 +5086,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1686321142}
   m_CullTransparentMesh: 1
---- !u!1001 &1728518377
+--- !u!1001 &1699523586
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -6744,34 +5094,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 747300681}
     m_Modifications:
-    - target: {fileID: 225248297880791929, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 376764459109107291, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 875549118547616183, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 991328182856472311, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 1145856132401937762, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 1225075601664540900, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 1260767185406058035, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
     - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -6852,133 +5174,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2621517720418271106, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 2993230652823045409, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 3041819055814189343, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 3079799319256399209, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 3246317557724977262, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 3390236037916211661, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 3986203771253439492, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 4388602168805827326, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 4600479054035061742, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 4905208824559444354, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
     - target: {fileID: 5284806370076414674, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
       propertyPath: m_Name
-      value: BoardImg (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 5496712777775229552, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 5636626083378974591, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 5678200549576727517, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 6309003573048535319, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 6561476473033601542, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -5632.012
-      objectReference: {fileID: 0}
-    - target: {fileID: 6620897337284521846, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 6857094928881521209, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 7023259929215489721, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 7261399026571745357, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 7344812443257393297, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 7566992633553336353, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 7620873562982613834, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 7704988232978691491, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 7720962743100404829, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 7720962743100404829, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_RaycastPadding.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8010651411422815056, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 8135817373083322702, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 8564586944547375626, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 8902936964813878998, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 9161026929445955272, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 9167732142468375435, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
+      value: BoardImg2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6986,118 +5184,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5284806370076414674, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 566225150}
-    - targetCorrespondingSourceObject: {fileID: 5284806370076414674, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 566225151}
-    - targetCorrespondingSourceObject: {fileID: 6368889154896802733, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 720330076}
-    - targetCorrespondingSourceObject: {fileID: 8724151072006450667, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1848606909}
-    - targetCorrespondingSourceObject: {fileID: 2244853805763628723, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1205851128}
-    - targetCorrespondingSourceObject: {fileID: 8199144085766454259, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 582965005}
-    - targetCorrespondingSourceObject: {fileID: 8818402050890907952, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2049430642}
-    - targetCorrespondingSourceObject: {fileID: 8485433876175329553, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1757946422}
-    - targetCorrespondingSourceObject: {fileID: 904620536054307660, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 585690561}
-    - targetCorrespondingSourceObject: {fileID: 5160920956894955412, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1659327733}
-    - targetCorrespondingSourceObject: {fileID: 7216075683961097016, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1812979293}
-    - targetCorrespondingSourceObject: {fileID: 2563569981239165090, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1654983145}
-    - targetCorrespondingSourceObject: {fileID: 8461807819809916407, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 26753788}
-    - targetCorrespondingSourceObject: {fileID: 4980749163622078552, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1265148362}
-    - targetCorrespondingSourceObject: {fileID: 3462080131515466591, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1755109129}
-    - targetCorrespondingSourceObject: {fileID: 3319750427604705348, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1148511573}
-    - targetCorrespondingSourceObject: {fileID: 1046487862833945251, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 45678697}
-    - targetCorrespondingSourceObject: {fileID: 4908429050392498085, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 640724210}
-    - targetCorrespondingSourceObject: {fileID: 5854602599676728016, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 573689526}
-    - targetCorrespondingSourceObject: {fileID: 5809918221776663183, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 440112671}
-    - targetCorrespondingSourceObject: {fileID: 6751791790965236063, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1023616470}
-    - targetCorrespondingSourceObject: {fileID: 203029423891014324, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2002676579}
-    - targetCorrespondingSourceObject: {fileID: 7508773693484167045, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1790591257}
-    - targetCorrespondingSourceObject: {fileID: 2789986168623853926, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 776022996}
-    - targetCorrespondingSourceObject: {fileID: 418113305927451925, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 913280795}
-    - targetCorrespondingSourceObject: {fileID: 1496279357371805767, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1212851841}
-    - targetCorrespondingSourceObject: {fileID: 2392915089279589565, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 226048223}
-    - targetCorrespondingSourceObject: {fileID: 3595770142937281527, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 135398548}
-    - targetCorrespondingSourceObject: {fileID: 6334283141154731473, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1082641286}
-    - targetCorrespondingSourceObject: {fileID: 2539593673844635726, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 263805430}
-    - targetCorrespondingSourceObject: {fileID: 8091970175101402544, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 888550160}
-    - targetCorrespondingSourceObject: {fileID: 9100735623672870552, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 596470286}
-    - targetCorrespondingSourceObject: {fileID: 6030465925622141291, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1570921079}
-    - targetCorrespondingSourceObject: {fileID: 1175359057218003335, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3631214}
-    - targetCorrespondingSourceObject: {fileID: 3536200840587727283, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 48406980}
-    - targetCorrespondingSourceObject: {fileID: 4638441504184045265, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1556370089}
-    - targetCorrespondingSourceObject: {fileID: 5767145179591670599, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 56345207}
-    - targetCorrespondingSourceObject: {fileID: 3676684244486611, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 94433022}
+      addedObject: {fileID: 541304548}
   m_SourcePrefab: {fileID: 100100000, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
 --- !u!1001 &1752571465
 PrefabInstance:
@@ -7180,176 +5267,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 430ff3213a9f47bb9a952ed8b2ea830e, type: 3}
---- !u!1 &1755109127 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3462080131515466591, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1755109129
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1755109127}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 0
-  arg2: 3
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1757946420 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8485433876175329553, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1757946422
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1757946420}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 5
-  arg2: 5
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1790591255 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7508773693484167045, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1790591257
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1790591255}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 2
-  arg2: 2
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1806306804 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1175359057218003335, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1806306806
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1806306804}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 1
-  arg2: 0
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1812979291 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7216075683961097016, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1812979293
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1812979291}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 2
-  arg2: 4
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &1840901980
 GameObject:
   m_ObjectHideFlags: 0
@@ -7486,40 +5403,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1840901980}
   m_CullTransparentMesh: 1
---- !u!1 &1848606907 stripped
+--- !u!1 &1851528082 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 8724151072006450667, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
+  m_CorrespondingSourceObject: {fileID: 5284806370076414674, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+  m_PrefabInstance: {fileID: 691500699}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1848606909
+--- !u!114 &1851528083
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1848606907}
+  m_GameObject: {fileID: 1851528082}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
+  m_Script: {fileID: 11500000, guid: cafdbcca5cd24d45b1f915595927d59d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arg1: 1
-  arg2: 5
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+--- !u!224 &1851528085 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
+  m_PrefabInstance: {fileID: 691500699}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1887152655
 GameObject:
   m_ObjectHideFlags: 0
@@ -8093,74 +5998,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1924290960}
   m_CullTransparentMesh: 1
---- !u!1 &1954853195 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8485433876175329553, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1954853197
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1954853195}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 5
-  arg2: 5
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &1958267697 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2244853805763628723, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1958267699
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1958267697}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 2
-  arg2: 5
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &1961650209
 GameObject:
   m_ObjectHideFlags: 0
@@ -8327,40 +6164,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1986984048}
   m_CullTransparentMesh: 1
---- !u!1 &2002676577 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 203029423891014324, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2002676579
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2002676577}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 1
-  arg2: 2
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1001 &2036084551
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8465,6 +6268,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PolyominoTestImg (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 3777817610942172042, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
+      propertyPath: energyBullet
+      value: 
+      objectReference: {fileID: -7636538640081984408, guid: 9198e958ee278df48abdeb333f831c36, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8574,40 +6381,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2038797990}
   m_CullTransparentMesh: 1
---- !u!1 &2049430640 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8818402050890907952, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 1728518377}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2049430642
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2049430640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 4
-  arg2: 5
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 566225150}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &2080266493 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3777817610942172042, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
@@ -8624,40 +6397,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1808665182920887003, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
   m_PrefabInstance: {fileID: 763923480}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &2089287161 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 203029423891014324, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2089287163
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2089287161}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6716c3838b7c4ef9ba3571653547a8da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arg1: 1
-  arg2: 2
-  onClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8587666012095357130}
-        m_TargetAssemblyTypeName: PlayerSystem.Tiling.TestBoard, Assembly-CSharp
-        m_MethodName: click
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &2098638223
 GameObject:
   m_ObjectHideFlags: 0
@@ -8977,6 +6716,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PolyominoTestImg
       objectReference: {fileID: 0}
+    - target: {fileID: 3777817610942172042, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
+      propertyPath: energyBullet
+      value: 
+      objectReference: {fileID: -7636538640081984408, guid: 9198e958ee278df48abdeb333f831c36, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8998,395 +6741,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 737d44339c6d4c748cc7b39ff24a9fd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1001 &8587666012095357128
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 747300681}
-    m_Modifications:
-    - target: {fileID: 225248297880791929, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 376764459109107291, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 875549118547616183, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 991328182856472311, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 1145856132401937762, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 1225075601664540900, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 1260767185406058035, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Pivot.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Pivot.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2621517720418271106, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 2993230652823045409, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 3041819055814189343, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 3079799319256399209, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 3246317557724977262, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 3390236037916211661, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 3986203771253439492, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 4388602168805827326, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 4600479054035061742, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 4905208824559444354, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 5284806370076414674, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Name
-      value: BoardImg
-      objectReference: {fileID: 0}
-    - target: {fileID: 5496712777775229552, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 5636626083378974591, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 5678200549576727517, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 6309003573048535319, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 6561476473033601542, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -5632.012
-      objectReference: {fileID: 0}
-    - target: {fileID: 6620897337284521846, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 6857094928881521209, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 7023259929215489721, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 7261399026571745357, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 7344812443257393297, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 7566992633553336353, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 7620873562982613834, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 7704988232978691491, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 7720962743100404829, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 7720962743100404829, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_RaycastPadding.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8010651411422815056, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 8135817373083322702, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 8564586944547375626, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 8902936964813878998, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 9161026929445955272, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 9167732142468375435, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      propertyPath: m_Color.a
-      value: 0.19607843
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5284806370076414674, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8587666012095357130}
-    - targetCorrespondingSourceObject: {fileID: 5284806370076414674, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8587666012095357131}
-    - targetCorrespondingSourceObject: {fileID: 6368889154896802733, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 716113308}
-    - targetCorrespondingSourceObject: {fileID: 8724151072006450667, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 635904518}
-    - targetCorrespondingSourceObject: {fileID: 2244853805763628723, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1958267699}
-    - targetCorrespondingSourceObject: {fileID: 8199144085766454259, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1171468443}
-    - targetCorrespondingSourceObject: {fileID: 8818402050890907952, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 635786312}
-    - targetCorrespondingSourceObject: {fileID: 8485433876175329553, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1954853197}
-    - targetCorrespondingSourceObject: {fileID: 904620536054307660, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1612717783}
-    - targetCorrespondingSourceObject: {fileID: 5160920956894955412, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 107670344}
-    - targetCorrespondingSourceObject: {fileID: 7216075683961097016, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 695135464}
-    - targetCorrespondingSourceObject: {fileID: 2563569981239165090, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 686578338}
-    - targetCorrespondingSourceObject: {fileID: 8461807819809916407, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1168400649}
-    - targetCorrespondingSourceObject: {fileID: 4980749163622078552, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 526780838}
-    - targetCorrespondingSourceObject: {fileID: 3462080131515466591, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1079356951}
-    - targetCorrespondingSourceObject: {fileID: 3319750427604705348, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1451332414}
-    - targetCorrespondingSourceObject: {fileID: 1046487862833945251, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1502384767}
-    - targetCorrespondingSourceObject: {fileID: 4908429050392498085, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 224261595}
-    - targetCorrespondingSourceObject: {fileID: 5854602599676728016, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1189741854}
-    - targetCorrespondingSourceObject: {fileID: 5809918221776663183, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 96557162}
-    - targetCorrespondingSourceObject: {fileID: 6751791790965236063, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 140010654}
-    - targetCorrespondingSourceObject: {fileID: 203029423891014324, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2089287163}
-    - targetCorrespondingSourceObject: {fileID: 7508773693484167045, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 349352216}
-    - targetCorrespondingSourceObject: {fileID: 2789986168623853926, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1304961237}
-    - targetCorrespondingSourceObject: {fileID: 418113305927451925, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1598389706}
-    - targetCorrespondingSourceObject: {fileID: 1496279357371805767, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1109738248}
-    - targetCorrespondingSourceObject: {fileID: 2392915089279589565, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 114465212}
-    - targetCorrespondingSourceObject: {fileID: 3595770142937281527, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 123945923}
-    - targetCorrespondingSourceObject: {fileID: 6334283141154731473, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1310737018}
-    - targetCorrespondingSourceObject: {fileID: 2539593673844635726, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 546636479}
-    - targetCorrespondingSourceObject: {fileID: 8091970175101402544, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1034388223}
-    - targetCorrespondingSourceObject: {fileID: 9100735623672870552, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 114948737}
-    - targetCorrespondingSourceObject: {fileID: 6030465925622141291, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1407830238}
-    - targetCorrespondingSourceObject: {fileID: 1175359057218003335, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1806306806}
-    - targetCorrespondingSourceObject: {fileID: 3536200840587727283, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1594046262}
-    - targetCorrespondingSourceObject: {fileID: 4638441504184045265, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1124735677}
-    - targetCorrespondingSourceObject: {fileID: 5767145179591670599, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 451171328}
-    - targetCorrespondingSourceObject: {fileID: 3676684244486611, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1585269774}
-  m_SourcePrefab: {fileID: 100100000, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
---- !u!224 &8587666012095357129 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 2320234962137083977, guid: cfcff53ba0d28d04a96f8c1b9531ac78, type: 3}
-  m_PrefabInstance: {fileID: 8587666012095357128}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &8587666012095357130
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1157038856}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a38818936f546468a7d6d921a2026aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selected: {fileID: 0}
---- !u!222 &8587666012095357131
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1157038856}
-  m_CullTransparentMesh: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

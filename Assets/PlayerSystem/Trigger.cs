@@ -9,7 +9,6 @@ namespace PlayerSystem
     public abstract class Trigger:MonoBehaviour, IEntityEventListener
     {
         protected Entity entity { get; set; }
-        protected List<ITriggerEffect> effects { get; set; } = new List<ITriggerEffect>();
         public abstract void eventActive(EventArgs eventArgs);
 
         public void registerTarget(Entity target, object args = null)

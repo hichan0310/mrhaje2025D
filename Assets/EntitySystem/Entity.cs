@@ -31,7 +31,7 @@ namespace EntitySystem
 
         protected virtual void update(float deltaTime)
         {
-            foreach (var listener in listeners)
+            foreach (var listener in listeners.ToList())
             {
                 listener.update(deltaTime, this);
             }

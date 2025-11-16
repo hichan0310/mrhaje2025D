@@ -10,12 +10,30 @@ namespace PlayerSystem.Tiling
         public GameObject BackgroundUIObject { get; set; }
         protected List<(int x, int y, Polyomino p)> polyominos = new();
 
+        public List<Polyomino> reset()
+        {
+            var res=polyominos.ConvertAll(p => p.p);
+            polyominos.Clear();
+            return res;
+        }
+
+        public void trigger(float power)
+        {
+            foreach (var t in this.polyominos)
+            {
+                t.p.trigger(this.entity, power);
+            }
+        }
+
         // 프리뷰 상태
-        [SerializeField] public Polyomino selected;
+        public Polyomino selected { get; set; }
         private int previewX, previewY;
         private bool hasPreview;
 
-        protected abstract Vector3 cellPos2Real(int x, int y);
+        protected virtual Vector3 cellPos2Real(int x, int y)
+        {
+            return new Vector3(-490 + x * 80, -150 + y * 80, 0);
+        }
 
         public IGetBoardItem getBoardItem { get; set; }
 

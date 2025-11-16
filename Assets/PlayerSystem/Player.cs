@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using DefaultNamespace;
 using EntitySystem;
 using EntitySystem.Events;
 using EntitySystem.StatSystem;
@@ -10,16 +12,14 @@ using PlayerSystem.Skills.ElectricShock;
 using PlayerSystem.Tiling;
 using PlayerSystem.Weapons;
 using UnityEngine;
+using EventArgs = EntitySystem.Events.EventArgs;
 
 namespace PlayerSystem
 {
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(Collider2D))]
-    [RequireComponent(typeof(PlayerMemoryBinder))]
     public class Player : Entity
     {
-        [SerializeField] private SimpleEnergyGunEffect temp;
-        
         [Header("Movement")] [SerializeField] private float moveSpeed = 7f;
         [SerializeField] private float groundAcceleration = 20f;
         [SerializeField] private float airAcceleration = 12f;
@@ -37,19 +37,10 @@ namespace PlayerSystem
         [SerializeField] private float fireCooldown = 0.2f;
         [SerializeField] private TriggerEffectAsset fallbackSkillEffect = null;
         [SerializeField] private TriggerEffectAsset fallbackUltimateEffect = null;
-        [SerializeField] private float skillCooldown = 5f;
-        [SerializeField] private float ultimateCooldown = 12f;
 
         [SerializeField] public Skill skill;
         [SerializeField] public Ultimate ultimate;
-
-        [Header("Mobility")] [SerializeField] private float dashSpeed = 18f;
-        [SerializeField] private float dashDuration = 0.2f;
-        [SerializeField] private float dashCooldown = 1.2f;
-        [SerializeField] private float dodgeDuration = 0.35f;
-        [SerializeField] private float dodgeCooldown = 1.5f;
-        [SerializeField] private float justDodgeWindow = 0.2f;
-
+        
         [Header("Interaction")] [SerializeField]
         private float interactRadius = 1.5f;
 
@@ -65,21 +56,16 @@ namespace PlayerSystem
         [SerializeField] private KeyCode inventoryKey = KeyCode.I;
         [SerializeField] private Inventory inventory;
         
-        [SerializeField] private KeyCode dashKey = KeyCode.LeftShift;
-        [SerializeField] private KeyCode dodgeKey = KeyCode.LeftControl;
+        private KeyCode dodgeKey = KeyCode.LeftShift;
 
         private Rigidbody2D body = null;
         private Collider2D bodyCollider = null;
-        private PlayerMemoryBinder memoryBinder = null;
 
         private float fireTimer;
         private float skillTimer;
         private float ultimateTimer;
-        private float dashTimer;
-        private float dashCooldownTimer;
         private float dodgeTimer;
         private float dodgeCooldownTimer;
-        private float perfectDodgeTimer;
         private float coyoteTimerValue;
         private float jumpBufferTimer;
         private float fallThroughTimer;
@@ -87,11 +73,14 @@ namespace PlayerSystem
         private bool jumpQueued;
         private bool grounded;
         private bool wasGrounded;
-        private bool isDashing;
         private bool isDodging;
         private bool isFallingThrough;
-        private float dashDirection = 1f;
         private readonly List<Collider2D> fallingThroughPlatforms = new List<Collider2D>();
+
+        private void Awake()
+        {
+            this.inventory.entity = this;
+        }
 
         protected override void Start()
         {
@@ -99,7 +88,6 @@ namespace PlayerSystem
             EnsureLayerMasksConfigured();
             body = GetComponent<Rigidbody2D>();
             bodyCollider = GetComponent<Collider2D>();
-            memoryBinder = GetComponent<PlayerMemoryBinder>();
             skill = Instantiate(skill);
             skill.registerTarget(this);
             ultimate = Instantiate(ultimate);
@@ -118,26 +106,37 @@ namespace PlayerSystem
                 {
                     if (damagegiveEvent.atkTags.Contains(AtkTags.ultimateDamage))
                     {
-                        this.stat.energy += (int)(5f * stat.energyRecharge);
+                        this.stat.energy += (int)(30f * stat.energyRecharge);
                         if(this.stat.energy > 100) this.stat.energy = 100;
                     }
                     else if (damagegiveEvent.atkTags.Contains(AtkTags.skillDamage))
                     {
-                        this.stat.energy += (int)(2.5f * stat.energyRecharge);
+                        this.stat.energy += (int)(50f * stat.energyRecharge);
                         if(this.stat.energy > 100) this.stat.energy = 100;
                     }
                     else if (damagegiveEvent.atkTags.Contains(AtkTags.normalAttackDamage))
                     {
-                        this.stat.energy += (int)(1f * stat.energyRecharge);
+                        this.stat.energy += (int)(20f * stat.energyRecharge);
                         if(this.stat.energy > 100) this.stat.energy = 100;
                         energyChargeICD = 0.2f;
                     }
                     else
                     {
-                        this.stat.energy += (int)(1.5f * stat.energyRecharge);
+                        this.stat.energy += (int)(10f * stat.energyRecharge);
                         if(this.stat.energy > 100) this.stat.energy = 100;
                         energyChargeICD = 0.2f;
                     }
+                }
+            }
+
+            if (e is JustDodgeEvent dodgeEvent)
+            {
+                if (this == dodgeEvent.entity)
+                {
+                    TimeScaler.Instance.changeScaleForRealTime(0.2f, 0.5f);
+                    
+                    dodgeTimer = this.stat.dodgeTime;
+                    dodgeCooldownTimer = 0;
                 }
             }
 
@@ -157,15 +156,7 @@ namespace PlayerSystem
         }
 
 
-        // TODO
-        // 이렇게 하지 말고 memory board를 event listener에 넣어서 특정 이벤트를 받았을 때 트리거 작동하도록 하기
-        private void ActivateMemory(ActionTriggerType triggerType, float power)
-        {
-            if (memoryBinder)
-            {
-                memoryBinder.Trigger(triggerType, power);
-            }
-        }
+
 
         private void FixedUpdate()
         {
@@ -295,19 +286,8 @@ namespace PlayerSystem
             fireTimer = Mathf.Max(0f, fireTimer - deltaTime);
             skillTimer = Mathf.Max(0f, skillTimer - deltaTime);
             ultimateTimer = Mathf.Max(0f, ultimateTimer - deltaTime);
-            dashCooldownTimer = Mathf.Max(0f, dashCooldownTimer - deltaTime);
             dodgeCooldownTimer = Mathf.Max(0f, dodgeCooldownTimer - deltaTime);
-            perfectDodgeTimer = Mathf.Max(0f, perfectDodgeTimer - deltaTime);
             fallThroughTimer = Mathf.Max(0f, fallThroughTimer - deltaTime);
-
-            if (isDashing)
-            {
-                dashTimer -= deltaTime;
-                if (dashTimer <= 0f)
-                {
-                    isDashing = false;
-                }
-            }
 
             if (isDodging)
             {
@@ -329,9 +309,9 @@ namespace PlayerSystem
             Vector2 velocity = body.linearVelocity;
             float fixedDelta = Time.fixedDeltaTime;
 
-            if (isDashing)
+            if (isDodging)
             {
-                velocity.x = dashDirection * dashSpeed;
+                velocity.x = Mathf.Sign(transform.localScale.x) * this.stat.dodgeSpeed;
             }
             else
             {
@@ -383,11 +363,8 @@ namespace PlayerSystem
                 Debug.Log(instance);
                 instance.Initialize(this, dir, 1f, 0f);
                 if (MemoryTriggerContext.TryGetActive(this, out var context))
-                {
                     context.ApplyToProjectile(instance);
-                }
             }
-            this.temp.trigger(this, 1);
             fireTimer = fireCooldown;
         }
 
@@ -426,9 +403,8 @@ namespace PlayerSystem
             }
 
             isDodging = true;
-            dodgeTimer = dodgeDuration;
-            dodgeCooldownTimer = dodgeCooldown;
-            perfectDodgeTimer = justDodgeWindow;
+            dodgeTimer = this.stat.dodgeTime;
+            dodgeCooldownTimer = this.stat.dodgeCooldown;
             new DodgeEvent(this).trigger();
             // ActivateMemory(ActionTriggerType.Dodge, 1f);
         }
@@ -465,7 +441,6 @@ namespace PlayerSystem
 
             fallThroughTimer = fallThroughDuration;
             isFallingThrough = true;
-            ActivateMemory(ActionTriggerType.DropDown, 1f); // todo: 이건 무슨 이벤트지?
         }
 
         private void ResetFallThroughState()

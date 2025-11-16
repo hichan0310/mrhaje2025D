@@ -22,12 +22,20 @@ namespace EntitySystem.HpBar
 
         private void Update()
         {
-            this.transform.position = target.position + Vector3.up;
-            ratio = Mathf.Clamp(ratio, 0, 1.0f);
-            var scale = progressBar.transform.localScale;
-            scale.x = ratio * length / 1.28f;
-            progressBar.transform.localScale = scale;
-            progressBar.transform.localPosition = new Vector3(length * ratio / 2 - length / 2, 0, 2) + startPosition;
+            if (!target)
+            {
+                Destroy(this.gameObject);
+            }
+            else
+            {
+                this.transform.position = target.position + Vector3.up;
+                ratio = Mathf.Clamp(ratio, 0, 1.0f);
+                var scale = progressBar.transform.localScale;
+                scale.x = ratio * length / 1.28f;
+                progressBar.transform.localScale = scale;
+                progressBar.transform.localPosition =
+                    new Vector3(length * ratio / 2 - length / 2, 0, 2) + startPosition;
+            }
         }
     }
 }

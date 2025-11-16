@@ -86,7 +86,7 @@ namespace PlayerSystem.Skills.ElectricShock
         {
             if (!targets.ContainsKey(target))
             {
-                Debug.Log("apply");
+                // Debug.Log("apply");
                 target.stat.increaseDef -= 20;
             }
 
@@ -97,7 +97,7 @@ namespace PlayerSystem.Skills.ElectricShock
         {
             if (targets.ContainsKey(target))
             {
-                Debug.Log("remove");
+                // Debug.Log("remove");
                 target.stat.increaseDef += 20;
                 base.removeTarget(target);
             }

@@ -63,5 +63,13 @@ namespace PlayerSystem.Tiling
             p.rt.localScale = new Vector3(0.2f, 0.2f, 0.2f);
             bag.Add(p);
         }
+
+        public void addBagItem(IEnumerable<Polyomino> ps)
+        {
+            foreach (var p in ps)
+            {
+                addBagItem(p);
+            }
+        }
     }
 }

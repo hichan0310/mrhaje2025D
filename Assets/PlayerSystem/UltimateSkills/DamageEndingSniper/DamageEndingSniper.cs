@@ -108,14 +108,14 @@ namespace PlayerSystem.UltimateSkills.DamageEndingSniper
                     }
 
                     // Time.timeScale = 0.05f;
-                    TimeScaler.Instance.SetTimeScale(0.03f);
+                    TimeScaler.Instance.changeTimeScale(32);
                 }
             }
             else if (cooldown <= 0 && nowEnergy>=energyCost)
             {
                 this.player.stat.energy -= energyCost;
                 new UltimateExecuteEvent(this.player, this).trigger();
-                TimeScaler.Instance.SetTimeScale(0);
+                TimeScaler.Instance.changeTimeScale(1f/512);
                 this.snipeAimNow = Instantiate(snipeAim);
                 executing = true;
             }
@@ -124,7 +124,7 @@ namespace PlayerSystem.UltimateSkills.DamageEndingSniper
         public void reset()
         {
             // Time.timeScale = 1;
-            TimeScaler.Instance.SetTimeScale(1);
+            TimeScaler.Instance.changeTimeScale(16);
             foreach (var display in stack.Values)
             {
                 Destroy(display.gameObject);
