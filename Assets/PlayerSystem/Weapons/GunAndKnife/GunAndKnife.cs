@@ -23,7 +23,7 @@ namespace PlayerSystem.Weapons.GunAndKnife
         
         
         
-        public override void fire(AimSupport aimSupport)
+        public override void fire()
         {
             if (fireTimer <= 0)
             {
@@ -33,7 +33,7 @@ namespace PlayerSystem.Weapons.GunAndKnife
             
         }
 
-        public override void skill(AimSupport aimSupport)
+        public override void skill()
         {
             if (skillStack > 0)
             {
@@ -41,7 +41,7 @@ namespace PlayerSystem.Weapons.GunAndKnife
             }
         }
 
-        public override void ultimate(AimSupport aimSupport)
+        public override void ultimate()
         {
             if (energy >= requireEnergy)
             {
