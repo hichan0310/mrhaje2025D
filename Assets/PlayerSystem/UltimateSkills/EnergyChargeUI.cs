@@ -10,7 +10,7 @@ namespace PlayerSystem.UltimateSkills
 
         private void Update()
         {
-            text.text = skill.nowEnergy.ToString()+"/"+skill.energyCost.ToString();
+            text.text = "asdf";
         }
     }
 }

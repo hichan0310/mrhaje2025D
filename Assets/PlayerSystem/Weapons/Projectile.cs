@@ -79,7 +79,7 @@ namespace PlayerSystem.Weapons
                 // 공격력, 피해증가, 크리티컬 등 자동 적용됩니다
                 int damage = stat.calculateTrueDamage(tag, 100);
                 // projectile 형식이 아닌 공격이 들어올 수 있어서 저스트 회피는 이 안에서 처리하게 바꿔놨어요
-                new DamageGiveEvent(damage, Vector3.zero, stat.entity, entity, tag).trigger();
+                new DamageGiveEvent(damage, Vector3.zero, stat.entity, entity, tag, 1).trigger();
 
                 // 넉백은 DamageGiveEvent의 force에서 전달만 하고 target에서 알아서 처리하게 하기
                 // if (knockbackForce > 0f && entity.TryGetComponent(out Rigidbody2D targetBody))

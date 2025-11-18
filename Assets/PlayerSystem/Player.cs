@@ -20,10 +20,7 @@ namespace PlayerSystem
     [RequireComponent(typeof(Collider2D))]
     public class Player : Entity
     {
-        [Header("Movement")] [SerializeField] private float moveSpeed = 7f;
-        [SerializeField] private float groundAcceleration = 20f;
-        [SerializeField] private float airAcceleration = 12f;
-        [SerializeField] private float jumpForce = 16f;
+        [Header("Movement")] 
         [SerializeField] private float coyoteTime = 0.15f;
         [SerializeField] private float jumpBuffer = 0.15f;
         [SerializeField] private Transform groundCheck = null;
@@ -31,15 +28,6 @@ namespace PlayerSystem
         [SerializeField] private LayerMask groundMask = -1;
         [SerializeField] private LayerMask dropPlatformMask = 0;
         [SerializeField] private float fallThroughDuration = 0.35f;
-
-        [Header("Combat")] [SerializeField] private Projectile defaultProjectile = null;
-        [SerializeField] private Transform firePoint = null;
-        [SerializeField] private float fireCooldown = 0.2f;
-        [SerializeField] private TriggerEffectAsset fallbackSkillEffect = null;
-        [SerializeField] private TriggerEffectAsset fallbackUltimateEffect = null;
-
-        [SerializeField] public Skill skill;
-        [SerializeField] public Ultimate ultimate;
         
         [Header("Interaction")] [SerializeField]
         private float interactRadius = 1.5f;
@@ -47,16 +35,18 @@ namespace PlayerSystem
         [SerializeField] private LayerMask interactMask = -1;
 
         [Header("Input")] [SerializeField] private string horizontalAxis = "Horizontal";
-        [SerializeField] private KeyCode jumpKey = KeyCode.Space;
-        [SerializeField] private KeyCode downKey = KeyCode.S;
-        [SerializeField] private KeyCode fireKey = KeyCode.J;
-        [SerializeField] private KeyCode skillKey = KeyCode.K;
-        [SerializeField] private KeyCode ultimateKey = KeyCode.L;
-        [SerializeField] private KeyCode interactKey = KeyCode.E;
-        [SerializeField] private KeyCode inventoryKey = KeyCode.I;
+        private KeyCode jumpKey = KeyCode.Space;
+        private KeyCode downKey = KeyCode.S;
+        private KeyCode skillKey = KeyCode.E;
+        private KeyCode ultimateKey = KeyCode.Q;
+        private KeyCode interactKey = KeyCode.F;
+        private KeyCode inventoryKey = KeyCode.I;
         [SerializeField] private Inventory inventory;
         
         private KeyCode dodgeKey = KeyCode.LeftShift;
+        [SerializeField] private Weapon weapon;
+        
+        public EntityStat statCache { get; private set; }
 
         private Rigidbody2D body = null;
         private Collider2D bodyCollider = null;
@@ -77,6 +67,8 @@ namespace PlayerSystem
         private bool isFallingThrough;
         private readonly List<Collider2D> fallingThroughPlatforms = new List<Collider2D>();
 
+        [SerializeField] private AimSupport aimSupport;
+        
         private void Awake()
         {
             this.inventory.entity = this;
@@ -88,47 +80,16 @@ namespace PlayerSystem
             EnsureLayerMasksConfigured();
             body = GetComponent<Rigidbody2D>();
             bodyCollider = GetComponent<Collider2D>();
-            skill = Instantiate(skill);
-            skill.registerTarget(this);
-            ultimate = Instantiate(ultimate);
-            ultimate.registerTarget(this);
             this.stat = new EntityStat(this, 10000, 100, 100);
+            this.statCache = this.stat.calculate();
+            weapon = Instantiate(weapon);
+            weapon.registerTarget(this);
         }
 
         private float energyChargeICD = 0;
 
         public override void eventActive(EventArgs e)
         {
-            if (e is DamageGiveEvent damagegiveEvent)
-            {
-                var stat = this.stat.calculate();
-                if (energyChargeICD <= 0)
-                {
-                    if (damagegiveEvent.atkTags.Contains(AtkTags.ultimateDamage))
-                    {
-                        this.stat.energy += (int)(30f * stat.energyRecharge);
-                        if(this.stat.energy > 100) this.stat.energy = 100;
-                    }
-                    else if (damagegiveEvent.atkTags.Contains(AtkTags.skillDamage))
-                    {
-                        this.stat.energy += (int)(50f * stat.energyRecharge);
-                        if(this.stat.energy > 100) this.stat.energy = 100;
-                    }
-                    else if (damagegiveEvent.atkTags.Contains(AtkTags.normalAttackDamage))
-                    {
-                        this.stat.energy += (int)(20f * stat.energyRecharge);
-                        if(this.stat.energy > 100) this.stat.energy = 100;
-                        energyChargeICD = 0.2f;
-                    }
-                    else
-                    {
-                        this.stat.energy += (int)(10f * stat.energyRecharge);
-                        if(this.stat.energy > 100) this.stat.energy = 100;
-                        energyChargeICD = 0.2f;
-                    }
-                }
-            }
-
             if (e is JustDodgeEvent dodgeEvent)
             {
                 if (this == dodgeEvent.entity)
@@ -155,13 +116,14 @@ namespace PlayerSystem
             
         }
 
-
+        
 
 
         private void FixedUpdate()
         {
             ApplyMovement();
             HandleFallThrough();
+            this.statCache = this.stat.calculate();
         }
 
         private void EnsureLayerMasksConfigured()
@@ -249,19 +211,19 @@ namespace PlayerSystem
                 new JumpEvent(this, jumpPower).trigger();
             }
 
-            if (Input.GetKeyDown(fireKey))
+            if (Input.GetMouseButton(0))
             {
-                TryFire();
+                this.weapon.fire(this.aimSupport);
             }
 
             if (Input.GetKeyDown(skillKey))
             {
-                this.skill.execute();
+                this.weapon.skill(this.aimSupport);
             }
 
             if (Input.GetKeyDown(ultimateKey))
             {
-                this.ultimate.execute();
+                this.weapon.ultimate(this.aimSupport);
             }
 
             if (Input.GetKeyDown(interactKey))
@@ -283,9 +245,6 @@ namespace PlayerSystem
 
         private void UpdateTimers(float deltaTime)
         {
-            fireTimer = Mathf.Max(0f, fireTimer - deltaTime);
-            skillTimer = Mathf.Max(0f, skillTimer - deltaTime);
-            ultimateTimer = Mathf.Max(0f, ultimateTimer - deltaTime);
             dodgeCooldownTimer = Mathf.Max(0f, dodgeCooldownTimer - deltaTime);
             fallThroughTimer = Mathf.Max(0f, fallThroughTimer - deltaTime);
 
@@ -315,14 +274,14 @@ namespace PlayerSystem
             }
             else
             {
-                float targetSpeed = horizontalInput * moveSpeed;
-                float accel = grounded ? groundAcceleration : airAcceleration;
+                float targetSpeed = horizontalInput * statCache.speed;
+                float accel = grounded ? statCache.groundAcceleration : statCache.airAcceleration;
                 velocity.x = Mathf.MoveTowards(velocity.x, targetSpeed, accel * fixedDelta);
             }
 
             if (jumpQueued)
             {
-                velocity.y = jumpForce;
+                velocity.y = statCache.jumpPower;
                 jumpQueued = false;
             }
 
@@ -343,31 +302,6 @@ namespace PlayerSystem
 
             ResetFallThroughState();
         }
-
-        private void TryFire()
-        {
-            if (fireTimer > 0f)
-            {
-                return;
-            }
-
-            //ActivateMemory(ActionTriggerType.BasicAttack, 1f);
-            var targetPos = Vector3.zero;
-            new BasicAttackExecuteEvent(this, targetPos).trigger();
-
-            if (defaultProjectile && firePoint)
-            {
-                float direction = Mathf.Sign(transform.localScale.x);
-                Vector2 dir = new Vector2(direction, 0f);
-                var instance = Instantiate(defaultProjectile, firePoint.position, Quaternion.identity);
-                Debug.Log(instance);
-                instance.Initialize(this, dir, 1f, 0f);
-                if (MemoryTriggerContext.TryGetActive(this, out var context))
-                    context.ApplyToProjectile(instance);
-            }
-            fireTimer = fireCooldown;
-        }
-
 
         private void TryInteract()
         {

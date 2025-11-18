@@ -20,7 +20,7 @@ namespace PlayerSystem.Effects
             var stat = entity.stat.calculate();
             var tag = new AtkTagSet(atkTagSet);
             var dmg=stat.calculateTrueDamage(tag, 100*power);
-            f.damage = new(dmg, Vector3.zero, entity, null, tag);
+            f.damage = new(dmg, Vector3.zero, entity, null, tag, 1);
         }
     }
 }

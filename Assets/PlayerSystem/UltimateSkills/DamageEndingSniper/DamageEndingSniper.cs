@@ -100,7 +100,6 @@ namespace PlayerSystem.UltimateSkills.DamageEndingSniper
                     // Debug.Log("asdfasdfasdfasdf");
                     var result = snipeAimNow.snipePositions;
                     finished = 5 - result.Count;
-                    this.player.stat.energy+=(5-result.Count)*10;
                     var stat = this.player.stat.calculate();
                     for (int i = 0; i < result.Count; i++)
                     {
@@ -111,9 +110,8 @@ namespace PlayerSystem.UltimateSkills.DamageEndingSniper
                     TimeScaler.Instance.changeTimeScale(32);
                 }
             }
-            else if (cooldown <= 0 && nowEnergy>=energyCost)
+            else if (cooldown <= 0)
             {
-                this.player.stat.energy -= energyCost;
                 new UltimateExecuteEvent(this.player, this).trigger();
                 TimeScaler.Instance.changeTimeScale(1f/512);
                 this.snipeAimNow = Instantiate(snipeAim);
@@ -142,8 +140,5 @@ namespace PlayerSystem.UltimateSkills.DamageEndingSniper
             b.stat = stat;
             b.stack = stack;
         }
-
-        public override int energyCost => 80;
-        public override int nowEnergy => this.player.stat.energy;
     }
 }

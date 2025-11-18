@@ -39,7 +39,5 @@ namespace PlayerSystem
 
     public abstract class Ultimate : Skill
     {
-        public abstract int energyCost { get; }
-        public abstract int nowEnergy { get; }
     }
 }

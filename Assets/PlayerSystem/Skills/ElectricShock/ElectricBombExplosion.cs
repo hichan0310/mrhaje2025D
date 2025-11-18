@@ -39,7 +39,7 @@ namespace PlayerSystem.Skills.ElectricShock
 
             var tag = new AtkTagSet(tags);
             var dmg=stat.calculateTrueDamage(tag, 200);
-            new DamageGiveEvent(dmg, Vector3.zero, stat.entity, target, tag).trigger();
+            new DamageGiveEvent(dmg, Vector3.zero, stat.entity, target, tag, 10).trigger();
             shock.registerTarget(target);
         }
     }

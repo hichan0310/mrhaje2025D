@@ -34,6 +34,11 @@ namespace PlayerSystem.Tiling
             foreach (var board in boards) board.getBoardItem = this;
         }
 
+        public void addPolyomino(Polyomino polyomino)
+        {
+            this.bag.addBagItem(polyomino);
+        }
+
         public void addBoard(Board b)
         {
             var board = Instantiate(b);

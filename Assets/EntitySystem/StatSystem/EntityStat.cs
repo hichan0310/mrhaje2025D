@@ -20,11 +20,6 @@ namespace EntitySystem.StatSystem
         public int addDef { get; set; }
         public float increaseDef { get; set; }
         private int def => (int)(baseDef * (increaseDef / 100 + 1) + addDef);
-        
-        public float projectileSpeed { get; set; }
-        public float projectileAmount { get; set; }
-        public float projectilecoolTime { get; set; }
-        public float projectileGuidence { get; set; }
 
         public float crit { get; set; }
         public float critDmg { get; set; }
@@ -33,16 +28,22 @@ namespace EntitySystem.StatSystem
         public float[] dmgAdd { get; set; }
         
         public float energyRecharge { get; set; }
-        public int energy { get; set; }
         
         public float speed { get; set; }
         public int jumpCount { get; set; }
         public float jumpPower { get; set; }
-        public float airSpeed { get; set; }
+        public float airAcceleration { get; set; }
+        public float groundAcceleration { get; set; }
         public float dodgeSpeed { get; set; }
         public float dodgeTime { get; set; }
         public float dodgeCooldown { get; set; }
+        
         public float skillCooldownDecrease { get; set; }
+        public float bulletRate { get; set; }
+        public float bulletSpeed { get; set; }
+        public float additionalDuration { get; set; }
+        public float skillRange { get; set; }
+        public float fireSpeed { get; set; }
         
         public EntityStat(Entity entity, int hp, int baseAtk, int baseDef)
         {
@@ -64,20 +65,23 @@ namespace EntitySystem.StatSystem
             dmgAdd = new float[Tag.atkTagCount];
             
             energyRecharge = 1f;
-            energy = 0;
-            speed = 1;
+            speed = 8f;
             jumpCount = 1;
             jumpPower = 10f;
-            airSpeed = 10f;
-            dodgeSpeed = 10f;
+            airAcceleration = 20f;
+            groundAcceleration = 20f;
+            
+            dodgeSpeed = 15f;
             dodgeTime = 0.3f;
             dodgeCooldown = 0.7f;
             
-            projectileSpeed = 10f;
-            projectileAmount = 1f;
-            projectilecoolTime = 5f;
-            projectileGuidence = 0f;
+            
             skillCooldownDecrease = 1f;
+            bulletRate = 1f;
+            bulletSpeed = 1f;
+            additionalDuration = 0.2f;
+            skillRange = 0.2f;
+            fireSpeed = 1;
         }
 
         public EntityStat(EntityStat copy)
@@ -100,20 +104,23 @@ namespace EntitySystem.StatSystem
             Array.Copy(copy.dmgAdd, this.dmgAdd, Tag.atkTagCount);
             
             this.energyRecharge = copy.energyRecharge;
-            this.energy = copy.energy;
             this.speed = copy.speed;
             this.jumpCount = copy.jumpCount;
             this.jumpPower = copy.jumpPower;
-            this.airSpeed = copy.airSpeed;
+            this.airAcceleration = copy.airAcceleration;
+            this.groundAcceleration = copy.groundAcceleration;
+            
             this.dodgeSpeed = copy.dodgeSpeed;
             this.dodgeTime = copy.dodgeTime;
             this.dodgeCooldown = copy.dodgeCooldown;
             
-            this.projectileSpeed = copy.projectileSpeed;
-            this.projectileAmount = copy.projectileAmount;
-            this.projectilecoolTime = copy.projectilecoolTime;
-            this.projectileGuidence = copy.projectileGuidence;
+            
             this.skillCooldownDecrease = copy.skillCooldownDecrease;
+            this.bulletRate = copy.bulletRate;
+            this.bulletSpeed = copy.bulletSpeed;
+            this.additionalDuration = copy.additionalDuration;
+            this.skillRange = copy.skillRange;
+            this.fireSpeed = copy.fireSpeed;
         }
         
         // 모든 버프에는 교환법칙이 성립한다고 가정

@@ -41,7 +41,7 @@ namespace PlayerSystem.Effects.EnergyGun
             targets.Add(target);
             var tag = new AtkTagSet(tags);
             var dmg=stat.calculateTrueDamage(tag, coef);
-            new DamageGiveEvent(dmg, Vector3.zero, stat.entity, target, tag).trigger();
+            new DamageGiveEvent(dmg, Vector3.zero, stat.entity, target, tag, 1).trigger();
         }
     }
 }
