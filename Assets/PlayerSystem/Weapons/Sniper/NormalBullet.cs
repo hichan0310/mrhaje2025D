@@ -27,7 +27,8 @@ namespace PlayerSystem.Weapons.Sniper
 
         protected override void update(float deltaTime)
         {
-            
+            this.timer+=deltaTime;
+            checkDestroy(10);
         }
 
         private void Start()

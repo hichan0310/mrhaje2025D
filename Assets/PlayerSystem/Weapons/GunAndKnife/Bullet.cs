@@ -26,6 +26,7 @@ namespace PlayerSystem.Weapons.GunAndKnife
 
         protected override void update(float deltaTime)
         {
+            this.timer+=deltaTime;
             checkDestroy(0.5f);
         }
 

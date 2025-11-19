@@ -3,6 +3,7 @@ using EntitySystem;
 using EntitySystem.Events;
 using UnityEngine;
 using EventArgs = EntitySystem.Events.EventArgs;
+using Random = UnityEngine.Random;
 
 namespace PlayerSystem.Weapons.Sniper
 {
@@ -31,8 +32,9 @@ namespace PlayerSystem.Weapons.Sniper
                 direction.Normalize();
                 var b = Instantiate(bulletNormalPrefab, fire, Quaternion.identity);
                 b.rigidbody2D.position = fire;
-                b.rigidbody2D.rotation = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                b.direction = direction;
+                var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg+this.aimSupport.aimRange*(Random.Range(-0.3f, 0.3f));
+                b.rigidbody2D.rotation = angle;
+                b.direction = new Vector2(Mathf.Cos(angle*Mathf.Deg2Rad), Mathf.Sin(angle*Mathf.Deg2Rad));
 
                 var stat = this.player.stat.calculate();
                 stat.bulletRate += bulletNumAdd;
@@ -60,8 +62,9 @@ namespace PlayerSystem.Weapons.Sniper
                 direction.Normalize();
                 var b = Instantiate(skillBulletPrefab, fire, Quaternion.identity);
                 b.rigidbody2D.position = fire;
-                b.rigidbody2D.rotation = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                b.direction = direction;
+                var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg+this.aimSupport.aimRange*(Random.Range(-0.3f, 0.3f));
+                b.rigidbody2D.rotation = angle;
+                b.direction = new Vector2(Mathf.Cos(angle*Mathf.Deg2Rad), Mathf.Sin(angle*Mathf.Deg2Rad));
 
                 var stat = this.player.stat.calculate();
                 var coef = 100 * (stat.bulletRate + 2) * (stat.bulletSpeed + 2) / 9;
