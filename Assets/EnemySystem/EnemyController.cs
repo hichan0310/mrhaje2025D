@@ -1,244 +1,123 @@
-using System;
-using System.Linq;
-using EntitySystem;
+using EntitySystem.Events;
 using EntitySystem.StatSystem;
-using PlayerSystem;
-using PlayerSystem.Weapons;
+using GameBackend;
 using UnityEngine;
+using static EntitySystem.StatSystem.EntityStat;
 
-namespace EnemySystem
+namespace EntitySystem
 {
-    [RequireComponent(typeof(Collider2D))]
-    public class EnemyController : Entity
+    /// <summary>
+    /// 모든 적의 공통 베이스.
+    /// - Entity 상속 → HP, hpBar, 이벤트 시스템 그대로 사용
+    /// - EnemyStat을 기본 스탯으로 사용 (없으면 여기서 생성)
+    /// </summary>
+    public abstract class EnemyBase : Entity
     {
-        [SerializeField] private EnemyDefinition definition = null;
-        [SerializeField] private Rigidbody2D body = null;
-        [SerializeField] private Transform projectileSpawnPoint = null;
-        [SerializeField] private float targetRefreshInterval = 0.5f;
-        [SerializeField] private float engagementRange = 12f;
-        [SerializeField] private Player explicitTarget = null;
+        [Header("Common Components")]
+        [SerializeField] protected Rigidbody2D rb;
+        [SerializeField] protected Transform target;
+        [SerializeField] protected bool faceTarget = true;
+        [SerializeField] protected float moveSpeed = 3f;
 
-        private EnemyDefinition.ActionSequenceEntry[] sequence = Array.Empty<EnemyDefinition.ActionSequenceEntry>();
-        private EnemyActionAsset currentAction = null;
-        private int currentActionIndex = -1;
-        private float currentActionDuration = 0f;
-        private float actionTimer = 0f;
-        private bool pendingAdvance = false;
-        private float targetRefreshTimer = 0f;
-        private Transform currentTarget = null;
-        private bool isDead = false;
-        private float initialScaleX = 1f;
-        private float patrolDirection = 1f;
+        [Header("Base Stat (for init)")]
+        [SerializeField] protected int baseHp = 100;
+        [SerializeField] protected int baseAtk = 10;
+        [SerializeField] protected int baseDef = 0;
+        [SerializeField] protected ArmorType armorType = ArmorType.Normal;
+        [SerializeField] protected float baseKnockbackResist = 0.0f;
 
-        public EnemyDefinition Definition => definition;
-        public Transform Target => currentTarget;
-        public Vector2 TargetDirection
+        protected bool isDead = false;
+
+        /// <summary>
+        /// EnemyStat로 캐스팅한 뷰. (아니면 null)
+        /// </summary>
+        protected EnemyStat EnemyStat
         {
-            get
-            {
-                if (!currentTarget)
-                {
-                    return Vector2.right * Mathf.Sign(transform.localScale.x);
-                }
-
-                return (currentTarget.position - transform.position).normalized;
-            }
+            get { return stat as EnemyStat; }
         }
-
-        public Transform ProjectileOrigin => projectileSpawnPoint ? projectileSpawnPoint : transform;
-        public float MoveSpeed => definition ? definition.MoveSpeed : 0f;
-        public float PatrolDirection => patrolDirection;
 
         protected override void Start()
         {
-            base.Start();
+            base.Start(); // animator, TimeManager, hpBar 설정
 
-            if (!body)
+            if (!rb) rb = GetComponent<Rigidbody2D>();
+
+            // stat이 비어 있으면 EnemyStat으로 초기화
+            if (stat == null)
             {
-                body = GetComponent<Rigidbody2D>();
-            }
-
-            initialScaleX = Mathf.Abs(transform.localScale.x) > 0.001f ? Mathf.Abs(transform.localScale.x) : 1f;
-
-            if (definition)
-            {
-                stat = new EntityStat(this, definition.BaseHealth, definition.BaseAttack, definition.BaseDefense)
-                {
-                    entity = this,
-                    speed = definition.MoveSpeed
-                };
-                sequence = definition.ActionSequence == null
-                    ? Array.Empty<EnemyDefinition.ActionSequenceEntry>()
-                    : definition.ActionSequence.ToArray();
+                stat = new EnemyStat(
+                    this,
+                    baseHp,
+                    baseAtk,
+                    baseDef,
+                    armorType,
+                    baseKnockbackResist,
+                    1f
+                );
             }
             else
             {
-                stat = new EntityStat(this, 50, 10, 0) { entity = this };
-                sequence = Array.Empty<EnemyDefinition.ActionSequenceEntry>();
+                // 만약 이미 Inspector에서 EnemyStat을 넣어놨다면 그대로 사용.
+                // (EntityStat만 있다면 추가 필드는 못 쓰지만, 에러는 안 나게 두기)
+                if (!(stat is EnemyStat))
+                {
+                    Debug.LogWarning(
+                        $"{name}: stat이 EnemyStat이 아니라서 armorType/knockbackResist 같은 Enemy 전용 속성은 못 씀."
+                    );
+                }
             }
-
-            AdvanceAction();
         }
 
         protected override void update(float deltaTime)
         {
-            if (isDead)
-            {
-                return;
-            }
-
-            UpdateTarget(deltaTime);
-
-            if (sequence.Length > 0 && currentAction != null)
-            {
-                currentAction.Tick(this, deltaTime);
-                actionTimer += deltaTime;
-
-                bool shouldAdvance = pendingAdvance;
-                if (!shouldAdvance && currentActionDuration > 0f && actionTimer >= currentActionDuration)
-                {
-                    shouldAdvance = true;
-                }
-
-                pendingAdvance = false;
-                if (shouldAdvance)
-                {
-                    AdvanceAction();
-                }
-            }
-
+            // 기존 리스너 업데이트 + hpBar 갱신
             base.update(deltaTime);
 
-            if (stat != null && stat.nowHp <= 0)
-            {
-                HandleDeath();
-            }
+            if (isDead) return;
+
+            UpdateFacing();
+            TickAI(deltaTime);
         }
 
-        public void RequestNextAction()
+        protected virtual void FixedUpdate()
         {
-            pendingAdvance = true;
+            if (isDead) return;
+            TickMovement(Time.fixedDeltaTime);
         }
 
-        public void Move(Vector2 velocity, float deltaTime)
+        public override void eventActive(EventArgs e)
         {
-            if (body)
+            // 먼저 Entity가 리스너들에게 뿌리게 함
+            base.eventActive(e);
+
+            // 내가 죽은 EntityDieEvent라면 OnDie 호출
+            EntityDieEvent die = e as EntityDieEvent;
+            if (die != null && die.entity == this && !isDead)
             {
-                body.linearVelocity = new Vector2(velocity.x, body.linearVelocity.y);
-                body.MovePosition(body.position + velocity * deltaTime);
-            }
-            else
-            {
-                transform.position += (Vector3)(velocity * deltaTime);
+                isDead = true;
+                OnDie(die.attacker);
             }
 
-            if (Mathf.Abs(velocity.x) > 0.01f)
-            {
-                FaceDirection(Mathf.Sign(velocity.x));
-            }
+            OnEvent(e);
         }
 
-        public void StopMovement()
+        protected virtual void UpdateFacing()
         {
-            if (body)
+            if (!faceTarget || target == null) return;
+
+            float dx = target.position.x - transform.position.x;
+            if (Mathf.Abs(dx) > 0.01f)
             {
-                body.linearVelocity = new Vector2(0f, body.linearVelocity.y);
+                Vector3 scale = transform.localScale;
+                scale.x = dx > 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+                transform.localScale = scale;
             }
         }
 
-        public void InvertPatrolDirection()
-        {
-            patrolDirection = -patrolDirection;
-        }
-
-        public void FaceDirection(float directionSign)
-        {
-            if (Mathf.Approximately(directionSign, 0f))
-            {
-                return;
-            }
-
-            float sign = Mathf.Sign(directionSign);
-            Vector3 scale = transform.localScale;
-            scale.x = sign * initialScaleX;
-            transform.localScale = scale;
-        }
-
-        public void FireProjectile(Projectile projectilePrefab, float power)
-        {
-            if (!projectilePrefab)
-            {
-                return;
-            }
-
-            Vector3 spawnPosition = ProjectileOrigin.position;
-            Vector2 direction = TargetDirection;
-            var instance = Instantiate(projectilePrefab, spawnPosition, Quaternion.identity);
-            instance.Initialize(this, direction, power, 0f);
-        }
-
-        private void AdvanceAction()
-        {
-            currentAction?.OnExit(this);
-
-            if (sequence.Length == 0)
-            {
-                currentAction = null;
-                return;
-            }
-
-            actionTimer = 0f;
-            currentActionIndex = (currentActionIndex + 1) % sequence.Length;
-            var entry = sequence[currentActionIndex];
-            currentAction = entry.action;
-            currentActionDuration = Mathf.Max(0f, entry.duration);
-            currentAction?.OnEnter(this);
-        }
-
-        private void UpdateTarget(float deltaTime)
-        {
-            targetRefreshTimer -= deltaTime;
-            if (targetRefreshTimer > 0f && currentTarget)
-            {
-                return;
-            }
-
-            targetRefreshTimer = Mathf.Max(0.1f, targetRefreshInterval);
-
-            if (explicitTarget)
-            {
-                currentTarget = explicitTarget.transform;
-                return;
-            }
-
-            Player[] players = FindObjectsOfType<Player>();
-            Transform best = null;
-            float bestDistance = float.MaxValue;
-            float maxRangeSqr = engagementRange <= 0f ? float.MaxValue : engagementRange * engagementRange;
-
-            foreach (var player in players)
-            {
-                float distSqr = (player.transform.position - transform.position).sqrMagnitude;
-                if (distSqr < bestDistance && distSqr <= maxRangeSqr)
-                {
-                    bestDistance = distSqr;
-                    best = player.transform;
-                }
-            }
-
-            currentTarget = best;
-        }
-
-        private void HandleDeath()
-        {
-            if (isDead)
-            {
-                return;
-            }
-
-            isDead = true;
-            currentAction?.OnExit(this);
-            Destroy(gameObject);
-        }
+        // 개별 적이 구현해야 하는 것들
+        protected abstract void TickAI(float deltaTime);
+        protected abstract void TickMovement(float fixedDeltaTime);
+        protected abstract void OnDie(Entity attacker);
+        protected virtual void OnEvent(EventArgs e) { }
     }
 }
