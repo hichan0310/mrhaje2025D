@@ -1,4 +1,5 @@
-﻿using EntitySystem;
+﻿using System.Collections.Generic;
+using EntitySystem;
 using EntitySystem.Events;
 using UnityEngine;
 
@@ -22,16 +23,24 @@ namespace PlayerSystem.Weapons.GunAndKnife
         private float energy = 0;
 
         [SerializeField] private Bullet bullet;
+        [SerializeField] private KnifeSkill knifeSkill;
         [SerializeField] private GameObject firePoint;
 
 
         public GameObject muzzleFlashPrefab;
+        public Mark marking;
 
 
         [SerializeField] private int bulletNumAdd = 0;
 
-        private AtkTagSet atkTagSetBullet = new AtkTagSet().Add(AtkTags.electricalDamage, AtkTags.normalAttackDamage);
+        private AtkTagSet atkTagSetBullet = new AtkTagSet().Add(AtkTags.physicalDamage, AtkTags.normalAttackDamage);
 
+
+        public override void registerTarget(Entity target, object args = null)
+        {
+            base.registerTarget(target, args);
+            marking.player=player;
+        }
 
         public override void fire()
         {
@@ -66,12 +75,12 @@ namespace PlayerSystem.Weapons.GunAndKnife
                     }
 
                     var a = angle + angleOffset;
-                    Debug.Log(angleOffset);
+                    //Debug.Log(angleOffset);
                     b.rigidbody2D.rotation = a;
                     b.direction = new Vector2(Mathf.Cos(a * Mathf.Deg2Rad), Mathf.Sin(a * Mathf.Deg2Rad));
 
 
-                    var coef = 100;
+                    var coef = 200f/((int)(stat.bulletRate)+3);
 
                     var tag = new AtkTagSet(atkTagSetBullet);
                     var dmg = stat.calculateTrueDamage(tag, coef);
@@ -91,6 +100,51 @@ namespace PlayerSystem.Weapons.GunAndKnife
             {
                 var stat = player.stat.calculate();
                 fireTimer = fireCooldownNormal;
+                Entity[] allEntities = FindObjectsByType<Entity>(0);
+
+                Vector3 myPos = transform.position;
+
+                foreach (var e in allEntities)
+                {
+                    if (!e) continue;
+
+                    // 자기 자신이면 스킵 (원하면 제거)
+                    if (e.gameObject == this.player.gameObject)
+                        continue;
+
+                    float dist = Vector3.Distance(myPos, e.transform.position);
+                    if (dist <= 10)
+                    {
+                        var b = Instantiate(knifeSkill, player.transform.position, Quaternion.identity);
+                        b.rigidbody2D.position = player.transform.position;
+
+                
+                        Vector2 target = e.transform.position;
+                        Vector2 fire = player.transform.position;
+                        Vector2 direction = target - fire;
+                        direction.Normalize();
+                        var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                
+                        b.rigidbody2D.rotation = angle;
+                        b.direction = direction;
+
+                        var coef = 50;
+
+                        var tag = new AtkTagSet(atkTagSetBullet);
+                        var dmg = stat.calculateTrueDamage(tag, coef);
+                        b.damageGiveEventHit=new DamageGiveEvent(dmg, Vector3.zero, player, null, tag, 5);
+                        b.marking=this.marking;
+                    }
+                }
+                
+                
+                
+                
+                
+                
+                
+                
+                
             }
         }
 

@@ -174,8 +174,10 @@ MonoBehaviour:
   requireEnergy: 0
   maxEnergy: 0
   bullet: {fileID: -601790943258710981, guid: 59f19675da3ba5646a05e7950002e59f, type: 3}
+  knifeSkill: {fileID: -8988235017919117797, guid: 65b13a75b4cb021468fa70e6cba82121, type: 3}
   firePoint: {fileID: 8774327583771512012}
   muzzleFlashPrefab: {fileID: 0}
+  marking: {fileID: 7948874810560785132, guid: 357f59ba0c426a94f9c4d6694a306dec, type: 3}
   bulletNumAdd: 4
 --- !u!114 &8102883733431299258
 MonoBehaviour:

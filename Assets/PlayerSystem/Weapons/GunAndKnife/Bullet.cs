@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace PlayerSystem.Weapons.GunAndKnife
 {
-    public class Bullet:SkillEffect
+    public class Bullet : SkillEffect
     {
         [SerializeField] private float speed;
         public DamageGiveEvent damageGiveEvent { get; set; }
@@ -15,7 +15,7 @@ namespace PlayerSystem.Weapons.GunAndKnife
 
         public Vector2 direction
         {
-            set => this.rigidbody2D.linearVelocity = value*speed;
+            set => this.rigidbody2D.linearVelocity = value * speed;
         }
 
         private void Awake()
@@ -26,8 +26,9 @@ namespace PlayerSystem.Weapons.GunAndKnife
 
         protected override void update(float deltaTime)
         {
-            this.timer+=deltaTime;
-            checkDestroy(0.5f);
+            this.timer += deltaTime;
+            checkDestroy(0.4f);
+            if (finish) Destroy(this.gameObject);
         }
 
         private void Start()
@@ -39,11 +40,11 @@ namespace PlayerSystem.Weapons.GunAndKnife
 
         protected override void OnTriggerEnter2D(Collider2D other)
         {
-            if(finish) return;
+            if (finish) return;
             var e = other.gameObject.GetComponent<Entity>();
-            if(e==null) return;
-            if(e is Player) return;
-            Debug.Log(other.gameObject.name);
+            if (e == null) return;
+            if (e is Player) return;
+            //Debug.Log(other.gameObject.name);
             Destroy(gameObject);
             this.rigidbody2D.linearVelocity = Vector2.zero;
             Instantiate(hitEffect, this.transform.position, Quaternion.identity);

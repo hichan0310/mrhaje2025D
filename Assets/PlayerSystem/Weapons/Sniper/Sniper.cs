@@ -38,7 +38,7 @@ namespace PlayerSystem.Weapons.Sniper
 
                 var stat = this.player.stat.calculate();
                 stat.bulletRate += bulletNumAdd;
-                var coef = 100 * (stat.bulletRate + 2) * (stat.bulletSpeed + 2) / 9;
+                var coef = 100 * (stat.bulletRate + 1) * (stat.bulletSpeed + 1) * (stat.fireSpeed + 1) / 8;
                 if (this.aimSupport is SniperAim s)
                 {
                     coef *= Mathf.Min(0.5f + s.aimDuration, 1f) / 2;
@@ -67,7 +67,8 @@ namespace PlayerSystem.Weapons.Sniper
                 b.direction = new Vector2(Mathf.Cos(angle*Mathf.Deg2Rad), Mathf.Sin(angle*Mathf.Deg2Rad));
 
                 var stat = this.player.stat.calculate();
-                var coef = 100 * (stat.bulletRate + 2) * (stat.bulletSpeed + 2) / 9;
+                stat.bulletRate += bulletNumAdd;
+                var coef = 100 * (stat.bulletRate + 1) * (stat.bulletSpeed + 1) * (stat.fireSpeed + 1) / 8f;
                 if (this.aimSupport is SniperAim s)
                 {
                     coef *= Mathf.Min(0.5f + s.aimDuration, 1f) / 2;

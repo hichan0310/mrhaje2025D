@@ -15,7 +15,7 @@ namespace PlayerSystem.Weapons
         public abstract void ultimate();
         public abstract void eventActive(EventArgs eventArgs);
 
-        public void registerTarget(Entity target, object args = null)
+        public virtual void registerTarget(Entity target, object args = null)
         {
             if (target is Player p)
             {

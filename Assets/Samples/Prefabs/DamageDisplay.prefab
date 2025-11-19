@@ -54,10 +54,10 @@ MonoBehaviour:
   moveSpeed: 1
   destroyTime: 0.8
   fadeStart: 0.4
-  normalColor: {r: 1, g: 1, b: 1, a: 1}
-  critColor: {r: 1, g: 0.95, b: 0.2, a: 1}
+  normalColor: {r: 0, g: 0, b: 0, a: 1}
+  critColor: {r: 0, g: 0, b: 0, a: 1}
   normalFontSize: 4
-  critFontSize: 6
+  critFontSize: 7
   randomOffset: {x: 0.3, y: 0.3}
   isUIOverlay: 0
   sortingLayerName: Default
