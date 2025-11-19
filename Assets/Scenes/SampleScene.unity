@@ -1467,6 +1467,7 @@ GameObject:
   - component: {fileID: 475566873}
   - component: {fileID: 475566876}
   - component: {fileID: 475566877}
+  - component: {fileID: 475566878}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1599,14 +1600,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 475566872}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e759280109ffcaa4281b9d3145d0a4d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   positionOffset: {x: 0, y: 2, z: -10}
-  positionSmoothTime: 0.2
+  positionSmoothTime: 0.01
   maxPositionSpeed: 40
   limitVerticalTracking: 1
   verticalDeadZone: 1.5
@@ -1617,6 +1618,21 @@ MonoBehaviour:
   lookAheadDistance: 2.5
   lookAheadResponsiveness: 3
   lookAheadSmoothTime: 0.15
+--- !u!114 &475566878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 475566872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e107de9f9c964126a1831dd9f8f463f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 1676463071}
+  smoothSpeed: 3
+  offset: {x: 0, y: 1}
 --- !u!114 &477374052 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3777817610942172042, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
@@ -2081,7 +2097,7 @@ PrefabInstance:
     - target: {fileID: 7300000000000000005, guid: 5f97354d47d445a59dce987467a9aa2e, type: 3}
       propertyPath: weapon
       value: 
-      objectReference: {fileID: 229302457419543078, guid: e6fab49b6abb04348aebdf0e8edafb0d, type: 3}
+      objectReference: {fileID: 605836707987010487, guid: 52fc8b93ee731d8448ade06cbf091651, type: 3}
     - target: {fileID: 7300000000000000005, guid: 5f97354d47d445a59dce987467a9aa2e, type: 3}
       propertyPath: ultimate
       value: 
@@ -5016,6 +5032,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1669376410}
   m_CullTransparentMesh: 1
+--- !u!1 &1676463071 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7300000000000000000, guid: 5f97354d47d445a59dce987467a9aa2e, type: 3}
+  m_PrefabInstance: {fileID: 617738910}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1686321142
 GameObject:
   m_ObjectHideFlags: 0
