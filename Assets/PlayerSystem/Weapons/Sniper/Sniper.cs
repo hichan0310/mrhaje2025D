@@ -12,10 +12,14 @@ namespace PlayerSystem.Weapons.Sniper
         public NormalBullet bulletNormalPrefab;
         public SkillBullet skillBulletPrefab;
         public GameObject muzzleFlashPrefab;
+        private float energy = 0;
         
         private AtkTagSet atkTagSet=new AtkTagSet().Add(AtkTags.electricalDamage, AtkTags.normalAttackDamage);
         
         private bool skillBullet = false;
+        
+        
+        [SerializeField] private int bulletNumAdd = 0;
         
         public override void fire()
         {
@@ -31,6 +35,7 @@ namespace PlayerSystem.Weapons.Sniper
                 b.direction = direction;
 
                 var stat = this.player.stat.calculate();
+                stat.bulletRate += bulletNumAdd;
                 var coef = 100 * (stat.bulletRate + 2) * (stat.bulletSpeed + 2) / 9;
                 if (this.aimSupport is SniperAim s)
                 {
@@ -82,6 +87,7 @@ namespace PlayerSystem.Weapons.Sniper
         public override void skill()
         {
             this.skillBullet = true;
+            
         }
 
         public override void ultimate()
@@ -91,7 +97,10 @@ namespace PlayerSystem.Weapons.Sniper
 
         public override void eventActive(EventArgs eventArgs)
         {
-            
+            if (eventArgs is DamageGiveEvent d)
+            {
+                this.energy += d.energeRecharge * player.statCache.energyRecharge;
+            }
         }
 
         public override void update(float deltaTime, Entity target)

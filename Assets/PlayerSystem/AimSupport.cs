@@ -67,7 +67,7 @@ namespace PlayerSystem
 
             newLr.positionCount = 2;
             newLr.startWidth = 0.015f;
-            newLr.endWidth = 0.015f;
+            newLr.endWidth = 0.005f;
             newLr.startColor = new Color(0f, 1f, 1f, 0.5f);
             newLr.endColor = new Color(0f, 1f, 1f, 0.5f);
 
@@ -167,7 +167,7 @@ namespace PlayerSystem
                 Mathf.Sin(leftAngle * Mathf.Deg2Rad),
                 0f
             );
-            Vector3 leftEnd = start + leftDir * length;
+            Vector3 leftEnd = start + leftDir * (length * 0.95f);
 
             lrLeft.SetPosition(0, start);
             lrLeft.SetPosition(1, leftEnd);
@@ -178,7 +178,7 @@ namespace PlayerSystem
                 Mathf.Sin(rightAngle * Mathf.Deg2Rad),
                 0f
             );
-            Vector3 rightEnd = start + rightDir * length;
+            Vector3 rightEnd = start + rightDir * (length * 0.95f);
 
             lrRight.SetPosition(0, start);
             lrRight.SetPosition(1, rightEnd);

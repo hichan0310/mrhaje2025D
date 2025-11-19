@@ -170,6 +170,7 @@ MonoBehaviour:
   bulletNormalPrefab: {fileID: 5964572857195935109, guid: 663e3658e5cefc240884d624c3f56411, type: 3}
   skillBulletPrefab: {fileID: -2422280095771278480, guid: fe8dc951fbf7aa940856768ffe246ae7, type: 3}
   muzzleFlashPrefab: {fileID: 1227067792111776, guid: 89c6e66d5825ccc4e885325e3c225171, type: 3}
+  bulletNumAdd: 4
 --- !u!114 &5877542399906084445
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -9,6 +9,7 @@ namespace PlayerSystem.Weapons.GunAndKnife
         private Entity entity;
         public int requireHit;
         public DamageGiveEvent damageGiveEvent { get; set; }
+        public GameObject markHit;
 
 
         public void eventActive(EventArgs eventArgs)
