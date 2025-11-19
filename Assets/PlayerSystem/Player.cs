@@ -37,8 +37,6 @@ namespace PlayerSystem
         [Header("Input")] [SerializeField] private string horizontalAxis = "Horizontal";
         private KeyCode jumpKey = KeyCode.Space;
         private KeyCode downKey = KeyCode.S;
-        private KeyCode skillKey = KeyCode.E;
-        private KeyCode ultimateKey = KeyCode.Q;
         private KeyCode interactKey = KeyCode.F;
         private KeyCode inventoryKey = KeyCode.I;
         [SerializeField] private Inventory inventory;
@@ -51,9 +49,6 @@ namespace PlayerSystem
         private Rigidbody2D body = null;
         private Collider2D bodyCollider = null;
 
-        private float fireTimer;
-        private float skillTimer;
-        private float ultimateTimer;
         private float dodgeTimer;
         private float dodgeCooldownTimer;
         private float coyoteTimerValue;
@@ -66,8 +61,6 @@ namespace PlayerSystem
         private bool isDodging;
         private bool isFallingThrough;
         private readonly List<Collider2D> fallingThroughPlatforms = new List<Collider2D>();
-
-        [SerializeField] private AimSupport aimSupport;
         
         private void Awake()
         {
@@ -82,8 +75,11 @@ namespace PlayerSystem
             bodyCollider = GetComponent<Collider2D>();
             this.stat = new EntityStat(this, 10000, 100, 100);
             this.statCache = this.stat.calculate();
-            weapon = Instantiate(weapon);
-            weapon.registerTarget(this);
+            if (weapon)
+            {
+                weapon = Instantiate(weapon);
+                weapon.registerTarget(this);
+            }
         }
 
         private float energyChargeICD = 0;
@@ -209,21 +205,6 @@ namespace PlayerSystem
                 var jumpPower = 1f;
                 //ActivateMemory(ActionTriggerType.Jump, 1f);
                 new JumpEvent(this, jumpPower).trigger();
-            }
-
-            if (Input.GetMouseButton(0))
-            {
-                this.weapon.fire(this.aimSupport);
-            }
-
-            if (Input.GetKeyDown(skillKey))
-            {
-                this.weapon.skill(this.aimSupport);
-            }
-
-            if (Input.GetKeyDown(ultimateKey))
-            {
-                this.weapon.ultimate(this.aimSupport);
             }
 
             if (Input.GetKeyDown(interactKey))

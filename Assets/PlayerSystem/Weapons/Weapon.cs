@@ -8,10 +8,11 @@ namespace PlayerSystem.Weapons
     public abstract class Weapon:MonoBehaviour, IEntityEventListener
     {
         protected Player player;
+        public AimSupport aimSupport;
         
-        public abstract void fire(AimSupport aimSupport);
-        public abstract void skill(AimSupport aimSupport);
-        public abstract void ultimate(AimSupport aimSupport);
+        public abstract void fire();
+        public abstract void skill();
+        public abstract void ultimate();
         public abstract void eventActive(EventArgs eventArgs);
 
         public void registerTarget(Entity target, object args = null)
@@ -22,6 +23,7 @@ namespace PlayerSystem.Weapons
                 player.registerListener(this);
             }
             else Debug.LogWarning(target + " is not a player");
+            aimSupport.player = player;
         }
 
         public void removeSelf()
