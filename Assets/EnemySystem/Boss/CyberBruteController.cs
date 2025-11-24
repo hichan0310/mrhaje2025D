@@ -65,27 +65,26 @@ namespace EnemySystem
         {
             base.Start();
 
-            // �� ���� ���� �⺻ ���� Ʃ��
+            //
             if (EnemyStat != null)
             {
                 EnemyStat.armorType = ArmorType.SpecialArmor;
-                EnemyStat.knockbackResist = 0.9f;          // �˹� ���� �� ����
-                EnemyStat.contactDamageMultiplier = 2.0f; // �����ġ�� ���ϰ� ���� ������ ���
+                EnemyStat.knockbackResist = 0.9f;          //              
+                EnemyStat.contactDamageMultiplier = 2.0f; //          
             }
         }
 
-        // ===== AI ���� =====
+        // ===== AI      =====
         protected override void TickAI(float deltaTime)
         {
             if (state == CyberBruteState.Dead) return;
             if (target == null) return;
-
-            // ��Ÿ�� ����
+  
             if (meleeTimer > 0f) meleeTimer -= deltaTime;
             if (jumpTimer > 0f) jumpTimer -= deltaTime;
             if (missileTimer > 0f) missileTimer -= deltaTime;
 
-            // ����/����/ȸ�� �� �׼� ���̸� ���� ����
+            //            
             if (currentAction != null) return;
 
             decisionTimer -= deltaTime;
@@ -94,14 +93,14 @@ namespace EnemySystem
 
             float dist = Vector2.Distance(transform.position, target.position);
 
-            // ���� �켱
+            //       
             if (dist <= meleeRange && meleeTimer <= 0f)
             {
                 StartMelee();
                 return;
             }
 
-            // �߰Ÿ�: ���� or �̻���
+            //  
             if (dist <= midRange && missileTimer <= 0f)
             {
                 if (jumpTimer <= 0f && Random.value < 0.5f)
@@ -111,7 +110,7 @@ namespace EnemySystem
                 return;
             }
 
-            // �߰� ����
+            //     
             if (dist <= chaseRange)
             {
                 state = CyberBruteState.Chase;
@@ -122,13 +121,13 @@ namespace EnemySystem
             }
         }
 
-        // ===== �̵�/���� =====
+        // =====   =====
         protected override void TickMovement(float fixedDeltaTime)
         {
             if (rb == null) return;
             if (state == CyberBruteState.Dead) return;
 
-            // ����/����/ȸ�� �߿��� �̵� X
+            //    
             if (state == CyberBruteState.MeleeAttack ||
                 state == CyberBruteState.JumpAttack ||
                 state == CyberBruteState.MissileVolley ||
@@ -150,7 +149,7 @@ namespace EnemySystem
             }
         }
 
-        // ===== �׼ǵ� =====
+        // =====  =====
         #region Actions
 
         private void StartMelee()
@@ -169,8 +168,8 @@ namespace EnemySystem
                 animator.SetTrigger(meleeTriggerName);
             }
 
-            // ��Ʈ�ڽ��� �ִϸ��̼� �̺�Ʈ���� DamageGiveEvent�� ��ų�,
-            // ���⼭ Physics2D.OverlapCircle ������ ó���ص� ��.
+            //   DamageGiveEvent
+            //    Physics2D.OverlapCircle 
 
             yield return new WaitForSeconds(meleeDuration);
 
@@ -201,14 +200,14 @@ namespace EnemySystem
 
             float t = 0f;
             float originalGravity = rb.gravityScale;
-            rb.gravityScale = 0f; // ������ ���� ���
+            rb.gravityScale = 0f; //                
 
             while (t < jumpDuration)
             {
                 t += Time.deltaTime;
                 float n = Mathf.Clamp01(t / jumpDuration);
 
-                // �߰����� �ְ����� ������ Ŀ��
+  
                 float hCurve = 4f * n * (1f - n);
                 Vector2 pos = Vector2.Lerp(startPos, endPos, n);
                 pos.y += hCurve * jumpHeight;
@@ -218,11 +217,21 @@ namespace EnemySystem
             }
 
             rb.gravityScale = originalGravity;
-
-            // ���� ���� ����
+             
             if (landingAoEPrefab != null)
             {
-                Object.Instantiate(landingAoEPrefab, rb.position, Quaternion.identity);
+                Vector2 spawnPos = rb.position;
+                Collider2D col = GetComponent<Collider2D>();
+                if (col != null)
+                    spawnPos.y -= col.bounds.extents.y;
+
+                var aoeObj = Object.Instantiate(landingAoEPrefab, spawnPos, Quaternion.identity);
+
+                var aoe = aoeObj.GetComponent<AoEAttack>();
+                if (aoe != null)
+                {
+                    aoe.owner = this;   // 보스 Entity 넣기 (EnemyBase : Entity 이니까 this 가능)
+                }
             }
 
             state = CyberBruteState.Recover;
@@ -262,7 +271,7 @@ namespace EnemySystem
                 Vector2 dir = (target.position - missileSpawnPoint.position);
                 if (dir.sqrMagnitude < 0.0001f) dir = Vector2.right;
 
-                // EnemyBase�� Entity�� ����ϹǷ� this�� �� owner
+                // EnemyBase   Entity       ϹǷ  this      owner
                 proj.Initialize(this, dir, missilePower, missileSize);
 
                 yield return new WaitForSeconds(missileInterval);
@@ -284,14 +293,14 @@ namespace EnemySystem
 
         #endregion
 
-        // ===== ��� / �̺�Ʈ =====
+
         protected override void OnDie(Entity attacker)
         {
             if (state == CyberBruteState.Dead) return;
 
             state = CyberBruteState.Dead;
 
-            // ���� ���� �׼� ����
+    
             if (currentAction != null)
             {
                 StopCoroutine(currentAction);
@@ -299,39 +308,34 @@ namespace EnemySystem
             }
             StopAllCoroutines();
 
-            // ����/�̵� ����
+   
             if (rb != null)
             {
                 rb.linearVelocity = Vector2.zero;
                 rb.isKinematic = true;
             }
 
-            // �ݶ��̴� ��Ȱ��ȭ
+
             Collider2D[] colliders = GetComponentsInChildren<Collider2D>();
             for (int i = 0; i < colliders.Length; i++)
             {
                 colliders[i].enabled = false;
             }
 
-            // �״� �ִϸ��̼�
+
             if (animator != null)
             {
                 animator.SetTrigger("Die");
             }
 
-            // TODO: ���, ����, ī�޶� ����ũ �� �߰� ����
+
 
             Destroy(gameObject, deathDestroyDelay);
         }
 
         protected override void OnEvent(EventArgs e)
         {
-            // ���ϸ� ���⼭ DamageTakeEvent ���� �ǰ� ����Ʈ/����/�˹� ���� ����
-            // var dmg = e as DamageTakeEvent;
-            // if (dmg != null && dmg.target == this)
-            // {
-            //     // EnemyStat.knockbackResist �̿��ؼ� force ���̱� ���� �͡�
-            // }
+
         }
     }
 }

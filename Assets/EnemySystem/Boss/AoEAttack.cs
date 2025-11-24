@@ -13,7 +13,7 @@ public class AoEAttack : MonoBehaviour
 
     private void Start()
     {
-        transform.localScale = new Vector3(radius, radius, 1);
+        transform.localScale = new Vector3(radius*11, radius, 1);
     }
 
     private void Update()
