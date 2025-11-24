@@ -112,7 +112,7 @@ namespace PlayerSystem.UltimateSkills.DamageEndingSniper
             }
             else if (cooldown <= 0)
             {
-                new UltimateExecuteEvent(this.player, this).trigger();
+                new UltimateExecuteEvent(this.player, 80).trigger();
                 TimeScaler.Instance.changeTimeScale(1f/512);
                 this.snipeAimNow = Instantiate(snipeAim);
                 executing = true;

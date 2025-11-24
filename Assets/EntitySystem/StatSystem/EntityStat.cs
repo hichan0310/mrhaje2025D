@@ -9,7 +9,7 @@ namespace EntitySystem.StatSystem
     {
         public Entity entity { get; set; }
         public int maxHp { get; set; }
-        public int nowHp { get; protected set; }
+        public int nowHp { get; set; }
 
         private int baseAtk { get; }
         public int addAtk { get; set; }

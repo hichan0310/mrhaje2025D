@@ -7,13 +7,13 @@ namespace EntitySystem.Events
     public class UltimateExecuteEvent:EventArgs
     {
         public Entity entity;
-        public Ultimate skill;
+        public int energy;
 
-        public UltimateExecuteEvent(Entity entity, Ultimate skill)
+        public UltimateExecuteEvent(Entity entity, int energy)
         {
             name=$"UltimateExecuteEvent: {entity.name}";
             this.entity = entity;
-            this.skill = skill;
+            this.energy = energy;
         }
 
         public override void trigger()
