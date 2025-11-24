@@ -1,8 +1,9 @@
 ﻿using EntitySystem;
 using PlayerSystem.Effects.EnergyGun;
+using PlayerSystem.Tiling;
 using UnityEngine;
 
-namespace PlayerSystem.Tiling
+namespace PlayerSystem.Polyominoes
 {
     public class TestPoly:Polyomino
     {
