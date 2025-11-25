@@ -9,7 +9,7 @@ namespace PlayerSystem.Triggers
     public class RebootProtocol : Board
     {
         public override string Name => "리부트 프로토콜";
-        public override string Description => "가한 누적 피해량이 hp*5+atk*50+def*50 이상이 되면 효과가 활성화된다. \n" +
+        public override string Description => "가한 누적 피해량이 최대체력의 5배 이상이 되면 효과가 활성화된다. \n" +
                                               "이 상태에서 죽음에 해당하는 피해를 받으면 hp 1로 생존하고, power=9의 트리거를 발동한다. ";
         
         private int damageCharge = 0;

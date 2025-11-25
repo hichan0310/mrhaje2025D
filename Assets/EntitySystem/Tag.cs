@@ -18,8 +18,8 @@ namespace EntitySystem
         skillDamage = 9,
         ultimateDamage = 10,
         triggerEffectDamage = 11,
+        fixedDamage = 12,
         fireball = 60,
-        
     }
 
     public static class Tag

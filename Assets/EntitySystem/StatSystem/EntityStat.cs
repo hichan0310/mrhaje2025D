@@ -160,6 +160,7 @@ namespace EntitySystem.StatSystem
 
         public int calculateTrueDamage(AtkTagSet tags, float coefficient)
         {
+            if (tags.Contains(AtkTags.fixedDamage)) return (int)coefficient;
             if (changeBuffs.Count > 0) return calculate().calculateTrueDamage(tags, coefficient);
 
             float dmg = coefficient * this.atk / 100;
