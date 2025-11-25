@@ -6,6 +6,11 @@ namespace PlayerSystem.Triggers
 {
     public class ChainLoadingProtocol:Board
     {
+        public override string Name => "체인로딩 프로토콜";
+        public override string Description => "일반 공격을 발동하면 charge 수치가 1 증가한다. \n" +
+                                              "이후 내부쿨 1초로 스킬이 명중하면 power=charge*0.2+0.5의 트리거를 발동한다. \n" +
+                                              "발사 속도에 반비례하여 내부쿨이 줄어든다. ";
+        
         private int charge = 0;
         private float timer = 0;
         

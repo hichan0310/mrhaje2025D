@@ -7,6 +7,8 @@ namespace PlayerSystem.Tiling
 {
     public abstract class Board : Trigger
     {
+        public abstract string Name { get; }
+        public abstract string Description { get; }
         public GameObject BackgroundUIObject { get; set; }
         protected List<(int x, int y, Polyomino p)> polyominos = new();
 

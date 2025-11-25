@@ -6,6 +6,10 @@ namespace PlayerSystem.Triggers
 {
     public class RapidFirePulse:Board
     {
+        public override string Name => "레피드파이어 펄스";
+        public override string Description => "일반 공격이 발동하면 power=총알 개수/10의 트리거를 발동한다. \n" +
+                                              "내부쿨은 존재하지 않는다. ";
+        
         public override void eventActive(EventArgs eventArgs)
         {
             if (eventArgs is BasicAttackExecuteEvent)

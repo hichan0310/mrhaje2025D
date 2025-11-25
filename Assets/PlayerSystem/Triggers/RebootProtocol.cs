@@ -8,6 +8,10 @@ namespace PlayerSystem.Triggers
 {
     public class RebootProtocol : Board
     {
+        public override string Name => "리부트 프로토콜";
+        public override string Description => "가한 누적 피해량이 hp*5+atk*50+def*50 이상이 되면 효과가 활성화된다. \n" +
+                                              "이 상태에서 죽음에 해당하는 피해를 받으면 hp 1로 생존하고, power=9의 트리거를 발동한다. ";
+        
         private int damageCharge = 0;
 
         public override void eventActive(EventArgs eventArgs)
@@ -19,8 +23,14 @@ namespace PlayerSystem.Triggers
             }
             else if (eventArgs is DamageTakeEvent damageTakeEvent)
             {
-                if (this.entity.stat.nowHp <= 0) this.entity.stat.nowHp = 1;
-                this.trigger(9);
+                if(damageTakeEvent.target!=this.entity) return;
+                if (this.entity is Player p)
+                {
+                    var stat=p.statCache;
+                    if (this.damageCharge<stat.maxHp*5+stat.atk*50+stat.def*50) return;
+                    if (this.entity.stat.nowHp <= 0) this.entity.stat.nowHp = 1;
+                    this.trigger(9);
+                }
             }
         }
 

@@ -6,6 +6,9 @@ namespace PlayerSystem.Tiling
 {
     public class TestBoard:Board
     {
+        public override string Name => "asdf";
+        public override string Description => "asdf";
+
         protected override Vector3 cellPos2Real(int x, int y)
         {
             //Debug.Log((x, y));

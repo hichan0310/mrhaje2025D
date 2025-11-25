@@ -14,12 +14,12 @@ namespace EntitySystem.StatSystem
         private int baseAtk { get; }
         public int addAtk { get; set; }
         public float increaseAtk { get; set; }
-        private int atk => (int)(baseAtk * (increaseAtk / 100 + 1) + addAtk);
+        public int atk => (int)(baseAtk * (increaseAtk / 100 + 1) + addAtk);
 
         private int baseDef { get; }
         public int addDef { get; set; }
         public float increaseDef { get; set; }
-        private int def => (int)(baseDef * (increaseDef / 100 + 1) + addDef);
+        public int def => (int)(baseDef * (increaseDef / 100 + 1) + addDef);
 
         public float crit { get; set; }
         public float critDmg { get; set; }

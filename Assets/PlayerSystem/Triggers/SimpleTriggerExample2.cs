@@ -26,5 +26,8 @@ namespace PlayerSystem.Triggers
                 }
             }
         }
+
+        public override string Name => "temp";
+        public override string Description => "1초마다 1짜리";
     }
 }

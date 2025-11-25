@@ -36,5 +36,8 @@ namespace PlayerSystem.Triggers
                 if (timer < 0) timer = 0;
             }
         }
+
+        public override string Name => "temp";
+        public override string Description => "temp";
     }
 }
