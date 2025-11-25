@@ -7,6 +7,9 @@ namespace PlayerSystem.Polyominoes
 {
     public class TestPoly:Polyomino
     {
+        public override string Name => "test";
+        public override string Description => "test";
+
         public EnergyBullet energyBullet;
         
         public override void trigger(Entity entity, float power)

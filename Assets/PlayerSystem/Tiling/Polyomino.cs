@@ -9,12 +9,15 @@ namespace PlayerSystem.Tiling
     // 모델의 피벗이 셀 (0,0) 중심에 오도록 제작돼 있다고 가정한다.
     public abstract class Polyomino : MonoBehaviour, ITriggerEffect
     {
+        public abstract string Name { get; }
+        public abstract string Description { get; }
+        
         [Tooltip("피벗(0,0)을 기준으로 차지하는 셀 좌표들")] public List<Cell> cells;
 
         public RectTransform rt { get; private set; }
 
 
-        private void Start()
+        protected virtual void Start()
         {
             this.rt = this.GetComponent<RectTransform>();
         }

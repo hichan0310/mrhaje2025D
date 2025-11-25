@@ -10,6 +10,9 @@ namespace PlayerSystem.Effects
         public Example2FireBall fireball;
         private AtkTagSet atkTagSet = new AtkTagSet().Add(AtkTags.fireball);
 
+        public override string Name => "asdf";
+        public override string Description => "asdf";
+
         public override void trigger(Entity entity, float power)
         {
             var f=Instantiate(fireball);
