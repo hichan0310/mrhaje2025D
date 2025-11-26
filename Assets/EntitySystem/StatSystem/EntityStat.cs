@@ -86,7 +86,7 @@ namespace EntitySystem.StatSystem
             skillCooldownDecrease = 1f;
             bulletRate = 1f;
             bulletSpeed = 1f;
-            additionalDuration = 0.2f;
+            additionalDuration = 1f;
             skillRange = 1f;
             fireSpeed = 1;
         }
