@@ -167,7 +167,7 @@ namespace PlayerSystem.Weapons.Sniper
                     float angleOffset;
 
                     var tmp = (bullets % 2 == 0) ? bullets * 2 + 1 : bullets * 2 - 1;
-                    var tmpp = Mathf.Atan(stat.skillRange) / Mathf.PI * 4 * 15 / (tmp - 1);
+                    var tmpp = Mathf.Atan(Mathf.Sqrt(stat.skillRange)) / Mathf.PI * 4 * 15 / (tmp - 1);
                     if (bullets % 2 == 0)
                     {
                         var tmppp = i * 2 - bullets + 1;
