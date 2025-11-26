@@ -310,14 +310,15 @@ namespace PlayerSystem
             //ActivateMemory(ActionTriggerType.Interact, 1f);
         }
 
-        private void TryDodge()
+        public void TryDodge(bool ignoreTimer = false)
         {
-            if (isDodging || dodgeCooldownTimer > 0f)
+            if (!ignoreTimer && (isDodging || dodgeCooldownTimer > 0f))
             {
                 return;
             }
 
             isDodging = true;
+            this.body.linearVelocityY = 0.1f;
             dodgeTimer = this.stat.dodgeTime;
             dodgeCooldownTimer = this.stat.dodgeCooldown;
             new DodgeEvent(this).trigger();

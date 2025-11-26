@@ -1,4 +1,6 @@
 ﻿using System;
+using DefaultNamespace;
+using DG.Tweening;
 using EntitySystem;
 using EntitySystem.Events;
 using UnityEngine;
@@ -7,21 +9,22 @@ using Random = UnityEngine.Random;
 
 namespace PlayerSystem.Weapons.Sniper
 {
-    public class Sniper:Weapon
+    public class Sniper : Weapon
     {
         public GameObject firePoint;
         public NormalBullet bulletNormalPrefab;
         public SkillBullet skillBulletPrefab;
         public GameObject muzzleFlashPrefab;
+        public UltimateHit ultimateHitPrefab;
         private float energy = 0;
-        
-        private AtkTagSet atkTagSet=new AtkTagSet().Add(AtkTags.electricalDamage, AtkTags.normalAttackDamage);
-        
+
+        private AtkTagSet atkTagSet = new AtkTagSet().Add(AtkTags.electricalDamage, AtkTags.normalAttackDamage);
+        private AtkTagSet ultimateTag = new AtkTagSet().Add(AtkTags.electricalDamage, AtkTags.ultimateDamage);
+
         private bool skillBullet = false;
-        
-        
+
         [SerializeField] private int bulletNumAdd = 0;
-        
+
         public override void fire()
         {
             if (!skillBullet)
@@ -32,9 +35,10 @@ namespace PlayerSystem.Weapons.Sniper
                 direction.Normalize();
                 var b = Instantiate(bulletNormalPrefab, fire, Quaternion.identity);
                 b.rigidbody2D.position = fire;
-                var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg+this.aimSupport.aimRange*(Random.Range(-0.3f, 0.3f));
+                var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg +
+                            this.aimSupport.aimRange * (Random.Range(-0.3f, 0.3f));
                 b.rigidbody2D.rotation = angle;
-                b.direction = new Vector2(Mathf.Cos(angle*Mathf.Deg2Rad), Mathf.Sin(angle*Mathf.Deg2Rad));
+                b.direction = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
 
                 var stat = this.player.stat.calculate();
                 stat.bulletRate += bulletNumAdd;
@@ -62,9 +66,10 @@ namespace PlayerSystem.Weapons.Sniper
                 direction.Normalize();
                 var b = Instantiate(skillBulletPrefab, fire, Quaternion.identity);
                 b.rigidbody2D.position = fire;
-                var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg+this.aimSupport.aimRange*(Random.Range(-0.3f, 0.3f));
+                var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg +
+                            this.aimSupport.aimRange * (Random.Range(-0.3f, 0.3f));
                 b.rigidbody2D.rotation = angle;
-                b.direction = new Vector2(Mathf.Cos(angle*Mathf.Deg2Rad), Mathf.Sin(angle*Mathf.Deg2Rad));
+                b.direction = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
 
                 var stat = this.player.stat.calculate();
                 stat.bulletRate += bulletNumAdd;
@@ -78,7 +83,8 @@ namespace PlayerSystem.Weapons.Sniper
                         coef *= 5;
                     }
                 }
-                coef=coef*0.8f+100;
+
+                coef = coef * 0.8f + 100;
 
                 var tag = new AtkTagSet(atkTagSet);
                 var dmg = stat.calculateTrueDamage(tag, coef);
@@ -91,12 +97,15 @@ namespace PlayerSystem.Weapons.Sniper
         public override void skill()
         {
             this.skillBullet = true;
-            
+            this.player.TryDodge(true);
         }
+
+        public bool inUltimate { get; set; } = false;
 
         public override void ultimate()
         {
-            Debug.Log("ultimate");
+            TimeScaler.Instance.changeTimeScale(1f / 3);
+            inUltimate = true;
         }
 
         public override void eventActive(EventArgs eventArgs)
@@ -109,27 +118,48 @@ namespace PlayerSystem.Weapons.Sniper
 
         public override void update(float deltaTime, Entity target)
         {
-            
+        }
+
+        private void releaseUltimate()
+        {
+            this.inUltimate = false;
         }
 
         private void Update()
         {
             Vector2 pp = player.transform.position;
             this.transform.position = pp;
-            Vector2 t=this.aimSupport.target;
-            Vector2 p=this.player.transform.position;
+            Vector2 t = this.aimSupport.target;
+            Vector2 p = this.player.transform.position;
             if (t.x < p.x) this.transform.localScale = new Vector3(1, -1, 1);
             else this.transform.localScale = new Vector3(1, 1, 1);
-            this.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(t.y-p.y, t.x-p.x) * Mathf.Rad2Deg);
-            
-            if (Input.GetKeyDown(KeyCode.E))
+            this.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(t.y - p.y, t.x - p.x) * Mathf.Rad2Deg);
+
+            if (!aimSupport.isAiming && !inUltimate && Input.GetKeyDown(KeyCode.E))
             {
                 skill();
             }
 
-            if (Input.GetKeyDown(KeyCode.Q))
+            if (!aimSupport.isAiming && !inUltimate && Input.GetKeyDown(KeyCode.Q))
             {
                 ultimate();
+            }
+
+            if (inUltimate && Input.GetMouseButtonUp(0))
+            {
+                Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                TimeScaler.Instance.changeTimeScale(3f);
+                var uHitObj = Instantiate(this.ultimateHitPrefab, pos, Quaternion.identity);
+                new UltimateExecuteEvent(this.player, 50).trigger();
+                var stat = this.player.stat.calculate();
+                var hitTag = new AtkTagSet(this.ultimateTag);
+                var finishTag = new AtkTagSet(this.ultimateTag);
+                var dmgHit = stat.calculateTrueDamage(hitTag, 30);
+                var dmgFinish = stat.calculateTrueDamage(finishTag, 700);
+                uHitObj.range = stat.skillRange;
+                uHitObj.hit = new DamageGiveEvent(dmgHit, Vector3.zero, player, null, hitTag, 1);
+                uHitObj.finish = new DamageGiveEvent(dmgFinish, Vector3.zero, player, null, finishTag, 10);
+                Invoke("releaseUltimate", 0.01f);
             }
         }
     }

@@ -33,7 +33,7 @@ namespace PlayerSystem.Weapons.Sniper
 
         private void Start()
         {
-            Debug.Log(this.damageGiveEvent.trueDmg);
+            // Debug.Log(this.damageGiveEvent.trueDmg);
         }
 
         private bool finish = false;

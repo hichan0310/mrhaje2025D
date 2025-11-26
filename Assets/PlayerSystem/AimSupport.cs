@@ -23,7 +23,7 @@ namespace PlayerSystem
         protected LineRenderer lrRight;
 
         protected float aimStartTime;
-        protected bool isAiming = false;
+        public bool isAiming { get; set; } = false;
 
         protected const float MAX_AIM_RANGE = 10f;
         protected const float MIN_AIM_RANGE = 0.1f;

@@ -87,7 +87,7 @@ namespace EntitySystem.StatSystem
             bulletRate = 1f;
             bulletSpeed = 1f;
             additionalDuration = 0.2f;
-            skillRange = 0.2f;
+            skillRange = 1f;
             fireSpeed = 1;
         }
 
@@ -171,6 +171,7 @@ namespace EntitySystem.StatSystem
                 if (atkTag == AtkTags.all) continue;
                 dmg += dmgAdd[(int)atkTag];
             }
+
             if (Random.value < crit / 100 && !tagSet.Contains(AtkTags.notcriticalHit))
             {
                 dmg = (int)(dmg * (1 + critDmg / 100));
@@ -194,6 +195,7 @@ namespace EntitySystem.StatSystem
 
         public int calculateTakenDamage(AtkTagSet tags, int damage)
         {
+            if (tags.Contains(AtkTags.fixedDamage)) return damage;
             if (changeBuffs.Count > 0) return calculate().calculateTakenDamage(tags, damage);
 
             int C = 200;
@@ -237,12 +239,12 @@ namespace EntitySystem.StatSystem
 
             // 기본 생성자: Enemy용으로 새 스탯 초기화할 때 사용
             public EnemyStat(Entity entity,
-                             int hp,
-                             int baseAtk,
-                             int baseDef,
-                             ArmorType armorType = ArmorType.Normal,
-                             float knockbackResist = 0f,
-                             float contactDamageMultiplier = 1f)
+                int hp,
+                int baseAtk,
+                int baseDef,
+                ArmorType armorType = ArmorType.Normal,
+                float knockbackResist = 0f,
+                float contactDamageMultiplier = 1f)
                 : base(entity, hp, baseAtk, baseDef)
             {
                 this.armorType = armorType;

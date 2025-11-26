@@ -87,7 +87,7 @@ namespace EnemySystem
             if (debugTimer >= 0.5f)
             {
                 string targetInfo = (target == null) ? "null" : target.name;
-                Debug.Log($"[MeleeEnemy] TickAI: state={state}, target={targetInfo}, attackTimer={attackTimer:F2}");
+                // Debug.Log($"[MeleeEnemy] TickAI: state={state}, target={targetInfo}, attackTimer={attackTimer:F2}");
                 debugTimer = 0f;
             }
 
@@ -106,11 +106,11 @@ namespace EnemySystem
 
             // Extra debug for distance check
             // (this will also show if meleeRange is too small)
-            Debug.Log($"[MeleeEnemy] Distance to target: {dist:F2}, meleeRange={meleeRange}");
+            // Debug.Log($"[MeleeEnemy] Distance to target: {dist:F2}, meleeRange={meleeRange}");
 
             if (dist <= meleeRange && attackTimer <= 0f)
             {
-                Debug.Log("[MeleeEnemy] Condition met for StartAttack");
+                // Debug.Log("[MeleeEnemy] Condition met for StartAttack");
                 StartAttack();
                 return;
             }
@@ -118,13 +118,13 @@ namespace EnemySystem
             if (dist <= detectRange)
             {
                 if (state != MeleeEnemyState.Chase)
-                    Debug.Log("[MeleeEnemy] Switching state to Chase");
+                    // Debug.Log("[MeleeEnemy] Switching state to Chase");
                 state = MeleeEnemyState.Chase;
             }
             else
             {
                 if (state != MeleeEnemyState.Idle)
-                    Debug.Log("[MeleeEnemy] Switching state to Idle");
+                    // Debug.Log("[MeleeEnemy] Switching state to Idle");
                 state = MeleeEnemyState.Idle;
             }
         }
@@ -156,11 +156,11 @@ namespace EnemySystem
         {
             if (attackRoutine != null)
             {
-                Debug.Log("[MeleeEnemy] StartAttack called but attackRoutine is already running");
+                // Debug.Log("[MeleeEnemy] StartAttack called but attackRoutine is already running");
                 return;
             }
 
-            Debug.Log("[MeleeEnemy] StartAttack: starting attack routine");
+            // Debug.Log("[MeleeEnemy] StartAttack: starting attack routine");
             state = MeleeEnemyState.Attack;
             attackTimer = attackCooldown;
             attackRoutine = StartCoroutine(AttackRoutine_NoAnimation());
@@ -170,21 +170,21 @@ namespace EnemySystem
         {
             if (attackWindup > 0f)
             {
-                Debug.Log($"[MeleeEnemy] AttackRoutine: windup {attackWindup}s");
+                // Debug.Log($"[MeleeEnemy] AttackRoutine: windup {attackWindup}s");
                 yield return new WaitForSeconds(attackWindup);
             }
 
-            Debug.Log("[MeleeEnemy] AttackRoutine: calling MeleeHit");
+            // Debug.Log("[MeleeEnemy] AttackRoutine: calling MeleeHit");
             MeleeHit();
 
             if (recoverDuration > 0f)
             {
-                Debug.Log($"[MeleeEnemy] AttackRoutine: recover {recoverDuration}s");
+                // Debug.Log($"[MeleeEnemy] AttackRoutine: recover {recoverDuration}s");
                 state = MeleeEnemyState.Recover;
                 yield return new WaitForSeconds(recoverDuration);
             }
 
-            Debug.Log("[MeleeEnemy] AttackRoutine: back to Idle");
+            // Debug.Log("[MeleeEnemy] AttackRoutine: back to Idle");
             state = MeleeEnemyState.Idle;
             attackRoutine = null;
         }
@@ -193,7 +193,7 @@ namespace EnemySystem
         {
             if (state == MeleeEnemyState.Dead)
             {
-                Debug.Log("[MeleeEnemy] MeleeHit called while Dead");
+                // Debug.Log("[MeleeEnemy] MeleeHit called while Dead");
                 return;
             }
 
@@ -204,21 +204,21 @@ namespace EnemySystem
             Debug.DrawLine(center, center + Vector2.up * 0.1f, Color.red, 0.25f);
 #endif
 
-            Debug.Log($"[MeleeEnemy] MeleeHit: center={center}, radius={hitRadius}, layerMask={targetLayer.value}");
+            // Debug.Log($"[MeleeEnemy] MeleeHit: center={center}, radius={hitRadius}, layerMask={targetLayer.value}");
 
             Collider2D[] hits = Physics2D.OverlapCircleAll(center, hitRadius, targetLayer);
 
-            Debug.Log($"[MeleeEnemy] MeleeHit: hits length = {hits.Length}");
+            // Debug.Log($"[MeleeEnemy] MeleeHit: hits length = {hits.Length}");
 
             for (int i = 0; i < hits.Length; i++)
             {
                 Entity t = hits[i].GetComponentInParent<Entity>();
-                Debug.Log($"[MeleeEnemy] MeleeHit: hit collider={hits[i].name}, entity={(t == null ? "null" : t.name)}");
+                // Debug.Log($"[MeleeEnemy] MeleeHit: hit collider={hits[i].name}, entity={(t == null ? "null" : t.name)}");
 
                 if (t == null || t == this) continue;
 
                 var tags = new AtkTagSet().Add(AtkTags.physicalDamage, AtkTags.normalAttackDamage);
-                Debug.Log($"[MeleeEnemy] MeleeHit: sending DamageGiveEvent to {t.name}");
+                // Debug.Log($"[MeleeEnemy] MeleeHit: sending DamageGiveEvent to {t.name}");
                 new DamageGiveEvent(baseDamage, center, this, t, tags, 1).trigger();
             }
         }
@@ -226,7 +226,7 @@ namespace EnemySystem
         protected override void OnDie(Entity attacker)
         {
             if (state == MeleeEnemyState.Dead) return;
-            Debug.Log($"[MeleeEnemy] OnDie: killed by {(attacker == null ? "null" : attacker.name)}");
+            // Debug.Log($"[MeleeEnemy] OnDie: killed by {(attacker == null ? "null" : attacker.name)}");
             state = MeleeEnemyState.Dead;
 
             if (attackRoutine != null)

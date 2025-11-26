@@ -8,15 +8,19 @@ namespace PlayerSystem.Weapons.Sniper
         public float aimDuration { get; set; } = 0;
         [SerializeField] private float slowTime = 0.3f;
         private bool slow = false;
+        [SerializeField] private Sniper sniper;
         
         protected override void HandleAimInput()
         {
             // 마우스 왼쪽 버튼을 누르고 있을 때
             if (Input.GetMouseButtonDown(0))
             {
-                isAiming = true;
+                if (!sniper.inUltimate)
+                {
+                    isAiming = true;
+                }
             }
-            else if (Input.GetMouseButtonUp(0))
+            else if (Input.GetMouseButtonUp(0) && !sniper.inUltimate)
             {
                 this.weapon.fire();
                 isAiming = false;

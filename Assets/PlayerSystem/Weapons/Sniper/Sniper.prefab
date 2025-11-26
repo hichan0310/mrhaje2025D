@@ -170,6 +170,7 @@ MonoBehaviour:
   bulletNormalPrefab: {fileID: 5964572857195935109, guid: 663e3658e5cefc240884d624c3f56411, type: 3}
   skillBulletPrefab: {fileID: -2422280095771278480, guid: fe8dc951fbf7aa940856768ffe246ae7, type: 3}
   muzzleFlashPrefab: {fileID: 1227067792111776, guid: 89c6e66d5825ccc4e885325e3c225171, type: 3}
+  ultimateHitPrefab: {fileID: 8301515786890591081, guid: 2efa16926774f8146b833b67ca94b946, type: 3}
   bulletNumAdd: 4
 --- !u!114 &5877542399906084445
 MonoBehaviour:
@@ -190,3 +191,4 @@ MonoBehaviour:
     m_Bits: 0
   assistRange: 1
   slowTime: 0.3
+  sniper: {fileID: 229302457419543078}
