@@ -47,7 +47,7 @@ namespace PlayerSystem.Weapons.Sniper
             Debug.Log(other.gameObject.name);
             trailDestroy.destroy();
             this.rigidbody2D.linearVelocity = Vector2.zero;
-            Instantiate(hitEffect, this.transform.position, Quaternion.identity);
+            Destroy(Instantiate(hitEffect, this.transform.position, Quaternion.identity).gameObject, 1);
             damageGiveEvent.target = e;
             damageGiveEvent.trigger();
             this.finish = true;

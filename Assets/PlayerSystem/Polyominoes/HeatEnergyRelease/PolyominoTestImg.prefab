@@ -61,7 +61,7 @@ MonoBehaviour:
     y: 0
   - x: 2
     y: 0
-  energyBullet: {fileID: 0}
+  energyBullet: {fileID: -7636538640081984408, guid: 9198e958ee278df48abdeb333f831c36, type: 3}
 --- !u!1 &2484452879200305468
 GameObject:
   m_ObjectHideFlags: 0

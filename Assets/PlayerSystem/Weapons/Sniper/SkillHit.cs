@@ -30,6 +30,7 @@ namespace PlayerSystem.Weapons.Sniper
                 var main = ps.main;
                 main.startSizeMultiplier *= range;
             }
+            Destroy(this.gameObject, 1);
         }
 
         protected override void update(float deltaTime)

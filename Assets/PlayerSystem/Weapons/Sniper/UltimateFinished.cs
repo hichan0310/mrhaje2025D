@@ -17,6 +17,7 @@ namespace PlayerSystem.Weapons.Sniper
         private void Start()
         {
             collider2D = GetComponent<Collider2D>();
+            Destroy(this.gameObject, 1);
         }
 
         private void Update()

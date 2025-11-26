@@ -1,4 +1,5 @@
 ﻿using EntitySystem;
+using PlayerSystem.Polyominoes.HeatEnergyRelease;
 using UnityEngine;
 
 namespace PlayerSystem.Effects.EnergyGun
@@ -14,8 +15,6 @@ namespace PlayerSystem.Effects.EnergyGun
             {
                 float angle = 60*i;
                 var e=Instantiate(energyBullet, entity.transform.position, Quaternion.AngleAxis(angle, Vector3.forward));
-                e.stat = stat;
-                e.power = power;
             }
         }
     }

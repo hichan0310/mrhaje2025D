@@ -10,7 +10,7 @@ namespace PlayerSystem.Polyominoes.AssaultStackBuffer
         public override string Name => "Assault Stack Buffer";
 
         public override string Description =>
-            "공격력이 10 증가한다.\n" +
+            "공격력이 100 증가한다.\n" +
             "이 효과는 power에 영향을 받지 않으며, 최대 +2000까지 중첩될 수 있다.\n" +
             "지속시간은 3초이고, 피해를 줄 때마다 지속시간이 3초로 초기화된다.";
 
@@ -40,7 +40,7 @@ namespace PlayerSystem.Polyominoes.AssaultStackBuffer
             {
                 if (this.target != target)
                 {
-                    if (this.target != null)
+                    if (this.target)
                     {
                         this.target.removeListener(this);
                         this.target.stat.removeBuff(this);
@@ -56,7 +56,7 @@ namespace PlayerSystem.Polyominoes.AssaultStackBuffer
 
                 if (stack < 2000f)
                 {
-                    stack += 10f;
+                    stack += 100f;
                     if (stack > 2000f) stack = 2000f;
                 }
 

@@ -47,8 +47,7 @@ namespace PlayerSystem.Weapons.Sniper
                     }
 
                     finishObj.damageGiveEvent = this.finish;
-
-                    Destroy(finishObj, 2f);
+                    
                     Destroy(gameObject);
                     this.colliders.Clear();
                 }

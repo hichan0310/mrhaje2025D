@@ -1,10 +1,9 @@
-﻿using System;
-using EntitySystem;
-using EntitySystem.StatSystem;
+﻿using EntitySystem;
+using EntitySystem.Events;
 using PlayerSystem.Skills;
 using UnityEngine;
 
-namespace PlayerSystem.Effects.EnergyGun
+namespace PlayerSystem.Polyominoes.HeatEnergyRelease
 {
     public class EnergyBullet:SkillEffect
     {
@@ -13,9 +12,8 @@ namespace PlayerSystem.Effects.EnergyGun
         private float retargetInterval = 0.2f;    // 목표 재탐색 주기
 
         private float retargetTimer;
-        public IStat stat { get; set; }
         private Entity target;
-        public float power { get; set; }
+        public DamageGiveEvent damageGiveEvent { get; set; }
 
         public EnergyBulletHit hit;
 
@@ -30,7 +28,7 @@ namespace PlayerSystem.Effects.EnergyGun
             this.timer -= deltaTime;
             if (this.timer <= 0) OnTriggerEnter2D(null);
             retargetTimer -= deltaTime;
-            if (target == null || !target.isActiveAndEnabled || retargetTimer <= 0f)
+            if (!target || !target.isActiveAndEnabled || retargetTimer <= 0f)
             {
                 target = AcquireNearestTarget();
                 retargetTimer = retargetInterval;
@@ -41,7 +39,7 @@ namespace PlayerSystem.Effects.EnergyGun
             float newAngle = currentAngle;
 
             // 목표가 있으면 목표 각도로 제한 회전
-            if (target != null)
+            if (target)
             {
                 Vector2 toTarget = (Vector2)target.transform.position - (Vector2)transform.position;
                 if (toTarget.sqrMagnitude > 0.0001f)
@@ -57,7 +55,7 @@ namespace PlayerSystem.Effects.EnergyGun
             // 회전 적용 및 속도 유지
             Vector2 dir = new Vector2(Mathf.Cos(newAngle * Mathf.Deg2Rad), Mathf.Sin(newAngle * Mathf.Deg2Rad));
 
-            if (rigidbody2D != null)
+            if (rigidbody2D)
             {
                 rigidbody2D.MoveRotation(newAngle);
                 rigidbody2D.linearVelocity = dir * speed;  // 속도 항상 일정
@@ -71,17 +69,18 @@ namespace PlayerSystem.Effects.EnergyGun
 
         protected override void OnTriggerEnter2D(Collider2D other)
         {
-            if (other != null)
+            if (other)
             {
                 var e = other.gameObject.GetComponent<Entity>();
-                if (e == null) return;
-                if (e == this.stat.entity) return;
+                if (!e) return;
+                if (e == this.damageGiveEvent.attacker) return;
             }
 
             var h=Instantiate(hit);
             h.transform.position = this.transform.position;
-            h.stat=stat;
-            h.coef = 50 * power;
+            
+            h.damageGiveEvent = this.damageGiveEvent;
+            
             Destroy(gameObject);
         }
 
@@ -98,7 +97,7 @@ namespace PlayerSystem.Effects.EnergyGun
             {
                 var e = enemies[i];
                 if (!e.isActiveAndEnabled) continue;
-                if (e == stat.entity) continue;
+                if (e == this.damageGiveEvent.attacker) continue;
 
                 float d = ((Vector2)e.transform.position - myPos).sqrMagnitude;
                 if (d < minDistSqr)
