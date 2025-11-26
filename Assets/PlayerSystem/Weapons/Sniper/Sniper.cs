@@ -15,7 +15,7 @@ namespace PlayerSystem.Weapons.Sniper
         public NormalBullet bulletNormalPrefab;
         public SkillBullet skillBulletPrefab;
         public GameObject muzzleFlashPrefab;
-        public UltimateHit ultimateHitPrefab;
+        public UltimateBullet ultimateBulletPrefab;
         private float energy = 0;
 
         private AtkTagSet atkTagSet = new AtkTagSet().Add(AtkTags.electricalDamage, AtkTags.normalAttackDamage);
@@ -149,17 +149,50 @@ namespace PlayerSystem.Weapons.Sniper
             {
                 Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 TimeScaler.Instance.changeTimeScale(3f);
-                var uHitObj = Instantiate(this.ultimateHitPrefab, pos, Quaternion.identity);
                 new UltimateExecuteEvent(this.player, 50).trigger();
                 var stat = this.player.stat.calculate();
-                var hitTag = new AtkTagSet(this.ultimateTag);
-                var finishTag = new AtkTagSet(this.ultimateTag);
-                var dmgHit = stat.calculateTrueDamage(hitTag, 30);
-                var dmgFinish = stat.calculateTrueDamage(finishTag, 700);
-                uHitObj.range = stat.skillRange;
-                uHitObj.hit = new DamageGiveEvent(dmgHit, Vector3.zero, player, null, hitTag, 1);
-                uHitObj.finish = new DamageGiveEvent(dmgFinish, Vector3.zero, player, null, finishTag, 10);
+                Vector2 target = this.aimSupport.target;
+                Vector2 fire = firePoint.transform.position;
+                Vector2 direction = target - fire;
+                float length = direction.magnitude;
+                direction.Normalize();
+                var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                var bullets = (int)stat.bulletRate + bulletNumAdd;
+                for (int i = 0; i < bullets; i++)
+                {
+                    var b = Instantiate(ultimateBulletPrefab, fire, Quaternion.identity);
+                    b.rigidbody2D.position = fire;
+
+
+                    float angleOffset;
+
+                    var tmp = (bullets % 2 == 0) ? bullets * 2 + 1 : bullets * 2 - 1;
+                    var tmpp = Mathf.Atan(stat.skillRange) / Mathf.PI * 4 * 15 / (tmp - 1);
+                    if (bullets % 2 == 0)
+                    {
+                        var tmppp = i * 2 - bullets + 1;
+                        angleOffset = tmppp * tmpp;
+                    }
+                    else
+                    {
+                        var tmppp = i * 2 - bullets + 1;
+                        angleOffset = tmppp * tmpp;
+                    }
+
+                    var a = angle + angleOffset;
+                    //Debug.Log(angleOffset);
+                    b.rigidbody2D.rotation = a;
+                    var d = new Vector2(Mathf.Cos(a * Mathf.Deg2Rad), Mathf.Sin(a * Mathf.Deg2Rad));
+                    b.pos = fire + d * (length * (1 + (Random.value - 0.5f) / 15));
+                    b.rigidbody2D.linearVelocity = d * 40;
+
+                    b.player = player;
+                    b.ultimateTag = this.ultimateTag;
+                    b.stat = player.stat.calculate();
+                }
+
                 Invoke("releaseUltimate", 0.01f);
+                //Destroy(Instantiate(muzzleFlashPrefab, fire, Quaternion.identity), 1);
             }
         }
     }

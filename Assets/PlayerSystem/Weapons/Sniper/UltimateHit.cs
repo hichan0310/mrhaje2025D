@@ -26,7 +26,7 @@ namespace PlayerSystem.Weapons.Sniper
             transform.localScale = Vector3.one * 0.3f;
 
             transform
-                .DOScale(Vector3.one * 3 * range, 3f)
+                .DOScale(Vector3.one * 1.5f * range, 3f)
                 .SetEase(Ease.OutQuad);
         }
 
@@ -38,12 +38,12 @@ namespace PlayerSystem.Weapons.Sniper
                 if (!finished)
                 {
                     var finishObj = Instantiate(finishObject, transform.position, Quaternion.identity);
-                    finishObj.transform.localScale = Vector3.one * (3 * range);
+                    finishObj.transform.localScale = Vector3.one * (1.5f * range);
                     foreach (var ps in finishObj.GetComponentsInChildren<ParticleSystem>(true))
                     {
                         var main = ps.main;
                         // 기본적으로 startSizeMultiplier에 배수 적용
-                        main.startSizeMultiplier *= 3 * range;
+                        main.startSizeMultiplier *= 1.5f * range;
                     }
 
                     finishObj.damageGiveEvent = this.finish;
