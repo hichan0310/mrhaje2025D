@@ -7,16 +7,23 @@ using static EntitySystem.StatSystem.EntityStat;
 namespace EntitySystem
 {
     /// <summary>
-    /// 모든 적의 공통 베이스.
-    /// - Entity 상속 → HP, hpBar, 이벤트 시스템 그대로 사용
-    /// - EnemyStat을 기본 스탯으로 사용 (없으면 여기서 생성)
+    /// Base class for all enemies.
+    /// - Inherits Entity (hp, hpBar, event system)
+    /// - Initializes EnemyStat if not assigned
+    /// - Provides common targeting and facing logic
     /// </summary>
     public abstract class EnemyBase : Entity
     {
         [Header("Common Components")]
         [SerializeField] protected Rigidbody2D rb;
+
+        [Header("Target & Detection")]
         [SerializeField] protected Transform target;
+        [SerializeField] protected bool autoFindPlayer = true;
         [SerializeField] protected bool faceTarget = true;
+        [SerializeField] protected float detectRange = 15f;
+
+        [Header("Movement")]
         [SerializeField] protected float moveSpeed = 3f;
 
         [Header("Base Stat (for init)")]
@@ -29,7 +36,7 @@ namespace EntitySystem
         protected bool isDead = false;
 
         /// <summary>
-        /// EnemyStat로 캐스팅한 뷰. (아니면 null)
+        /// Cast stat as EnemyStat. (null if not EnemyStat)
         /// </summary>
         protected EnemyStat EnemyStat
         {
@@ -38,11 +45,12 @@ namespace EntitySystem
 
         protected override void Start()
         {
-            base.Start(); // animator, TimeManager, hpBar 설정
+            base.Start(); // animator, TimeManager, hpBar
 
-            if (!rb) rb = GetComponent<Rigidbody2D>();
+            if (!rb)
+                rb = GetComponent<Rigidbody2D>();
 
-            // stat이 비어 있으면 EnemyStat으로 초기화
+            // Initialize stat as EnemyStat if not assigned
             if (stat == null)
             {
                 stat = new EnemyStat(
@@ -57,20 +65,28 @@ namespace EntitySystem
             }
             else
             {
-                // 만약 이미 Inspector에서 EnemyStat을 넣어놨다면 그대로 사용.
-                // (EntityStat만 있다면 추가 필드는 못 쓰지만, 에러는 안 나게 두기)
                 if (!(stat is EnemyStat))
                 {
                     Debug.LogWarning(
-                        $"{name}: stat이 EnemyStat이 아니라서 armorType/knockbackResist 같은 Enemy 전용 속성은 못 씀."
+                        $"{name}: stat is not EnemyStat. ArmorType / knockbackResist may not be used correctly."
                     );
+                }
+            }
+
+            // Auto target player if requested and target is not set
+            if (autoFindPlayer && target == null)
+            {
+                var player = FindObjectOfType<PlayerSystem.Player>();
+                if (player != null)
+                {
+                    target = player.transform;
                 }
             }
         }
 
         protected override void update(float deltaTime)
         {
-            // 기존 리스너 업데이트 + hpBar 갱신
+            // base Entity update (listeners, hpBar)
             base.update(deltaTime);
 
             if (isDead) return;
@@ -87,10 +103,10 @@ namespace EntitySystem
 
         public override void eventActive(EventArgs e)
         {
-            // 먼저 Entity가 리스너들에게 뿌리게 함
+            // forward to base listeners
             base.eventActive(e);
 
-            // 내가 죽은 EntityDieEvent라면 OnDie 호출
+            // handle die event
             EntityDieEvent die = e as EntityDieEvent;
             if (die != null && die.entity == this && !isDead)
             {
@@ -114,7 +130,38 @@ namespace EntitySystem
             }
         }
 
-        // 개별 적이 구현해야 하는 것들
+        // --------------------------------------------------------------------
+        // Target / detection helpers (for all enemies)
+        // --------------------------------------------------------------------
+
+        protected bool HasTarget
+        {
+            get { return target != null; }
+        }
+
+        protected float DistanceToTargetSqr()
+        {
+            if (target == null) return float.PositiveInfinity;
+            Vector2 diff = (Vector2)target.position - (Vector2)transform.position;
+            return diff.sqrMagnitude;
+        }
+
+        protected float DistanceToTarget()
+        {
+            if (target == null) return float.PositiveInfinity;
+            return Vector2.Distance(transform.position, target.position);
+        }
+
+        protected bool IsTargetWithinRange(float range)
+        {
+            if (target == null) return false;
+            float r2 = range * range;
+            return DistanceToTargetSqr() <= r2;
+        }
+
+        // --------------------------------------------------------------------
+        // Functions to be implemented per enemy type
+        // --------------------------------------------------------------------
         protected abstract void TickAI(float deltaTime);
         protected abstract void TickMovement(float fixedDeltaTime);
         protected abstract void OnDie(Entity attacker);

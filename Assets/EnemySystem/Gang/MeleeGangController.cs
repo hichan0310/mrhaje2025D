@@ -19,7 +19,6 @@ namespace EnemySystem
     public class MeleeEnemyController : EnemyBase
     {
         [Header("Range")]
-        [SerializeField] private float detectRange = 6f;
         [SerializeField] private float meleeRange = 1.5f;
 
         [Header("Attack")]
@@ -41,6 +40,14 @@ namespace EnemySystem
 
         private float debugTimer;
 
+        [Header("Animation")]
+        [SerializeField] private string moveBoolName = "IsMoving";
+        [SerializeField] private string attackTriggerName = "Attack";
+
+        [SerializeField] private bool flipToTarget = true;
+        private float baseScaleX = -5f;
+
+
         protected override void Start()
         {
             base.Start();
@@ -51,14 +58,7 @@ namespace EnemySystem
                 EnemyStat.knockbackResist = 0.3f;
             }
 
-            if (target == null)
-            {
-                Debug.Log($"[MeleeEnemy] Start: target is null on {name}");
-            }
-            else
-            {
-                Debug.Log($"[MeleeEnemy] Start: target = {target.name} on {name}");
-            }
+            baseScaleX = Mathf.Abs(transform.localScale.x);
         }
 
         protected virtual void Awake()
@@ -78,150 +78,167 @@ namespace EnemySystem
             }
         }
 
-        protected override void TickAI(float deltaTime)
-        {
-            if (state == MeleeEnemyState.Dead) return;
+        private void UpdateFacing()
+{
+    if (!flipToTarget) return;
+    if (target == null) return;
+    if (state == MeleeEnemyState.Dead) return;
 
-            // Simple debug every 0.5 sec
-            debugTimer += deltaTime;
-            if (debugTimer >= 0.5f)
-            {
-                string targetInfo = (target == null) ? "null" : target.name;
-                // Debug.Log($"[MeleeEnemy] TickAI: state={state}, target={targetInfo}, attackTimer={attackTimer:F2}");
-                debugTimer = 0f;
-            }
+    float dx = target.position.x - transform.position.x;
+    if (Mathf.Abs(dx) < 0.01f) return;
 
-            if (target == null)
-            {
-                return;
-            }
+    float sign = Mathf.Sign(dx);
+    Vector3 s = transform.localScale;
+    s.x = baseScaleX * sign;
+    transform.localScale = s;
+}
 
-            if (attackTimer > 0f)
-                attackTimer -= deltaTime;
 
-            if (state == MeleeEnemyState.Attack || state == MeleeEnemyState.Recover)
-                return;
+protected override void TickAI(float deltaTime)
+{
+    if (state == MeleeEnemyState.Dead) return;
 
-            float dist = Vector2.Distance(transform.position, target.position);
+    debugTimer += deltaTime;
+    if (debugTimer >= 0.5f)
+    {
+        string targetInfo = (target == null) ? "null" : target.name;
+        debugTimer = 0f;
+    }
 
-            // Extra debug for distance check
-            // (this will also show if meleeRange is too small)
-            // Debug.Log($"[MeleeEnemy] Distance to target: {dist:F2}, meleeRange={meleeRange}");
+    if (target == null)
+    {
+        return;
+    }
 
-            if (dist <= meleeRange && attackTimer <= 0f)
-            {
-                // Debug.Log("[MeleeEnemy] Condition met for StartAttack");
-                StartAttack();
-                return;
-            }
+    if (attackTimer > 0f)
+        attackTimer -= deltaTime;
 
-            if (dist <= detectRange)
-            {
-                if (state != MeleeEnemyState.Chase)
-                    // Debug.Log("[MeleeEnemy] Switching state to Chase");
-                state = MeleeEnemyState.Chase;
-            }
-            else
-            {
-                if (state != MeleeEnemyState.Idle)
-                    // Debug.Log("[MeleeEnemy] Switching state to Idle");
-                state = MeleeEnemyState.Idle;
-            }
-        }
+    if (state == MeleeEnemyState.Attack || state == MeleeEnemyState.Recover)
+    {
+        UpdateFacing();      // even during attack/recover, you can keep or remove this
+        return;
+    }
+
+    float dist = Vector2.Distance(transform.position, target.position);
+
+    if (dist <= meleeRange && attackTimer <= 0f)
+    {
+        StartAttack();
+        UpdateFacing();
+        return;
+    }
+
+    if (dist <= detectRange)
+    {
+        state = MeleeEnemyState.Chase;
+    }
+    else
+    {
+        state = MeleeEnemyState.Idle;
+    }
+
+    // <- here: always face target, regardless of Idle/Chase
+    UpdateFacing();
+}
+
 
         protected override void TickMovement(float fixedDeltaTime)
         {
             if (rb == null) return;
             if (state == MeleeEnemyState.Dead) return;
 
+            bool isMoving = false;
+
             if (state == MeleeEnemyState.Attack || state == MeleeEnemyState.Recover)
             {
                 rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
-                return;
             }
-
-            if (state == MeleeEnemyState.Chase && target != null)
+            else if (state == MeleeEnemyState.Chase && target != null)
             {
                 float dx = target.position.x - transform.position.x;
                 float dir = Mathf.Sign(dx);
                 rb.linearVelocity = new Vector2(dir * moveSpeed, rb.linearVelocity.y);
+                if (Mathf.Abs(rb.linearVelocity.x) > 0.01f)
+                    isMoving = true;
             }
             else
             {
                 rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
             }
+
+            if (animator != null && !string.IsNullOrEmpty(moveBoolName))
+            {
+                animator.SetBool(moveBoolName, isMoving);
+            }
         }
 
-        private void StartAttack()
-        {
-            if (attackRoutine != null)
-            {
-                // Debug.Log("[MeleeEnemy] StartAttack called but attackRoutine is already running");
-                return;
-            }
+private void StartAttack()
+{
+    if (attackRoutine != null)
+    {
+        return;
+    }
 
-            // Debug.Log("[MeleeEnemy] StartAttack: starting attack routine");
-            state = MeleeEnemyState.Attack;
-            attackTimer = attackCooldown;
-            attackRoutine = StartCoroutine(AttackRoutine_NoAnimation());
-        }
+    state = MeleeEnemyState.Attack;
+    attackTimer = attackCooldown;
+    attackRoutine = StartCoroutine(AttackRoutine_WithAnimation());
+}
 
-        private IEnumerator AttackRoutine_NoAnimation()
-        {
-            if (attackWindup > 0f)
-            {
-                // Debug.Log($"[MeleeEnemy] AttackRoutine: windup {attackWindup}s");
-                yield return new WaitForSeconds(attackWindup);
-            }
+private IEnumerator AttackRoutine_WithAnimation()
+{
+    if (attackWindup > 0f)
+        yield return new WaitForSeconds(attackWindup);
 
-            // Debug.Log("[MeleeEnemy] AttackRoutine: calling MeleeHit");
-            MeleeHit();
+    // Trigger attack animation
+    if (animator != null && !string.IsNullOrEmpty(attackTriggerName))
+    {
+        animator.SetTrigger(attackTriggerName);
+    }
+    else
+    {
+        // Fallback: if no animator, call hit directly
+        MeleeHit();
+    }
 
-            if (recoverDuration > 0f)
-            {
-                // Debug.Log($"[MeleeEnemy] AttackRoutine: recover {recoverDuration}s");
-                state = MeleeEnemyState.Recover;
-                yield return new WaitForSeconds(recoverDuration);
-            }
+    // Note:
+    // MeleeHit() will be called from the attack animation
+    // via Animation Event at the correct timing.
 
-            // Debug.Log("[MeleeEnemy] AttackRoutine: back to Idle");
-            state = MeleeEnemyState.Idle;
-            attackRoutine = null;
-        }
+    if (recoverDuration > 0f)
+    {
+        state = MeleeEnemyState.Recover;
+        yield return new WaitForSeconds(recoverDuration);
+    }
 
-        public void MeleeHit()
-        {
-            if (state == MeleeEnemyState.Dead)
-            {
-                // Debug.Log("[MeleeEnemy] MeleeHit called while Dead");
-                return;
-            }
+    state = MeleeEnemyState.Idle;
+    attackRoutine = null;
+}
 
-            float facing = transform.localScale.x >= 0 ? 1f : -1f;
-            Vector2 center = (Vector2)transform.position + new Vector2(hitOffset.x * facing, hitOffset.y);
+
+public void MeleeHit()
+{
+    if (state == MeleeEnemyState.Dead)
+        return;
+
+    float facing = transform.localScale.x >= 0 ? 1f : -1f;
+    Vector2 center = (Vector2)transform.position + new Vector2(hitOffset.x * facing, hitOffset.y);
 
 #if UNITY_EDITOR
-            Debug.DrawLine(center, center + Vector2.up * 0.1f, Color.red, 0.25f);
+    Debug.DrawLine(center, center + Vector2.up * 0.1f, Color.red, 0.25f);
 #endif
 
-            // Debug.Log($"[MeleeEnemy] MeleeHit: center={center}, radius={hitRadius}, layerMask={targetLayer.value}");
+    Collider2D[] hits = Physics2D.OverlapCircleAll(center, hitRadius, targetLayer);
 
-            Collider2D[] hits = Physics2D.OverlapCircleAll(center, hitRadius, targetLayer);
+    for (int i = 0; i < hits.Length; i++)
+    {
+        Entity t = hits[i].GetComponentInParent<Entity>();
+        if (t == null || t == this) continue;
 
-            // Debug.Log($"[MeleeEnemy] MeleeHit: hits length = {hits.Length}");
+        var tags = new AtkTagSet().Add(AtkTags.physicalDamage, AtkTags.normalAttackDamage);
+        new DamageGiveEvent(baseDamage, center, this, t, tags, 1).trigger();
+    }
+}
 
-            for (int i = 0; i < hits.Length; i++)
-            {
-                Entity t = hits[i].GetComponentInParent<Entity>();
-                // Debug.Log($"[MeleeEnemy] MeleeHit: hit collider={hits[i].name}, entity={(t == null ? "null" : t.name)}");
-
-                if (t == null || t == this) continue;
-
-                var tags = new AtkTagSet().Add(AtkTags.physicalDamage, AtkTags.normalAttackDamage);
-                // Debug.Log($"[MeleeEnemy] MeleeHit: sending DamageGiveEvent to {t.name}");
-                new DamageGiveEvent(baseDamage, center, this, t, tags, 1).trigger();
-            }
-        }
 
         protected override void OnDie(Entity attacker)
         {

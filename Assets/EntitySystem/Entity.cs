@@ -59,7 +59,8 @@ namespace EntitySystem
         public void takeDamage(DamageGiveEvent e)
         {
             if (stat == null || e == null || e.target != this) return;
-
+            if (e.attacker is EnemyBase && this is EnemyBase)
+                return; //일단 서로는 절대 안때리게
             var snapshot = stat.calculate();
             var dmg = snapshot.calculateTakenDamage(e.atkTags, e.trueDmg);
             stat.takeDamage(dmg);
