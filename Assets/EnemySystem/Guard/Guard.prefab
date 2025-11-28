@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4959202852468257058}
   - component: {fileID: 279260901762073282}
   - component: {fileID: 5776329690255212153}
+  - component: {fileID: 7464301928413896013}
   m_Layer: 0
   m_Name: Guard
   m_TagString: Untagged
@@ -197,3 +198,15 @@ MonoBehaviour:
   projectilePower: 1
   aimAtPlayer: 1
   maxAimRange: 10
+--- !u!114 &7464301928413896013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4975350963263411572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d921029925554c419d51cf62d10b25d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

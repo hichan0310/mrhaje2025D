@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7459493916166460524}
   - component: {fileID: 5595866037629974910}
   - component: {fileID: 1964586786943341366}
+  - component: {fileID: 100697841204235228}
   m_Layer: 0
   m_Name: RangeDrone
   m_TagString: Untagged
@@ -203,3 +204,15 @@ MonoBehaviour:
   velocitySmooth: 6
   wobbleAmplitude: 0.3
   wobbleFrequency: 1.5
+--- !u!114 &100697841204235228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7116452452985950426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d921029925554c419d51cf62d10b25d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
