@@ -13,13 +13,13 @@ GameObject:
   - component: {fileID: 6008297541308866214}
   - component: {fileID: 268589946525995096}
   - component: {fileID: 9063170410520435720}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Boss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6085795979526818806
 Transform:
   m_ObjectHideFlags: 0
