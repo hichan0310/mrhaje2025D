@@ -89,7 +89,7 @@ namespace EnemySystem
 
     float sign = Mathf.Sign(dx);
     Vector3 s = transform.localScale;
-    s.x = baseScaleX * sign;
+    s.x = -baseScaleX * sign;
     transform.localScale = s;
 }
 

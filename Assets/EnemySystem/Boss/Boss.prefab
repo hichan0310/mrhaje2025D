@@ -52,24 +52,32 @@ MonoBehaviour:
   target: {fileID: 0}
   autoFindPlayer: 1
   faceTarget: 1
-  detectRange: 10
+  detectRange: 20
   moveSpeed: 3
   baseHp: 10000
   baseAtk: 100
   baseDef: 0
   armorType: 0
   baseKnockbackResist: 0
-  meleeRange: 1.5
+  meleeRange: 3
   midRange: 6
   chaseRange: 10
   meleeCooldown: 2
-  jumpCooldown: 5
+  jumpCooldown: 3
   missileCooldown: 4
   jumpDuration: 1
   jumpHeight: 4
   landingAoEPrefab: {fileID: 7663212923903866115, guid: aaad8e185b1497d44a4b40910d89888c, type: 3}
-  meleeTriggerName: Melee
   meleeDuration: 0.6
+  meleeHitOffset: {x: 1, y: 0}
+  meleeHitRadius: 5
+  meleeHitMask:
+    serializedVersion: 2
+    m_Bits: 256
+  meleeDamage: 250
+  spriteRenderer: {fileID: 6008297541308866214}
+  meleeFlashColor: {r: 1, g: 0, b: 0, a: 1}
+  meleeFlashDuration: 0.6
   missilePrefab: {fileID: 585103627240126144, guid: 36266858b3c0489180fabadc6c426bb5, type: 3}
   missileSpawnPoint: {fileID: 6085795979526818806}
   minMissiles: 5

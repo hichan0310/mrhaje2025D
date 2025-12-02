@@ -964,7 +964,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.28773582, g: 0.36216697, b: 1, a: 0}
+  m_BackGroundColor: {r: 0.5943396, g: 0.6349056, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -2977,7 +2977,7 @@ GameObject:
   - component: {fileID: 970960050}
   - component: {fileID: 970960049}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: MapGen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2995,14 +2995,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a0087f3ce9c8f5438099f5ceccc99a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  csvFile: {fileID: 4900000, guid: ec9f61b473e7aca44aaff1f27ace91b7, type: 3}
+  csvFile: {fileID: 4900000, guid: 2e8c327ce04bd9244b66187a17ac60bf, type: 3}
   tokenPrefabs:
   - token: W
     prefab: {fileID: 7110469403581098652, guid: 77fb0de5d837a19418bf94f978f3e13d, type: 3}
-  - token: "\uC804\uD22C\uB85C\uBD07"
+  - token: RB
     prefab: {fileID: 2047161378757209205, guid: 6d9ca240e67166c4fa4983370634c473, type: 3}
-  - token: "\uAE61\uD328"
+  - token: K
     prefab: {fileID: 4847686537993156966, guid: 3f701d3a03768d9448b71acc6c5cfb41, type: 3}
+  - token: D
+    prefab: {fileID: 7116452452985950426, guid: 28a2b016b29637e4db7efa657ca91fde, type: 3}
+  - token: G
+    prefab: {fileID: 4975350963263411572, guid: f69e80fd85b8e494a875d39c774d5512, type: 3}
+  - token: S
+    prefab: {fileID: 2821328829691207827, guid: ef9e5852d595300458be8247cec0bc4a, type: 3}
+  - token: B
+    prefab: {fileID: 1810179919152325982, guid: 2a8d794fc43587d4197832af57a1365b, type: 3}
   cellSize: 1
   originOffset: {x: -5, y: -5}
   spawnPlayerFromToken: 0
@@ -4423,11 +4431,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2311736581718202629, guid: 45adb346407802949bccee53f7848dd1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.99
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2311736581718202629, guid: 45adb346407802949bccee53f7848dd1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.85
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2311736581718202629, guid: 45adb346407802949bccee53f7848dd1, type: 3}
       propertyPath: m_LocalPosition.z
