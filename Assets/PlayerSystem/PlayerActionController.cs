@@ -40,7 +40,7 @@ namespace PlayerSystem
 
         [Header("Jump")]
         [SerializeField]
-        private float jumpForce = 12f;
+        private float jumpForce = 24f;
 
         [SerializeField]
         private float coyoteTime = 0.15f;

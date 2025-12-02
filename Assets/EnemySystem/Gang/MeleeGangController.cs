@@ -45,7 +45,7 @@ namespace EnemySystem
         [SerializeField] private string attackTriggerName = "Attack";
 
         [SerializeField] private bool flipToTarget = true;
-        private float baseScaleX = -5f;
+        private float baseScaleX = 5f;
 
 
         protected override void Start()
