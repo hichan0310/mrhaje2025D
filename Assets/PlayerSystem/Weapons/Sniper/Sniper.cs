@@ -158,7 +158,7 @@ namespace PlayerSystem.Weapons.Sniper
                 direction.Normalize();
                 var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 var bullets = (int)stat.bulletRate + bulletNumAdd;
-                for (int i = 0; i < bullets; i++)
+                for (int i = 0; i < bullets+2; i++)
                 {
                     var b = Instantiate(ultimateBulletPrefab, fire, Quaternion.identity);
                     b.rigidbody2D.position = fire;
@@ -168,6 +168,9 @@ namespace PlayerSystem.Weapons.Sniper
 
                     var tmp = (bullets % 2 == 0) ? bullets * 2 + 1 : bullets * 2 - 1;
                     var tmpp = Mathf.Atan(Mathf.Sqrt(stat.skillRange)) / Mathf.PI * 4 * 15 / (tmp - 1);
+                    Debug.Log(tmp);
+                    Debug.Log(tmpp);
+                    Debug.Log(stat.skillRange);
                     if (bullets % 2 == 0)
                     {
                         var tmppp = i * 2 - bullets + 1;
@@ -180,7 +183,7 @@ namespace PlayerSystem.Weapons.Sniper
                     }
 
                     var a = angle + angleOffset;
-                    //Debug.Log(angleOffset);
+                    Debug.Log(angleOffset); // 이거 왜 NaN임?
                     b.rigidbody2D.rotation = a;
                     var d = new Vector2(Mathf.Cos(a * Mathf.Deg2Rad), Mathf.Sin(a * Mathf.Deg2Rad));
                     b.pos = fire + d * (length * (1 + (Random.value - 0.5f) / 15));

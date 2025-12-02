@@ -42,9 +42,7 @@ namespace PlayerSystem.Weapons.Sniper
         {
             if(finish) return;
             var e = other.gameObject.GetComponent<Entity>();
-            if(e==null) return;
-            if(e is Player) return;
-            Debug.Log(other.gameObject.name);
+            if(e!=null) if(e is Player) return;
             trailDestroy.destroy();
             this.rigidbody2D.linearVelocity = Vector2.zero;
             Destroy(Instantiate(hitEffect, this.transform.position, Quaternion.identity).gameObject, 1);
