@@ -31,9 +31,9 @@ namespace EntitySystem
 
         protected virtual void update(float deltaTime)
         {
-            foreach (var listener in listeners.ToList())
+            for (int i=listeners.Count-1; i>=0; i--)
             {
-                listener.update(deltaTime, this);
+                listeners[i].update(deltaTime, this);
             }
         }
         
@@ -50,9 +50,9 @@ namespace EntitySystem
 
         public virtual void eventActive(EventArgs e)
         {
-            foreach (var listener in listeners.ToList())
+            for (int i=listeners.Count-1; i>=0; i--)
             {
-                listener.eventActive(e);
+                listeners[i].eventActive(e);
             }
         }
 

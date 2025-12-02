@@ -20,15 +20,14 @@ namespace PlayerSystem
     [RequireComponent(typeof(Collider2D))]
     public class Player : Entity
     {
-        [Header("Movement")] 
-        [SerializeField] private float coyoteTime = 0.15f;
+        [Header("Movement")] [SerializeField] private float coyoteTime = 0.15f;
         [SerializeField] private float jumpBuffer = 0.15f;
         [SerializeField] private Transform groundCheck = null;
         [SerializeField] private float groundCheckRadius = 0.2f;
         [SerializeField] private LayerMask groundMask = -1;
         [SerializeField] private LayerMask dropPlatformMask = 0;
         [SerializeField] private float fallThroughDuration = 0.35f;
-        
+
         [Header("Interaction")] [SerializeField]
         private float interactRadius = 1.5f;
 
@@ -40,14 +39,15 @@ namespace PlayerSystem
         private KeyCode interactKey = KeyCode.F;
         private KeyCode inventoryKey = KeyCode.I;
         [SerializeField] private Inventory inventory;
-        
+
         private KeyCode dodgeKey = KeyCode.LeftShift;
         [SerializeField] private Weapon weapon;
-        
+
         public EntityStat statCache { get; private set; }
 
         private Rigidbody2D body = null;
-        private Collider2D bodyCollider = null;
+        private CapsuleCollider2D bodyCollider = null;
+        private Vector2 originalSize;
 
         private float dodgeTimer;
         private float dodgeCooldownTimer;
@@ -61,7 +61,11 @@ namespace PlayerSystem
         private bool isDodging;
         private bool isFallingThrough;
         private readonly List<Collider2D> fallingThroughPlatforms = new List<Collider2D>();
-        
+
+        [SerializeField] private int baseHp;
+        [SerializeField] private int baseAtk;
+        [SerializeField] private int baseDef;
+
         private void Awake()
         {
             this.inventory.entity = this;
@@ -72,8 +76,10 @@ namespace PlayerSystem
             base.Start();
             EnsureLayerMasksConfigured();
             body = GetComponent<Rigidbody2D>();
-            bodyCollider = GetComponent<Collider2D>();
-            this.stat = new EntityStat(this, 10000, 100, 100);
+            bodyCollider = GetComponent<CapsuleCollider2D>();
+            bodyCollider.direction=CapsuleDirection2D.Vertical;
+            originalSize = bodyCollider.size;
+            this.stat = new EntityStat(this, baseHp, baseAtk, baseDef);
             this.statCache = this.stat.calculate();
             if (weapon)
             {
@@ -91,7 +97,7 @@ namespace PlayerSystem
                 if (this == dodgeEvent.entity)
                 {
                     TimeScaler.Instance.changeScaleForRealTime(0.2f, 0.5f);
-                    
+
                     dodgeTimer = this.stat.dodgeTime;
                     dodgeCooldownTimer = 0;
                 }
@@ -107,12 +113,9 @@ namespace PlayerSystem
             UpdateTimers(deltaTime);
             energyChargeICD -= deltaTime;
             if (energyChargeICD < 0) energyChargeICD = 0;
-            
-            base.update(deltaTime);
-            
-        }
 
-        
+            base.update(deltaTime);
+        }
 
 
         private void FixedUpdate()
@@ -235,6 +238,7 @@ namespace PlayerSystem
                 if (dodgeTimer <= 0f)
                 {
                     isDodging = false;
+                    this.bodyCollider.size = originalSize;
                 }
             }
         }
@@ -318,6 +322,10 @@ namespace PlayerSystem
             }
 
             isDodging = true;
+            bodyCollider.direction = CapsuleDirection2D.Horizontal;
+            var size = this.bodyCollider.size;
+            size.x = originalSize.x*3;
+            this.bodyCollider.size = size;
             this.body.linearVelocityY = 0.1f;
             dodgeTimer = this.stat.dodgeTime;
             dodgeCooldownTimer = this.stat.dodgeCooldown;
@@ -414,4 +422,3 @@ namespace PlayerSystem
 #endif
     }
 }
-

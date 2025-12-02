@@ -6,7 +6,7 @@ namespace PlayerSystem.Triggers
 {
     public class ReverseHackReflection:Board
     {
-        public override string Name => "리버스해킹 리플렉션";
+        public override string Name => "ReverseHackReflection";
         public override string Description => "저스트 회피에 성공하면 power=2+회피한 공격의 피해량/200의 트리거를 발동한다. ";
         
         public override void eventActive(EventArgs eventArgs)

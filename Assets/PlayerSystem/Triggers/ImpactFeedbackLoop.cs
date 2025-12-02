@@ -6,7 +6,7 @@ namespace PlayerSystem.Triggers
 {
     public class ImpactFeedbackLoop:Board
     {
-        public override string Name => "임팩트 피드백 루프";
+        public override string Name => "ImpactFeedbackLoop";
         public override string Description => "적에게 피해를 가하면 1초 내부쿨로 power=1의 트리거를 발동한다. \n" +
                                               "발사 속도에 반비례하여 내부쿨이 줄어든다. ";
 

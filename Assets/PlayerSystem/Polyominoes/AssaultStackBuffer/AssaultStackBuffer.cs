@@ -11,7 +11,7 @@ namespace PlayerSystem.Polyominoes.AssaultStackBuffer
 
         public override string Description =>
             "공격력이 100 증가한다.\n" +
-            "이 효과는 power에 영향을 받지 않으며, 최대 +2000까지 중첩될 수 있다.\n" +
+            "이 효과는 power에 영향을 받지 않으며, 최대 +1000까지 중첩될 수 있다.\n" +
             "지속시간은 3초이고, 피해를 줄 때마다 지속시간이 3초로 초기화된다.";
 
         private static AssaultStackBuff buff;
@@ -54,10 +54,10 @@ namespace PlayerSystem.Polyominoes.AssaultStackBuffer
                     stack = 0f;
                 }
 
-                if (stack < 2000f)
+                if (stack < 1000f)
                 {
                     stack += 100f;
-                    if (stack > 2000f) stack = 2000f;
+                    if (stack > 1000f) stack = 2000f;
                 }
 
                 time = Duration * (target is Player pl ? pl.statCache.additionalDuration : 1);

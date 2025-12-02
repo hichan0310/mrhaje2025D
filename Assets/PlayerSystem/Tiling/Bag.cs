@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace PlayerSystem.Tiling
@@ -7,6 +8,15 @@ namespace PlayerSystem.Tiling
     {
         [SerializeField]private List<Polyomino> bag = new List<Polyomino>();
         public IGetBagItem getBagItem { get; set; }
+
+        private void Start()
+        {
+            Debug.Log(bag.Count);
+            foreach (Polyomino p in bag)
+            {
+                p.rt.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+            }
+        }
 
         private Vector2 ind2pos(int idx)
         {

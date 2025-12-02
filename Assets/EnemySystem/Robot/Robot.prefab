@@ -55,9 +55,9 @@ MonoBehaviour:
   faceTarget: 1
   detectRange: 10
   moveSpeed: 3
-  baseHp: 100
-  baseAtk: 10
-  baseDef: 0
+  baseHp: 10000
+  baseAtk: 200
+  baseDef: 100
   armorType: 0
   baseKnockbackResist: 0
   aggroRange: 6

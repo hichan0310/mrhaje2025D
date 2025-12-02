@@ -161,7 +161,6 @@ namespace EntitySystem.StatSystem
         public int calculateTrueDamage(AtkTagSet tags, float coefficient)
         {
             if (tags.Contains(AtkTags.fixedDamage)) return (int)coefficient;
-            if (changeBuffs.Count > 0) return calculate().calculateTrueDamage(tags, coefficient);
 
             float dmg = coefficient * this.atk / 100;
             dmg += dmgAdd[(int)AtkTags.all];
@@ -196,7 +195,6 @@ namespace EntitySystem.StatSystem
         public int calculateTakenDamage(AtkTagSet tags, int damage)
         {
             if (tags.Contains(AtkTags.fixedDamage)) return damage;
-            if (changeBuffs.Count > 0) return calculate().calculateTakenDamage(tags, damage);
 
             int C = 200;
 

@@ -17,10 +17,12 @@ namespace PlayerSystem.Tiling
         public RectTransform rt { get; private set; }
 
 
-        protected virtual void Start()
+        protected virtual void Awake()
         {
             this.rt = this.GetComponent<RectTransform>();
         }
+        
+        protected virtual void Start(){}
 
         public void Hide()
         {
