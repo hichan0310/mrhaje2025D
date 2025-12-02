@@ -253,6 +253,19 @@ namespace PlayerSystem
             Vector2 velocity = body.linearVelocity;
             float fixedDelta = Time.fixedDeltaTime;
 
+
+            if (Mathf.Abs(horizontalInput) > 0.01f)
+            {
+                Debug.Log(
+                    $"[Player Move] input={horizontalInput}, " +
+                    $"speed={statCache.speed}, " +
+                    $"groundAccel={statCache.groundAcceleration}, " +
+                    $"airAccel={statCache.airAcceleration}, " +
+                    $"isDodging={isDodging}"
+                );
+            }
+
+            
             if (isDodging)
             {
                 velocity.x = Mathf.Sign(transform.localScale.x) * this.stat.dodgeSpeed;
