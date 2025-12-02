@@ -157,8 +157,8 @@ namespace PlayerSystem.Weapons.Sniper
                 float length = direction.magnitude;
                 direction.Normalize();
                 var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                var bullets = (int)stat.bulletRate + bulletNumAdd;
-                for (int i = 0; i < bullets+2; i++)
+                var bullets = (int)stat.bulletRate + bulletNumAdd+2;
+                for (int i = 0; i < bullets; i++)
                 {
                     var b = Instantiate(ultimateBulletPrefab, fire, Quaternion.identity);
                     b.rigidbody2D.position = fire;
