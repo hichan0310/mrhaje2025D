@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4967631710322976}
   - component: {fileID: 198333008727947306}
   - component: {fileID: 199520397283491596}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: CircleGlow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4878,7 +4878,7 @@ GameObject:
   - component: {fileID: 4586386361932668}
   - component: {fileID: 198631062895622208}
   - component: {fileID: 199488086682975886}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Swirl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9745,7 +9745,7 @@ GameObject:
   - component: {fileID: 4181220549538168}
   - component: {fileID: 198485039719663748}
   - component: {fileID: 199656666246522636}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Glowing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14612,7 +14612,7 @@ GameObject:
   - component: {fileID: 4010505072147100}
   - component: {fileID: 198222960956025676}
   - component: {fileID: 199677566530585352}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Electricity
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19479,7 +19479,7 @@ GameObject:
   - component: {fileID: 4641642333452326}
   - component: {fileID: 6896463585869293289}
   - component: {fileID: -610469390706551465}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: UltimateHitFinish
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19570,7 +19570,7 @@ GameObject:
   - component: {fileID: 4525981689130480}
   - component: {fileID: 198257760110456652}
   - component: {fileID: 199735380753269580}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Beam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24491,7 +24491,7 @@ GameObject:
   - component: {fileID: 4984076306875436}
   - component: {fileID: 198768079747664586}
   - component: {fileID: 199505396338383420}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: DarkBeam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29358,7 +29358,7 @@ GameObject:
   - component: {fileID: 4929870305146210}
   - component: {fileID: 198007054806438222}
   - component: {fileID: 199857173244227008}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ParticlesAB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34234,7 +34234,7 @@ GameObject:
   - component: {fileID: 4377336128931164}
   - component: {fileID: 198360089080027694}
   - component: {fileID: 199851088310503500}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Ring
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39101,7 +39101,7 @@ GameObject:
   - component: {fileID: 4043401413990280}
   - component: {fileID: 198530724393548356}
   - component: {fileID: 199062235204897624}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Shockwave
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43968,7 +43968,7 @@ GameObject:
   - component: {fileID: 4766905438435722}
   - component: {fileID: 198583050474058082}
   - component: {fileID: 199348977649205684}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}

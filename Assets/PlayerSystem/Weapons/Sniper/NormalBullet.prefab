@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1032365094110463033}
   - component: {fileID: 551918233762897455}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Trail_AB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -150,7 +150,7 @@ GameObject:
   - component: {fileID: 2526335683629461094}
   - component: {fileID: 6982115856653796206}
   - component: {fileID: 2407478060530130271}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: CapsuleAB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5102,7 +5102,7 @@ GameObject:
   - component: {fileID: 1939513829155102189}
   - component: {fileID: 2559262548427126140}
   - component: {fileID: 7540562810147166606}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9995,7 +9995,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6657028381194074251}
   - component: {fileID: 5241039627309141535}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Trail_Center
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10135,7 +10135,7 @@ GameObject:
   - component: {fileID: 6254230068552697435}
   - component: {fileID: 6254230068552697445}
   - component: {fileID: 6254230068552697444}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14979,7 +14979,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6252396349561793168}
   - component: {fileID: 6313262429923471278}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Trail_Add
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15121,7 +15121,7 @@ GameObject:
   - component: {fileID: 3175184566537840533}
   - component: {fileID: 5964572857195935109}
   - component: {fileID: -9116522783864928601}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: NormalBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15260,7 +15260,7 @@ GameObject:
   - component: {fileID: 6586811979091368874}
   - component: {fileID: 7727793976735225223}
   - component: {fileID: 8683670731855594138}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20211,7 +20211,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3988283632039514659}
   - component: {fileID: 3493976377346723820}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Trail_Add (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20350,7 +20350,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8825545105598795157}
   - component: {fileID: 3055553307606146245}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Trail_AB (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20498,7 +20498,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4648253233490610278}
   - component: {fileID: 3072364763528500203}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Trail_Add (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

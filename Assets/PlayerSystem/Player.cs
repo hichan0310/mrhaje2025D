@@ -256,13 +256,13 @@ namespace PlayerSystem
 
             if (Mathf.Abs(horizontalInput) > 0.01f)
             {
-                Debug.Log(
-                    $"[Player Move] input={horizontalInput}, " +
-                    $"speed={statCache.speed}, " +
-                    $"groundAccel={statCache.groundAcceleration}, " +
-                    $"airAccel={statCache.airAcceleration}, " +
-                    $"isDodging={isDodging}"
-                );
+                // Debug.Log(
+                //     $"[Player Move] input={horizontalInput}, " +
+                //     $"speed={statCache.speed}, " +
+                //     $"groundAccel={statCache.groundAcceleration}, " +
+                //     $"airAccel={statCache.airAcceleration}, " +
+                //     $"isDodging={isDodging}"
+                // );
             }
 
             

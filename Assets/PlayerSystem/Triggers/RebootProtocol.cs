@@ -22,7 +22,7 @@ namespace PlayerSystem.Triggers
             {
                 if (damageGiveEvent.attacker == this.entity)
                     this.damageCharge += damageGiveEvent.trueDmg;
-                if (this.damageCharge >= damageGiveEvent.attacker.stat.maxHp * 5) Debug.Log("active");
+                Debug.Log(this.damageCharge);
             }
             else if (eventArgs is DamageTakeEvent damageTakeEvent)
             {
@@ -34,6 +34,7 @@ namespace PlayerSystem.Triggers
                     if (this.entity.stat.nowHp <= 0)
                     {
                         this.entity.stat.nowHp = (int)(this.entity.stat.maxHp * 0.1f);
+                        this.damageCharge = 0;
                         this.trigger(9);
                     }
                 }
