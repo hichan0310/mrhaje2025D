@@ -52,6 +52,7 @@ namespace PlayerSystem.Tiling
 
         public void click(int idx)
         {
+            Debug.Log(idx);
             if (getBagItem != null)
             {
                 if (idx < bag.Count)
