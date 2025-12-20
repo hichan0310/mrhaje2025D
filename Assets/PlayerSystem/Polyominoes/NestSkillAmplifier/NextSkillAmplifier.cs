@@ -13,7 +13,8 @@ namespace PlayerSystem.Polyominoes.NestSkillAmplifier
         public override string Description =>
             "다음 스킬 공격의 피해가 (10+10*power)% 증폭된다.\n" +
             "이 효과는 최대 3번까지 중첩되며, 항상 power 값이 높은 3개의 스택만 유지된다. 누적 피해 증폭은 최대 150%까지 적용된다.\n" +
-            "지속시간은 무한이며, 스킬로 피해를 입히는 순간 모든 스택이 소모된다.";
+            "지속시간은 무한이며, 스킬로 피해를 입히는 순간 모든 스택이 소모된다.\n" +
+            this.statBonusDescription;
 
         private static NextSkillDamageBuff buff = new NextSkillDamageBuff();
 

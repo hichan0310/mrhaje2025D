@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -8988235017919117797}
   - component: {fileID: -9042242936941729860}
   - component: {fileID: -6189865433023847715}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: KnifeSkillBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}

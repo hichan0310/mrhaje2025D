@@ -10,7 +10,8 @@ namespace PlayerSystem.Polyominoes.ExecutionFollowupShot
     {
         public override string Name => "Execution Followup Shot";
         public override string Description => "다음 일반 공격이 명중한 적에게 고정 피해 500 추가 사격\n" +
-                                              "최대 20번 중첩 가능하다. ";
+                                              "최대 20번 중첩 가능하다. \n" +
+                                              this.statBonusDescription;
         private List<Shot> shots = new List<Shot>();
         [SerializeField] private Shot shotObject;
         public override void trigger(Entity entity, float power)

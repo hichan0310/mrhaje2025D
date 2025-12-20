@@ -23,8 +23,6 @@ namespace PlayerSystem.Weapons.Sniper
 
         private bool skillBullet = false;
 
-        [SerializeField] private int bulletNumAdd = 0;
-
         public override void fire()
         {
             if (!skillBullet)
@@ -41,7 +39,6 @@ namespace PlayerSystem.Weapons.Sniper
                 b.direction = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
 
                 var stat = this.player.stat.calculate();
-                stat.bulletRate += bulletNumAdd;
                 var coef = 100 * (stat.bulletRate + 1) * (stat.bulletSpeed + 1) * (stat.fireSpeed + 1) / 8;
                 if (this.aimSupport is SniperAim s)
                 {
@@ -72,7 +69,6 @@ namespace PlayerSystem.Weapons.Sniper
                 b.direction = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
 
                 var stat = this.player.stat.calculate();
-                stat.bulletRate += bulletNumAdd;
                 var coef = 100 * (stat.bulletRate + 1) * (stat.bulletSpeed + 1) * (stat.fireSpeed + 1) / 8f;
                 if (this.aimSupport is SniperAim s)
                 {
@@ -157,7 +153,7 @@ namespace PlayerSystem.Weapons.Sniper
                 float length = direction.magnitude;
                 direction.Normalize();
                 var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                var bullets = (int)stat.bulletRate + bulletNumAdd+2;
+                var bullets = (int)stat.bulletRate+2;
                 for (int i = 0; i < bullets; i++)
                 {
                     var b = Instantiate(ultimateBulletPrefab, fire, Quaternion.identity);
@@ -167,10 +163,10 @@ namespace PlayerSystem.Weapons.Sniper
                     float angleOffset;
 
                     var tmp = (bullets % 2 == 0) ? bullets * 2 + 1 : bullets * 2 - 1;
-                    var tmpp = Mathf.Atan(Mathf.Sqrt(stat.skillRange)) / Mathf.PI * 4 * 15 / (tmp - 1);
-                    Debug.Log(tmp);
-                    Debug.Log(tmpp);
-                    Debug.Log(stat.skillRange);
+                    var tmpp = Mathf.Atan(Mathf.Sqrt(stat.skillRange)*bullets) / Mathf.PI * 4 * 15 / (tmp - 1)*Mathf.Sqrt((float)bullets/3);
+                    // Debug.Log(tmp);
+                    // Debug.Log(tmpp);
+                    // Debug.Log(stat.skillRange);
                     if (bullets % 2 == 0)
                     {
                         var tmppp = i * 2 - bullets + 1;
@@ -183,7 +179,7 @@ namespace PlayerSystem.Weapons.Sniper
                     }
 
                     var a = angle + angleOffset;
-                    Debug.Log(angleOffset); // 이거 왜 NaN임?
+                    // Debug.Log(angleOffset); // 이거 왜 NaN임?
                     b.rigidbody2D.rotation = a;
                     var d = new Vector2(Mathf.Cos(a * Mathf.Deg2Rad), Mathf.Sin(a * Mathf.Deg2Rad));
                     b.pos = fire + d * (length * (1 + (Random.value - 0.5f) / 15));

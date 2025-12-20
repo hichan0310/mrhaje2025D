@@ -11,7 +11,7 @@ namespace PlayerSystem.Tiling
 
         private void Start()
         {
-            Debug.Log(bag.Count);
+            // Debug.Log(bag.Count);
             foreach (Polyomino p in bag)
             {
                 p.rt.localScale = new Vector3(0.2f, 0.2f, 0.2f);
@@ -52,7 +52,7 @@ namespace PlayerSystem.Tiling
 
         public void click(int idx)
         {
-            Debug.Log(idx);
+            // Debug.Log(idx);
             if (getBagItem != null)
             {
                 if (idx < bag.Count)

@@ -12,7 +12,8 @@ namespace PlayerSystem.Polyominoes
         public override string Description =>
             "발사 속도가 5% 증가한다.\n" +
             "지속시간은 1초이며, 발동할 때마다 발사 속도 증가 스택이 1씩 증가하고 지속시간이 1초로 초기화된다.\n" +
-            "이 효과는 무한히 중첩될 수 있다.";
+            "이 효과는 무한히 중첩될 수 있다.\n" +
+            this.statBonusDescription;
 
         private static FireRateOverclockBuff buff;
 

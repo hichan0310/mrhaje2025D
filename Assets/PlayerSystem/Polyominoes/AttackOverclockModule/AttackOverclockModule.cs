@@ -12,7 +12,8 @@ namespace PlayerSystem.Polyominoes.AttackOverclockModule
         public override string Description =>
             "공격력이 (10+10*power)% 증가한다.\n" +
             "지속시간은 10초이며, 이 효과로 인한 공격력 증가는 최대 100%까지 적용된다.\n" +
-            "이 효과는 중첩되지 않는다.";
+            "이 효과는 중첩되지 않는다.\n" +
+            this.statBonusDescription;
 
         private static AtkUp atkUp;
 

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2526335683629461094}
   - component: {fileID: 6982115856653796206}
   - component: {fileID: 2407478060530130271}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: CapsuleAB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4963,7 +4963,7 @@ GameObject:
   - component: {fileID: 1939513829155102189}
   - component: {fileID: 2559262548427126140}
   - component: {fileID: 7540562810147166606}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9858,7 +9858,7 @@ GameObject:
   - component: {fileID: 8609347432722554415}
   - component: {fileID: 3175184566537840533}
   - component: {fileID: -601790943258710981}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: NormalBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9971,7 +9971,7 @@ GameObject:
   - component: {fileID: 6586811979091368874}
   - component: {fileID: 7727793976735225223}
   - component: {fileID: 8683670731855594138}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
