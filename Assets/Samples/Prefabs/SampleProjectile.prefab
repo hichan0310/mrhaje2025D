@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 585103627240126142}
   - component: {fileID: 585103627240126143}
   - component: {fileID: 585103627240126144}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SampleProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -172,3 +172,4 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   destroyOnAnyCollision: 0
+  size: 1
