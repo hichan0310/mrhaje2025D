@@ -1,27 +1,41 @@
-﻿using EntitySystem.Events;
+﻿using DefaultNamespace;
+using EntitySystem.Events;
+using UnityEngine;
 
 namespace EntitySystem.BuffTypes
 {
-    public abstract class DamageOverTime: IEntityEventListener
+    public abstract class DamageOverTime: MonoBehaviour, IEntityEventListener
     {
-        public Entity target;
+        public Entity target { get; set; }
         public DamageGiveEvent damageGiveEvent { get; set; }
+        protected float timer = 0;
+        protected abstract float cooldown { get; }
+        private int damageCount = 0;
 
 
-        public abstract void eventActive(EventArgs eventArgs);
+        public virtual void eventActive(EventArgs eventArgs){}
 
-        public void registerTarget(Entity target, object args = null)
+        public virtual void registerTarget(Entity target, object args = null)
         {
             this.target = target;
             target.registerListener(this);
         }
 
-        public void removeSelf()
+        public virtual void removeSelf()
         {
             target.removeListener(this);
         }
 
-        public abstract void update(float deltaTime, Entity target);
+        public virtual void update(float deltaTime, Entity target)
+        {
+            timer+=deltaTime;
+            if (timer > cooldown)
+            {
+                timer-=cooldown;
+                damageCount++;
+                giveDamage();
+            }
+        }
 
         public void giveDamage()
         {
