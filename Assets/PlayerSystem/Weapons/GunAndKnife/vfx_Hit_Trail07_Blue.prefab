@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 9045815553930762034}
   - component: {fileID: 5765607705115661548}
   - component: {fileID: 1698186390536290336}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Shockwave
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4878,7 +4878,7 @@ GameObject:
   - component: {fileID: 3852738816258335267}
   - component: {fileID: 8735663755065848135}
   - component: {fileID: 6766532609553797867}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ImpactRingAB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9745,7 +9745,7 @@ GameObject:
   - component: {fileID: 4685030352770618264}
   - component: {fileID: 36500281709102791}
   - component: {fileID: 2949254874768487139}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: FlashAdd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14450,7 +14450,7 @@ GameObject:
   - component: {fileID: 2699930852912252712}
   - component: {fileID: 8315885757693287670}
   - component: {fileID: 471937024401285047}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19317,7 +19317,7 @@ GameObject:
   - component: {fileID: 4155394539102405163}
   - component: {fileID: 2558907779696207778}
   - component: {fileID: 2441525602709582133}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ParticlesImpactAdd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24184,7 +24184,7 @@ GameObject:
   - component: {fileID: 9009591789303312639}
   - component: {fileID: 7449229771480682468}
   - component: {fileID: 6131566191898416226}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ImpactRingAdd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29051,7 +29051,7 @@ GameObject:
   - component: {fileID: 8511741781067719247}
   - component: {fileID: 8418168845628830883}
   - component: {fileID: 8419211729576517249}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: BeamAB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33756,7 +33756,7 @@ GameObject:
   - component: {fileID: 8511715537154765323}
   - component: {fileID: 8417682902433248529}
   - component: {fileID: 8418681192378514043}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: DistortedFlare
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38461,7 +38461,7 @@ GameObject:
   - component: {fileID: 8502820718999698993}
   - component: {fileID: 8417571586148044391}
   - component: {fileID: 8418358933849808135}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43326,7 +43326,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8511347123939014837}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: vfx_Hit_Trail07_Blue
   m_TagString: Untagged
   m_Icon: {fileID: 0}

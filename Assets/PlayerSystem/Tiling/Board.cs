@@ -107,6 +107,8 @@ namespace PlayerSystem.Tiling
             // 통과하면 등록하고 시각 배치
             polyominos.Add((x, y, polyomino));
             polyomino.display(x, y, cellPos2Real);
+            if(this.entity is Player p)
+                polyomino.register(p);
             return true;
         }
 
@@ -123,6 +125,8 @@ namespace PlayerSystem.Tiling
                 {
                     //Debug.Log(p.cells.ToString());
                     polyominos.Remove(kv);
+                    if(this.entity is Player pl)
+                        p.unregister(pl);
                     return (pivot.x, pivot.y, p);
                 }
             }

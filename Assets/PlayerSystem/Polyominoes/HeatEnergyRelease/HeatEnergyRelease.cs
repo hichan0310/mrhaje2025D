@@ -9,7 +9,8 @@ namespace PlayerSystem.Polyominoes.HeatEnergyRelease
     public class HeatEnergyRelease:Polyomino
     {
         public override string Name => "Heat Energy Release";
-        public override string Description => "공격력 (10+power*10)%의 열 피해를 주는 유도탄을 6개 발사한다. 총알 개수가 늘어나면 유도탄의 수도 늘어난다. ";
+        public override string Description => "공격력 (10+power*10)%의 열 피해를 주는 유도탄을 6개 발사한다. 총알 개수가 늘어나면 유도탄의 수도 늘어난다. \n" +
+                                              this.statBonusDescription;
 
         public EnergyBullet energyBullet;
         private AtkTagSet atkTagSet = new AtkTagSet().Add(AtkTags.triggerEffectDamage, AtkTags.heatDamage);

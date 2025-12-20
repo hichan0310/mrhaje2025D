@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using EntitySystem;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace PlayerSystem.Tiling
 {
@@ -11,7 +12,7 @@ namespace PlayerSystem.Tiling
     {
         public abstract string Name { get; }
         public abstract string Description { get; }
-        
+
         [Tooltip("피벗(0,0)을 기준으로 차지하는 셀 좌표들")] public List<Cell> cells;
 
         public RectTransform rt { get; private set; }
@@ -21,8 +22,13 @@ namespace PlayerSystem.Tiling
         {
             this.rt = this.GetComponent<RectTransform>();
         }
-        
-        protected virtual void Start(){}
+
+        protected virtual void Start()
+        {
+            Debug.Log("fuck");
+            setStatBonus();
+            Debug.Log(this.statBonusDescription);
+        }
 
         public void Hide()
         {
@@ -103,6 +109,90 @@ namespace PlayerSystem.Tiling
             display(bestX, bestY, pos2real);
         }
 
-        public abstract void trigger(Entity entity, float power);
+        public abstract void trigger(Entity player, float power);
+
+        public void register(Player player)
+        {
+            for (int i = 0; i < statBonus.Length; i++)
+            {
+                statBonus[i](player, true, statBonusId[i]);
+            }
+        }
+
+        public void unregister(Player player)
+        {
+            for (int i = 0; i < statBonus.Length; i++)
+            {
+                statBonus[i](player, false, statBonusId[i]);
+            }
+        }
+
+        protected int[] statBonusId = new[]{0, 0, 0, 0, 0, 0};
+
+        protected string[] statBonusName = new[]
+        {
+            "발사 속도",
+            "총알 개수",
+            "총알 속도",
+            "추가 지속시간",
+            "스킬 범위",
+            "쿨다운 감소"
+        };
+
+        protected string statBonusDescription = "";
+
+        private Action<Player, bool, int>[] statBonus = new[]
+        {
+            (Action<Player, bool, int>)((player, up, a) => player.stat.fireSpeed += up ? a : -a),
+            (player, up, a) => player.stat.bulletRate += up ? a : -a,
+            (player, up, a) => player.stat.bulletSpeed += up ? a : -a,
+            (player, up, a) => player.stat.additionalDuration += up ? a : -a,
+            (player, up, a) => player.stat.skillRange += up ? a : -a,
+            (player, up, a) => player.stat.skillCooldownDecrease += up ? a : -a
+        };
+
+        private void setStatBonus()
+        {
+            int n = this.cells.Count;
+            int bonusNum = 0;
+            switch (n)
+            {
+                case 1:
+                case 2:
+                    break;
+                case 3:
+                case 4:
+                    bonusNum = 1;
+                    break;
+                case 5:
+                case 6:
+                    bonusNum = 2;
+                    break;
+                case 7:
+                case 8:
+                    bonusNum = 3;
+                    break;
+                case 9:
+                case 10:
+                    bonusNum = 4;
+                    break;
+                case 11:
+                case 12:
+                    bonusNum = 5;
+                    break;
+                default:
+                    break;
+            }
+
+            for (int i = 0; i < bonusNum; i++)
+                this.statBonusId[Random.Range(0, statBonus.Length)] += 1;
+
+            this.statBonusDescription = "";
+            for (int i = 0; i < statBonus.Length; i++)
+            {
+                if (this.statBonusId[i] != 0)
+                    this.statBonusDescription += $"{statBonusName[i]} +{statBonusId[i]}\n";
+            }
+        }
     }
 }

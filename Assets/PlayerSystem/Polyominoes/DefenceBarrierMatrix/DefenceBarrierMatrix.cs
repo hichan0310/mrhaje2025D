@@ -13,7 +13,8 @@ namespace PlayerSystem.Polyominoes.DefenceBarrierMatrix
         public override string Description =>
             "방어력이 (30+30*power)% 증가한다.\n" +
             "지속시간은 10초이며, 증가량에는 최대치가 존재하지 않는다.\n" +
-            "이 효과는 중첩되지 않으며, 여러 번 발동 시 가장 높은 증가량만 적용된다.";
+            "이 효과는 중첩되지 않으며, 여러 번 발동 시 가장 높은 증가량만 적용된다.\n" +
+            this.statBonusDescription;
 
         private static DefPriorityStack buff;
 

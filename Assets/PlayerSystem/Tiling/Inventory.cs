@@ -22,6 +22,8 @@ namespace PlayerSystem.Tiling
         public void close()
         {
             this.show = false;
+            bag.addBagItem(boards[boardIndex].selected);
+            boards[boardIndex].selected = null;
         }
 
 

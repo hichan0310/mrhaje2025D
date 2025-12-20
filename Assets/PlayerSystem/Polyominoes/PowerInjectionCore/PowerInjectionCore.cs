@@ -13,7 +13,8 @@ namespace PlayerSystem.Polyominoes.PowerInjectionCore
         public override string Description =>
             "공격력이 250+250*power만큼 증가한다.\n" +
             "지속시간은 20초이며, 이 효과로 인한 공격력 증가는 최대 2500까지 적용된다.\n" +
-            "이 효과는 중첩되지 않는다. (여러 번 발동 시 가장 높은 증가량만 적용된다)";
+            "이 효과는 중첩되지 않는다. (여러 번 발동 시 가장 높은 증가량만 적용된다)\n" +
+            this.statBonusDescription;
 
         private static AtkPriorityStack buff;
 
