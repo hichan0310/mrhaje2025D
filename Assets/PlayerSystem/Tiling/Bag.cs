@@ -72,11 +72,17 @@ namespace PlayerSystem.Tiling
         {
             if (!p) return;
 
+            var rt = p.GetComponent<RectTransform>();
+            if (!rt)
+            {
+                Debug.LogError($"{p.name} has no RectTransform");
+                return;
+            }
 
-            p.rt.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-            p.gameObject.SetActive(true);
+            rt.localScale = new Vector3(0.2f, 0.2f, 0.2f);
             bag.Add(p);
         }
+
 
 
 

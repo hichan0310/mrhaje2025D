@@ -44,6 +44,22 @@ namespace PlayerSystem.Tiling
             this.bag.addBagItem(polyomino);
         }
 
+        public void CreateAndAddPolyomino(Polyomino prefab)
+        {
+            if (!prefab || !bag) return;
+
+            // ⭐ 여기서 생성
+            var poly = Instantiate(prefab, bag.transform);
+
+            // RectTransform 초기화 (중요)
+            var rt = poly.GetComponent<RectTransform>();
+            rt.localScale = Vector3.one;
+            rt.anchoredPosition = Vector2.zero;
+
+            bag.addBagItem(poly);
+        }
+
+
         public void addBoard(Board b)
         {
             var board = Instantiate(b);
