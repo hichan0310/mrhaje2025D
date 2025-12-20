@@ -57,7 +57,11 @@ namespace PlayerSystem.Tiling
 
         public void removeBoard(Board board)
         {
-            this.bag.addBagItem(board.reset());
+            foreach (var p in board.reset())
+            {
+                this.bag.addBagItem(p);
+            }
+
             this.boards.Remove(board);
             board.removeSelf();
             Destroy(board.gameObject);

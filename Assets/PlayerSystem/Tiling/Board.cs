@@ -50,6 +50,8 @@ namespace PlayerSystem.Tiling
 
         public void click(int x, int y)
         {
+            Debug.Log($"Board.click called. selected={(selected ? selected.name : "null")}");
+
             if (this.selected == null)
             {
                 var poly = this.popPolyomino(x, y);
@@ -77,6 +79,8 @@ namespace PlayerSystem.Tiling
         // x, y 위치에 Polyomino의 (0,0) 피벗을 두고 배치 시도
         public bool tryAddPolyomino(Polyomino polyomino, int x, int y)
         {
+            Debug.Log($"tryAddPolyomino: poly={polyomino.name}, alreadyOnBoard={polyominos.Exists(p => p.p == polyomino)}");
+
             if (!polyomino || polyomino.cells == null || polyomino.cells.Count == 0) return false;
 
             // 경계 및 타겟 좌표 수집
@@ -159,7 +163,11 @@ namespace PlayerSystem.Tiling
         // 프리뷰 시작
         public void BeginPreview(Polyomino poly)
         {
-            if (selected != null) selected.destroy();
+            if (selected != null)
+            {
+                selected.gameObject.SetActive(true);
+            }
+
             selected = poly;
             hasPreview = false;
         }
@@ -223,7 +231,12 @@ namespace PlayerSystem.Tiling
                     this.getBoardItem.somethingSelected(this.selected);
                     this.selected = null;
                 }
-                foreach (var poly in polyominos) poly.p.Hide();
+                foreach (var poly in polyominos)
+                {
+                    if (poly.p != selected)
+                        poly.p.Hide();
+                }
+
                 this.BackgroundUIObject.SetActive(false);
             }
         }

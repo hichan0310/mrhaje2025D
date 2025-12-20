@@ -20,15 +20,36 @@ namespace PlayerSystem.Tiling
 
         protected virtual void Awake()
         {
-            this.rt = this.GetComponent<RectTransform>();
+            this.rt = GetComponent<RectTransform>();
+
+            var cg = GetComponent<CanvasGroup>();
+            if (!cg) cg = gameObject.AddComponent<CanvasGroup>();
+
+            cg.blocksRaycasts = false;
         }
+
 
         protected virtual void Start()
         {
-            Debug.Log("fuck");
+            Debug.Log("fuck"); //아웃겨뒤지겠네ㅅㅂㅋㅋㅋㅋㅋ
             setStatBonus();
             Debug.Log(this.statBonusDescription);
         }
+
+        public void OnReturnToBag(Transform bagParent)
+        {
+            // 부모 복구
+            transform.SetParent(bagParent, false);
+
+            // UI 기준 초기화
+            rt.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+            rt.localRotation = Quaternion.identity;
+            rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
+            rt.pivot = new Vector2(0.5f, 0.5f);
+
+            gameObject.SetActive(true);
+        }
+
 
         public void Hide()
         {

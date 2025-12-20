@@ -29,7 +29,7 @@ namespace PlayerSystem
         [SerializeField] private float fallThroughDuration = 0.35f;
 
         [Header("Interaction")] [SerializeField]
-        private float interactRadius = 1.5f;
+        private float interactRadius = 3f;
 
         [SerializeField] private LayerMask interactMask = -1;
 
@@ -38,7 +38,7 @@ namespace PlayerSystem
         private KeyCode downKey = KeyCode.S;
         private KeyCode interactKey = KeyCode.F;
         private KeyCode inventoryKey = KeyCode.I;
-        [SerializeField] private Inventory inventory;
+        [SerializeField] public Inventory inventory;
 
         private KeyCode dodgeKey = KeyCode.LeftShift;
         [SerializeField] private Weapon weapon;
@@ -65,6 +65,8 @@ namespace PlayerSystem
         [SerializeField] private int baseHp;
         [SerializeField] private int baseAtk;
         [SerializeField] private int baseDef;
+        private IInteractable focused;
+
 
         private void Awake()
         {
@@ -113,7 +115,7 @@ namespace PlayerSystem
             UpdateTimers(deltaTime);
             energyChargeICD -= deltaTime;
             if (energyChargeICD < 0) energyChargeICD = 0;
-
+            UpdateFocus();
             base.update(deltaTime);
         }
 
@@ -172,6 +174,13 @@ namespace PlayerSystem
             }
         }
 
+        public void AddItemToInventory(Polyomino polyomino)
+        {
+            if (inventory == null) return;
+            inventory.addPolyomino(polyomino);
+        }
+
+
         private void ReadInput(float deltaTime)
         {
             horizontalInput = Input.GetAxisRaw(horizontalAxis);
@@ -212,6 +221,7 @@ namespace PlayerSystem
 
             if (Input.GetKeyDown(interactKey))
             {
+                Debug.Log("상호작용키 누름");
                 TryInteract();
             }
 
@@ -301,30 +311,46 @@ namespace PlayerSystem
             ResetFallThroughState();
         }
 
-        private void TryInteract()
+
+
+        private void UpdateFocus()
         {
-            Collider2D[] results = Physics2D.OverlapCircleAll(transform.position, interactRadius, interactMask);
-            List<IInteractable> interactables = new List<IInteractable>();
+            Collider2D[] results =
+                Physics2D.OverlapCircleAll(transform.position, interactRadius);
+
+            IInteractable nearest = null;
+            float minDist = float.MaxValue;
+
             foreach (var hit in results)
             {
-                if (hit && hit.TryGetComponent(out IInteractable interactable) && !interactables.Contains(interactable))
+                if (!hit || !hit.TryGetComponent(out IInteractable i)) continue;
+
+                float d = Vector2.Distance(transform.position, i.WorldPosition);
+                if (d < minDist)
                 {
-                    interactables.Add(interactable);
+                    minDist = d;
+                    nearest = i;
                 }
             }
 
-            if (interactables.Count == 0)
-            {
-                return;
-            }
+            if (focused == nearest) return;
 
-            interactables.Sort((a, b) =>
-                Vector3.Distance(transform.position, a.WorldPosition).CompareTo(
-                    Vector3.Distance(transform.position, b.WorldPosition)));
+            if (focused != null)
+                focused.OnDefocus();
 
-            interactables[0].Interact(this);
-            new InteractionEvent(this, interactables[0]).trigger();
-            //ActivateMemory(ActionTriggerType.Interact, 1f);
+            focused = nearest;
+            Debug.Log(focused);
+            if (focused != null)
+                focused.OnFocus();
+        }
+
+
+        private void TryInteract()
+        {
+            if (focused == null) return;
+
+            new InteractionEvent(this, focused).trigger();
+            Debug.Log("상호작용 이벤트 발행");
         }
 
         public void TryDodge(bool ignoreTimer = false)
@@ -418,6 +444,7 @@ namespace PlayerSystem
             // return false;
             return isDodging;
         }
+
 
 
 #if UNITY_EDITOR

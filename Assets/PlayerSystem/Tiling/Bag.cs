@@ -70,17 +70,17 @@ namespace PlayerSystem.Tiling
 
         public void addBagItem(Polyomino p)
         {
-            if(!p) return;
+            if (!p) return;
+
+
             p.rt.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+            p.gameObject.SetActive(true);
             bag.Add(p);
         }
 
-        public void addBagItem(IEnumerable<Polyomino> ps)
-        {
-            foreach (var p in ps)
-            {
-                addBagItem(p);
-            }
-        }
+
+
+
+
     }
 }
