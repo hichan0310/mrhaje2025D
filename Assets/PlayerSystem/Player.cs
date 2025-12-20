@@ -174,11 +174,18 @@ namespace PlayerSystem
             }
         }
 
-        public void AddItemToInventory(Polyomino polyomino)
+        public void GivePolyominoReward(Polyomino rewardPrefab)
         {
-            if (inventory == null) return;
-            inventory.addPolyomino(polyomino);
+            if (!inventory) return;
+
+            // 인벤 강제 활성화
+            inventory.gameObject.SetActive(true);
+            inventory.show = true;
+
+            inventory.CreateAndAddPolyomino(rewardPrefab);
         }
+
+
 
 
         private void ReadInput(float deltaTime)
@@ -236,6 +243,8 @@ namespace PlayerSystem
                 inventory.show = true;
             }
         }
+
+
 
         private void UpdateTimers(float deltaTime)
         {

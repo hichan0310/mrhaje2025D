@@ -70,6 +70,11 @@ public class Chest
 
         opened = true;
 
+        player.GivePolyominoReward(reward);
+
+        Destroy(gameObject);
+
+
 
         if (interactEffectPrefab)
         {
@@ -80,8 +85,8 @@ public class Chest
             );
         }
 
-        var poly = Instantiate(reward, player.inventory.transform, false);
-        player.AddItemToInventory(poly);
+        
+
 
 
 
