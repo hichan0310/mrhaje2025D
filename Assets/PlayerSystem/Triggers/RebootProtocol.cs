@@ -22,7 +22,7 @@ namespace PlayerSystem.Triggers
             {
                 if (damageGiveEvent.attacker == this.entity)
                     this.damageCharge += damageGiveEvent.trueDmg;
-                Debug.Log(this.damageCharge);
+                // Debug.Log(this.damageCharge);
             }
             else if (eventArgs is DamageTakeEvent damageTakeEvent)
             {

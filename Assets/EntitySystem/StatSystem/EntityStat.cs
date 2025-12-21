@@ -88,7 +88,7 @@ namespace EntitySystem.StatSystem
             bulletSpeed = 1f;
             additionalDuration = 1f;
             skillRange = 1f;
-            fireSpeed = 1;
+            fireSpeed = 1f;
         }
 
         public EntityStat(EntityStat copy)

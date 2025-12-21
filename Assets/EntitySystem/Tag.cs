@@ -14,11 +14,12 @@ namespace EntitySystem
         physicalDamage = 5,
         electricalDamage = 6,
         heatDamage = 7,
-        normalAttackDamage=8,
+        normalAttackDamage = 8,
         skillDamage = 9,
         ultimateDamage = 10,
         triggerEffectDamage = 11,
         fixedDamage = 12,
+        damageOverTime = 13,
         fireball = 60,
     }
 
@@ -26,14 +27,14 @@ namespace EntitySystem
     {
         public static int atkTagCount = Enum.GetValues(typeof(AtkTags)).Length;
     }
-    
+
     public class AtkTagSet : IEnumerable<AtkTags>
     {
-        private ulong _mask; 
+        private ulong _mask;
         // 비트마스크로 최대 64개 태그 저장 가능
         // 설마 64개보다 많아지겠어
 
-        public AtkTagSet(ulong mask=0) => _mask = mask;
+        public AtkTagSet(ulong mask = 0) => _mask = mask;
 
         public AtkTagSet Add(AtkTags tag)
         {
@@ -61,6 +62,14 @@ namespace EntitySystem
 
         public bool Contains(AtkTags tag) => (_mask & (1UL << (int)tag)) != 0;
 
+        public bool Contains(params AtkTags[] tags)
+        {
+            foreach (var tag in tags)
+                if (Contains(tag))
+                    return true;
+            return false;
+        }
+
         public ulong ToMask() => _mask;
 
         public IEnumerator<AtkTags> GetEnumerator()
@@ -71,6 +80,7 @@ namespace EntitySystem
                     yield return tag;
             }
         }
+
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         public static AtkTagSet None => new AtkTagSet();

@@ -28,12 +28,11 @@ namespace PlayerSystem.Tiling
             cg.blocksRaycasts = false;
         }
 
-
         protected virtual void Start()
         {
-            Debug.Log("fuck"); //아웃겨뒤지겠네ㅅㅂㅋㅋㅋㅋㅋ
+            // Debug.Log("fuck");
             setStatBonus();
-            Debug.Log(this.statBonusDescription);
+            // Debug.Log(this.statBonusDescription);
         }
 
         public void OnReturnToBag(Transform bagParent)
