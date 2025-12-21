@@ -13,7 +13,7 @@ namespace PlayerSystem.Polyominoes.HeatEnergyRelease
                                               this.statBonusDescription;
 
         public EnergyBullet energyBullet;
-        private AtkTagSet atkTagSet = new AtkTagSet().Add(AtkTags.triggerEffectDamage, AtkTags.heatDamage);
+        private AtkTagSet atkTagSet = new AtkTagSet().Add(AtkTags.combatModuleDamage, AtkTags.heatDamage);
         
         public override void trigger(Entity entity, float power)
         {
