@@ -98,20 +98,29 @@ namespace PlayerSystem
 
         private float energyChargeICD = 0;
 
+        private JustDodgeEvent justDodge = null;
+
         public override void eventActive(EventArgs e)
         {
             if (e is JustDodgeEvent dodgeEvent)
             {
                 if (this == dodgeEvent.entity)
                 {
-                    TimeScaler.Instance.changeScaleForRealTime(justDodgeCooltime, 0.5f);
-
-                    dodgeTimer = this.stat.dodgeTime;
-                    dodgeCooldownTimer = this.justDodgeCooltime;
+                    if (justDodge == null)
+                    {
+                        TimeScaler.Instance.changeScaleForRealTime(justDodgeCooltime, 0.5f);
+                        dodgeTimer = this.stat.dodgeTime;
+                        dodgeCooldownTimer = this.justDodgeCooltime;
+                        justDodge = dodgeEvent;
+                    }
+                    else
+                        justDodge = justDodge == null ||
+                                    justDodge.damageGiveEvent.trueDmg < dodgeEvent.damageGiveEvent.trueDmg
+                            ? dodgeEvent
+                            : justDodge;
                 }
             }
-
-            base.eventActive(e);
+            else base.eventActive(e);
         }
 
         protected override void update(float deltaTime)
@@ -123,6 +132,8 @@ namespace PlayerSystem
             if (energyChargeICD < 0) energyChargeICD = 0;
             UpdateFocus();
             base.update(deltaTime);
+            base.eventActive(justDodge);
+            justDodge = null;
         }
 
 
@@ -377,7 +388,7 @@ namespace PlayerSystem
 
             isDodging = true;
             this.bodyHitboxCollider1.radius = originalSize1 * 2;
-            this.bodyHitboxCollider2.size = new Vector2(originalSize2*4, this.bodyHitboxCollider2.size.y);
+            this.bodyHitboxCollider2.size = new Vector2(originalSize2 * 4, this.bodyHitboxCollider2.size.y);
             this.body.linearVelocityY = 0.1f;
             dodgeTimer = this.stat.dodgeTime;
             dodgeCooldownTimer = this.stat.dodgeCooldown;
@@ -448,8 +459,12 @@ namespace PlayerSystem
 
         public bool TryInterceptAttack(Entity attacker, DamageGiveEvent giveEvent)
         {
-            this.bodyHitboxCollider1.enabled = false;
-            this.bodyHitboxCollider2.enabled = false;
+            if (isDodging)
+            {
+                this.bodyHitboxCollider1.enabled = false;
+                this.bodyHitboxCollider2.enabled = false;
+            }
+
             return isDodging;
         }
 

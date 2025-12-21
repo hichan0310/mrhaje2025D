@@ -4,6 +4,7 @@ using EntitySystem;
 using EntitySystem.Events;
 using EntitySystem.StatSystem;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace PlayerSystem.Polyominoes.ElectricFieldGenerator
 {
@@ -15,6 +16,18 @@ namespace PlayerSystem.Polyominoes.ElectricFieldGenerator
         public float power { get; set; }
         
         [SerializeField] private Shock shock;
+
+        private void Start()
+        {
+            var scale = (1f + (entityStat.skillRange - 1) / 3);
+            this.transform.localScale = Vector3.one * scale;
+            foreach (var ps in this.gameObject.GetComponentsInChildren<ParticleSystem>())
+            {
+                var main = ps.main;
+                main.startSizeMultiplier *= scale;
+            }
+            Destroy(this.gameObject, 1);
+        }
 
         private void OnTriggerStay2D(Collider2D other)
         {
