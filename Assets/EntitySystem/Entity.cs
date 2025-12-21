@@ -66,5 +66,6 @@ namespace EntitySystem
             stat.takeDamage(dmg);
             new DamageTakeEvent(dmg, e.attacker, this, e.atkTags).trigger();
         }
+
     }
 }

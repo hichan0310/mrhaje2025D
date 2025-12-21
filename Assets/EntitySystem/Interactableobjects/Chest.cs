@@ -18,6 +18,12 @@ public class Chest
     [Header("Effect")]
     [SerializeField] private GameObject interactEffectPrefab;
 
+    [Header("Tooltip")]
+    [SerializeField] private WorldTooltip tooltipPrefab;
+
+    private WorldTooltip tooltipInstance;
+
+
     private bool opened;
 
     public Vector3 WorldPosition => transform.position;
@@ -32,24 +38,42 @@ public class Chest
     {
         var player = FindObjectOfType<PlayerSystem.Player>();
         if (player)
-        {
             registerTarget(player);
-            Debug.Log("Chest registered to player");
+
+        if (tooltipPrefab && reward)
+        {
+            tooltipInstance = Instantiate(
+                tooltipPrefab,
+                transform.position + Vector3.up * 1.2f,
+                Quaternion.identity,
+                transform
+            );
+
+            tooltipInstance.Set(reward.Name, reward.Description);
+            tooltipInstance.gameObject.SetActive(false);
         }
     }
+
 
     // ===== Focus =====
     public void OnFocus()
     {
         if (opened) return;
         sr.color = focusColor;
+
+        if (tooltipInstance)
+            tooltipInstance.gameObject.SetActive(true);
     }
 
     public void OnDefocus()
     {
         if (opened) return;
         sr.color = normalColor;
+
+        if (tooltipInstance)
+            tooltipInstance.gameObject.SetActive(false);
     }
+
 
     // ===== IEntityEventListener =====
     public void registerTarget(Entity target, object args = null)
@@ -70,9 +94,12 @@ public class Chest
 
         opened = true;
 
-        player.GivePolyominoReward(reward);
+        if (tooltipInstance)
+            Destroy(tooltipInstance.gameObject);
 
+        player.GivePolyominoReward(reward);
         Destroy(gameObject);
+
 
 
 

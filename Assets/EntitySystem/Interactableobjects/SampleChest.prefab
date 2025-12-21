@@ -51,6 +51,7 @@ MonoBehaviour:
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   focusColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   interactEffectPrefab: {fileID: 0}
+  tooltipPrefab: {fileID: 5962588922759380468, guid: 40a1353f0fc7bab499b464e21dd054ad, type: 3}
 --- !u!212 &5051616435229396333
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -136,7 +137,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
