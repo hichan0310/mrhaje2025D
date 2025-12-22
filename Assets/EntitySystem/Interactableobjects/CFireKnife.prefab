@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5051616435229396333}
   - component: {fileID: 3954188029262113751}
   m_Layer: 0
-  m_Name: SampleChest
+  m_Name: CFireKnife
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 6.07, y: 2.39, z: 0.95406115}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1584331507f82bb4bb048c25f345891c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reward: {fileID: 3777817610942172042, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
+  reward: {fileID: 3115172515937320635, guid: d52176502e7583b4289fddda4e21a2db, type: 3}
   sr: {fileID: 5051616435229396333}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   focusColor: {r: 0.5283019, g: 0.5283019, b: 0.5283019, a: 1}
@@ -96,7 +96,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7670959825255232715, guid: 0aae373a73039304eb331b20896f9762, type: 3}
+  m_Sprite: {fileID: -8528757242307102836, guid: 43b9b9fcc08ab914aaa9e629df237ec2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -141,15 +141,15 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.11647773, y: 0.44262075}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 9.95, y: 14.57}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 4.028456, y: 14.092246}
   m_EdgeRadius: 0

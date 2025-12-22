@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5595866037629974910}
   - component: {fileID: 1964586786943341366}
   - component: {fileID: 100697841204235228}
+  - component: {fileID: 4300457560810398549}
   m_Layer: 9
   m_Name: RangeDrone
   m_TagString: Untagged
@@ -183,7 +184,7 @@ MonoBehaviour:
   faceTarget: 1
   detectRange: 10
   moveSpeed: 3
-  baseHp: 10000
+  baseHp: 5000
   baseAtk: 200
   baseDef: 100
   armorType: 0
@@ -216,3 +217,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d921029925554c419d51cf62d10b25d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4300457560810398549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7116452452985950426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12cfdcee651d7cf41af41eca7cddbda6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropTable: {fileID: 11400000, guid: f2e5ebcdf07bede46ac6f236574dc6e0, type: 2}

@@ -167,7 +167,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 14
   lifeTime: 3
-  baseDamage: 10
+  baseDamage: 100
   collisionMask:
     serializedVersion: 2
     m_Bits: 256
