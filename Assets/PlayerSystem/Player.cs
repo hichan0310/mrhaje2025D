@@ -27,6 +27,7 @@ namespace PlayerSystem
         [SerializeField] private LayerMask groundMask = -1;
         [SerializeField] private LayerMask dropPlatformMask = 0;
         [SerializeField] private float fallThroughDuration = 0.35f;
+        [SerializeField] private float justDodgeCooltime;
 
         [Header("Interaction")] [SerializeField]
         private float interactRadius = 3f;
@@ -46,8 +47,11 @@ namespace PlayerSystem
         public EntityStat statCache { get; private set; }
 
         private Rigidbody2D body = null;
+        private CircleCollider2D bodyHitboxCollider1 = null;
+        private BoxCollider2D bodyHitboxCollider2 = null;
         private CapsuleCollider2D bodyCollider = null;
-        private Vector2 originalSize;
+        private float originalSize1;
+        private float originalSize2;
 
         private float dodgeTimer;
         private float dodgeCooldownTimer;
@@ -78,9 +82,11 @@ namespace PlayerSystem
             base.Start();
             EnsureLayerMasksConfigured();
             body = GetComponent<Rigidbody2D>();
+            bodyHitboxCollider1 = GetComponent<CircleCollider2D>();
+            bodyHitboxCollider2 = GetComponent<BoxCollider2D>();
             bodyCollider = GetComponent<CapsuleCollider2D>();
-            bodyCollider.direction=CapsuleDirection2D.Vertical;
-            originalSize = bodyCollider.size;
+            originalSize1 = bodyHitboxCollider1.radius;
+            originalSize2 = bodyHitboxCollider2.size.x;
             this.stat = new EntityStat(this, baseHp, baseAtk, baseDef);
             this.statCache = this.stat.calculate();
             if (weapon)
@@ -92,20 +98,29 @@ namespace PlayerSystem
 
         private float energyChargeICD = 0;
 
+        private JustDodgeEvent justDodge = null;
+
         public override void eventActive(EventArgs e)
         {
             if (e is JustDodgeEvent dodgeEvent)
             {
                 if (this == dodgeEvent.entity)
                 {
-                    TimeScaler.Instance.changeScaleForRealTime(0.2f, 0.5f);
-
-                    dodgeTimer = this.stat.dodgeTime;
-                    dodgeCooldownTimer = 0;
+                    if (justDodge == null)
+                    {
+                        TimeScaler.Instance.changeScaleForRealTime(justDodgeCooltime, 0.5f);
+                        dodgeTimer = this.stat.dodgeTime;
+                        dodgeCooldownTimer = this.justDodgeCooltime;
+                        justDodge = dodgeEvent;
+                    }
+                    else
+                        justDodge = justDodge == null ||
+                                    justDodge.damageGiveEvent.trueDmg < dodgeEvent.damageGiveEvent.trueDmg
+                            ? dodgeEvent
+                            : justDodge;
                 }
             }
-
-            base.eventActive(e);
+            else base.eventActive(e);
         }
 
         protected override void update(float deltaTime)
@@ -117,6 +132,8 @@ namespace PlayerSystem
             if (energyChargeICD < 0) energyChargeICD = 0;
             UpdateFocus();
             base.update(deltaTime);
+            base.eventActive(justDodge);
+            justDodge = null;
         }
 
 
@@ -178,14 +195,12 @@ namespace PlayerSystem
         {
             if (!inventory) return;
 
-            // ÀÎº¥ °­Á¦ È°¼ºÈ­
+            // ï¿½Îºï¿½ ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­
             inventory.gameObject.SetActive(true);
             inventory.show = true;
 
             inventory.CreateAndAddPolyomino(rewardPrefab);
         }
-
-
 
 
         private void ReadInput(float deltaTime)
@@ -228,7 +243,7 @@ namespace PlayerSystem
 
             if (Input.GetKeyDown(interactKey))
             {
-                Debug.Log("»óÈ£ÀÛ¿ëÅ° ´©¸§");
+                Debug.Log("ìƒí˜¸ìž‘ìš©í‚¤ ëˆ„ë¦„");
                 TryInteract();
             }
 
@@ -245,7 +260,6 @@ namespace PlayerSystem
         }
 
 
-
         private void UpdateTimers(float deltaTime)
         {
             dodgeCooldownTimer = Mathf.Max(0f, dodgeCooldownTimer - deltaTime);
@@ -257,7 +271,11 @@ namespace PlayerSystem
                 if (dodgeTimer <= 0f)
                 {
                     isDodging = false;
-                    this.bodyCollider.size = originalSize;
+                    this.bodyHitboxCollider1.enabled = true;
+                    this.bodyHitboxCollider2.enabled = true;
+                    this.bodyHitboxCollider1.radius = originalSize1;
+                    Vector2 size = new Vector2(originalSize2, this.bodyHitboxCollider2.size.y);
+                    this.bodyHitboxCollider2.size = size;
                 }
             }
         }
@@ -284,7 +302,7 @@ namespace PlayerSystem
                 // );
             }
 
-            
+
             if (isDodging)
             {
                 velocity.x = Mathf.Sign(transform.localScale.x) * this.stat.dodgeSpeed;
@@ -307,7 +325,7 @@ namespace PlayerSystem
 
         private void HandleFallThrough()
         {
-            if (!bodyCollider || !isFallingThrough)
+            if (!bodyHitboxCollider1 || !bodyHitboxCollider2 || !isFallingThrough)
             {
                 return;
             }
@@ -319,7 +337,6 @@ namespace PlayerSystem
 
             ResetFallThroughState();
         }
-
 
 
         private void UpdateFocus()
@@ -359,7 +376,7 @@ namespace PlayerSystem
             if (focused == null) return;
 
             new InteractionEvent(this, focused).trigger();
-            Debug.Log("»óÈ£ÀÛ¿ë ÀÌº¥Æ® ¹ßÇà");
+            Debug.Log("ìƒí˜¸ìž‘ìš© ì´ë²¤íŠ¸ ë°œí–‰");
         }
 
         public void TryDodge(bool ignoreTimer = false)
@@ -370,13 +387,13 @@ namespace PlayerSystem
             }
 
             isDodging = true;
-            bodyCollider.direction = CapsuleDirection2D.Horizontal;
-            var size = this.bodyCollider.size;
-            size.x = originalSize.x*3;
-            this.bodyCollider.size = size;
+            this.bodyHitboxCollider1.radius = originalSize1 * 2;
+            this.bodyHitboxCollider2.size = new Vector2(originalSize2 * 4, this.bodyHitboxCollider2.size.y);
             this.body.linearVelocityY = 0.1f;
             dodgeTimer = this.stat.dodgeTime;
             dodgeCooldownTimer = this.stat.dodgeCooldown;
+            this.bodyHitboxCollider1.enabled = true;
+            this.bodyHitboxCollider2.enabled = true;
             new DodgeEvent(this).trigger();
             // ActivateMemory(ActionTriggerType.Dodge, 1f);
         }
@@ -442,18 +459,14 @@ namespace PlayerSystem
 
         public bool TryInterceptAttack(Entity attacker, DamageGiveEvent giveEvent)
         {
-            // if (isDodging)
-            // {
-            //     float power = perfectDodgeTimer > 0f ? 2f : 1f;
-            //     isDodging = false;
-            //     dodgeTimer = 0f;
-            //     return true;
-            // }
-            //
-            // return false;
+            if (isDodging)
+            {
+                this.bodyHitboxCollider1.enabled = false;
+                this.bodyHitboxCollider2.enabled = false;
+            }
+
             return isDodging;
         }
-
 
 
 #if UNITY_EDITOR

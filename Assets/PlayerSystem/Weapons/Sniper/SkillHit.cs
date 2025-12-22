@@ -50,7 +50,7 @@ namespace PlayerSystem.Weapons.Sniper
             colliders.Add(other);
             var e = other.gameObject.GetComponent<Entity>();
             if (e == null) return;
-            // if (e == this.damageGiveEvent.attacker) return;
+            if (e == this.damageGiveEvent.attacker) return;
             this.damageGiveEvent.target = e;
             this.damageGiveEvent.trigger();
         }

@@ -16,7 +16,7 @@ namespace PlayerSystem.Polyominoes.ExecutionFollowupShot
         private LineRenderer lineRenderer;
 
         private AtkTagSet atkTagSet = new AtkTagSet()
-            .Add(AtkTags.triggerEffectDamage, AtkTags.physicalDamage, AtkTags.fixedDamage);
+            .Add(AtkTags.combatModuleDamage, AtkTags.physicalDamage, AtkTags.fixedDamage);
 
         public float r = 1;
         public float speed = 1;

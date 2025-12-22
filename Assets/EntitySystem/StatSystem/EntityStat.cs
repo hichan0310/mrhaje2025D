@@ -26,6 +26,7 @@ namespace EntitySystem.StatSystem
 
         public float[] dmgUp { get; set; }
         public float[] dmgAdd { get; set; }
+        public float[] dmgTakeUp { get; set; }
 
         public float energyRecharge { get; set; }
 
@@ -70,6 +71,7 @@ namespace EntitySystem.StatSystem
 
             dmgUp = new float[Tag.atkTagCount];
             dmgAdd = new float[Tag.atkTagCount];
+            dmgTakeUp = new float[Tag.atkTagCount];
 
             energyRecharge = 1f;
             speed = 8f;
@@ -78,8 +80,8 @@ namespace EntitySystem.StatSystem
             airAcceleration = 20f;
             groundAcceleration = 20f;
 
-            dodgeSpeed = 15f;
-            dodgeTime = 0.3f;
+            dodgeSpeed = 10f;
+            dodgeTime = 0.5f;
             dodgeCooldown = 0.7f;
 
 
@@ -107,8 +109,10 @@ namespace EntitySystem.StatSystem
 
             this.dmgUp = new float[Tag.atkTagCount];
             this.dmgAdd = new float[Tag.atkTagCount];
+            this.dmgTakeUp = new float[Tag.atkTagCount];
             Array.Copy(copy.dmgUp, this.dmgUp, Tag.atkTagCount);
             Array.Copy(copy.dmgAdd, this.dmgAdd, Tag.atkTagCount);
+            Array.Copy(copy.dmgTakeUp, this.dmgTakeUp, Tag.atkTagCount);
 
             this.energyRecharge = copy.energyRecharge;
             this.speed = copy.speed;
@@ -195,6 +199,15 @@ namespace EntitySystem.StatSystem
         public int calculateTakenDamage(AtkTagSet tags, int damage)
         {
             if (tags.Contains(AtkTags.fixedDamage)) return damage;
+
+            float dmgUpSum = dmgTakeUp[(int)AtkTags.all];
+            foreach (AtkTags atkTag in tags)
+            {
+                if (atkTag == AtkTags.all) continue;
+                dmgUpSum += dmgTakeUp[(int)atkTag];
+            }
+
+            damage = (int)((dmgUpSum / 100 + 1) * damage);
 
             int C = 200;
 
