@@ -103,16 +103,17 @@ namespace EntitySystem
 
         public override void eventActive(EventArgs e)
         {
-            // forward to base listeners
             base.eventActive(e);
 
-            // handle die event
             EntityDieEvent die = e as EntityDieEvent;
             if (die != null && die.entity == this && !isDead)
             {
                 isDead = true;
-                OnDie(die.attacker);
+
+                OnDie(die.attacker);   // 기존 몹 로직
+                HandleDeathReward();   // 공통 Chest 드랍
             }
+
 
             OnEvent(e);
         }
@@ -158,6 +159,13 @@ namespace EntitySystem
             float r2 = range * range;
             return DistanceToTargetSqr() <= r2;
         }
+
+        // EnemyBase.cs
+        protected virtual void HandleDeathReward()
+        {
+            RewardSystem.ChestDropper.TryDrop(this);
+        }
+
 
         // --------------------------------------------------------------------
         // Functions to be implemented per enemy type
