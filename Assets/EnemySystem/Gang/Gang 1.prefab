@@ -57,8 +57,8 @@ MonoBehaviour:
   faceTarget: 1
   detectRange: 6
   moveSpeed: 3
-  baseHp: 3000
-  baseAtk: 90
+  baseHp: 10000
+  baseAtk: 300
   baseDef: 0
   armorType: 0
   baseKnockbackResist: 0
@@ -249,4 +249,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12cfdcee651d7cf41af41eca7cddbda6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropTable: {fileID: 11400000, guid: cda7e381bab70d545a40d88fcccadbe8, type: 2}
+  dropTable: {fileID: 11400000, guid: 938161a0dbe560c40a7cd89f763db06e, type: 2}

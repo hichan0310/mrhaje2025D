@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 279260901762073282}
   - component: {fileID: 5776329690255212153}
   - component: {fileID: 7464301928413896013}
+  - component: {fileID: 3584183813551083034}
   m_Layer: 9
   m_Name: Guard
   m_TagString: Untagged
@@ -183,8 +184,8 @@ MonoBehaviour:
   faceTarget: 1
   detectRange: 10
   moveSpeed: 3
-  baseHp: 5000
-  baseAtk: 100
+  baseHp: 15000
+  baseAtk: 150
   baseDef: 0
   armorType: 0
   baseKnockbackResist: 0
@@ -210,3 +211,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d921029925554c419d51cf62d10b25d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3584183813551083034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4975350963263411572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12cfdcee651d7cf41af41eca7cddbda6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropTable: {fileID: 11400000, guid: 0af546fd88b6cb249b914a90f429cce7, type: 2}
