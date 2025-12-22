@@ -14,6 +14,7 @@ namespace EntitySystem
         public Animator animator { get; private set; }
         
         private List<IEntityEventListener> listeners = new List<IEntityEventListener>();
+        public IReadOnlyList<IEntityEventListener> Listeners => listeners;
         
         protected virtual void Start()
         {

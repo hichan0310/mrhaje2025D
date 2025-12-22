@@ -11,12 +11,12 @@ namespace EntitySystem.StatSystem
         public int maxHp { get; set; }
         public int nowHp { get; set; }
 
-        private int baseAtk { get; }
+        public int baseAtk { get; set; }
         public int addAtk { get; set; }
         public float increaseAtk { get; set; }
         public int atk => (int)(baseAtk * (increaseAtk / 100 + 1) + addAtk);
 
-        private int baseDef { get; }
+        public int baseDef { get; set; }
         public int addDef { get; set; }
         public float increaseDef { get; set; }
         public int def => (int)(baseDef * (increaseDef / 100 + 1) + addDef);
