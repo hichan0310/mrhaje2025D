@@ -1,18 +1,17 @@
-// ChestDropTable.cs
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace RewardSystem
 {
     [CreateAssetMenu(
-        fileName = "ChestDropTable",
-        menuName = "Reward/Chest Drop Table"
+        fileName = "DropTable",
+        menuName = "Reward/Drop Table"
     )]
-    public class ChestDropTable : ScriptableObject
+    public class DropTable : ScriptableObject
     {
-        public List<ChestDropEntry> entries = new();
+        public List<DropEntry> entries = new();
 
-        public ChestDropEntry Roll()
+        public IDropReward Roll()
         {
             float roll = Random.value;
             float acc = 0f;
@@ -21,9 +20,11 @@ namespace RewardSystem
             {
                 acc += e.probability;
                 if (roll <= acc)
-                    return e;
+                    return e.reward as IDropReward;
             }
+
             return null;
         }
     }
 }
+

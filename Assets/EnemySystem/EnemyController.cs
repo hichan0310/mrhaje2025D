@@ -163,7 +163,7 @@ namespace EntitySystem
         // EnemyBase.cs
         protected virtual void HandleDeathReward()
         {
-            RewardSystem.ChestDropper.TryDrop(this);
+            RewardSystem.Dropper.TryDrop(this);
         }
 
 
