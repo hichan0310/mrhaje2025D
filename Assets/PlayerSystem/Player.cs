@@ -129,7 +129,6 @@ namespace PlayerSystem
 
         protected override void update(float deltaTime)
         {
-
             if (isGrabLocked)
             {
                 grabLockTimer -= deltaTime;
@@ -220,7 +219,6 @@ namespace PlayerSystem
 
         private void ReadInput(float deltaTime)
         {
-
             if (isGrabLocked)
             {
                 horizontalInput = 0f;
@@ -306,7 +304,6 @@ namespace PlayerSystem
 
         private void ApplyMovement()
         {
-
             if (!body)
             {
                 return;
@@ -411,24 +408,24 @@ namespace PlayerSystem
             Debug.Log("상호작용 이벤트 발행");
         }
 
-public void TryDodge(bool ignoreTimer = false)
-{
-    if (isGrabLocked) return;
+        public void TryDodge(bool ignoreTimer = false)
+        {
+            if (isGrabLocked) return;
 
-    if (!ignoreTimer && (isDodging || dodgeCooldownTimer > 0f))
-        return;
+            if (!ignoreTimer && (isDodging || dodgeCooldownTimer > 0f))
+                return;
 
-    isDodging = true;
-    bodyHitboxCollider1.radius = originalSize1 * 2;
-    bodyHitboxCollider2.size =
-        new Vector2(originalSize2 * 4, bodyHitboxCollider2.size.y);
-    body.linearVelocityY += 0.1f;
-    dodgeTimer = stat.dodgeTime;
-    dodgeCooldownTimer = stat.dodgeCooldown;
-    bodyHitboxCollider1.enabled = true;
-    bodyHitboxCollider2.enabled = true;
-    new DodgeEvent(this).trigger();
-}
+            isDodging = true;
+            bodyHitboxCollider1.radius = originalSize1 * 2;
+            bodyHitboxCollider2.size =
+                new Vector2(originalSize2 * 4, bodyHitboxCollider2.size.y);
+            body.linearVelocityY += 0.1f;
+            dodgeTimer = stat.dodgeTime;
+            dodgeCooldownTimer = stat.dodgeCooldown;
+            bodyHitboxCollider1.enabled = true;
+            bodyHitboxCollider2.enabled = true;
+            new DodgeEvent(this).trigger();
+        }
 
         private void FallThrough()
         {
@@ -518,7 +515,6 @@ public void TryDodge(bool ignoreTimer = false)
             if (body)
                 body.linearVelocity = Vector2.zero;
         }
-
 
 
 #if UNITY_EDITOR
