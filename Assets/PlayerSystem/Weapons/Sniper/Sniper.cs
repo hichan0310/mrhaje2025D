@@ -61,7 +61,7 @@ namespace PlayerSystem.Weapons.Sniper
                     var tag = new AtkTagSet(atkTagSet);
                     var dmg = stat.calculateTrueDamage(tag, coef);
                     b.damageGiveEvent = new DamageGiveEvent(dmg, Vector3.zero, player, null, tag,
-                        5 * Mathf.Min(0.5f + s.aimDuration, 1f) / 2);
+                        3 * Mathf.Min(s.aimDuration, 1f));
                     Destroy(Instantiate(muzzleFlashPrefab, fire, Quaternion.identity), 1);
                 }
             }
@@ -94,7 +94,7 @@ namespace PlayerSystem.Weapons.Sniper
                     var tag = new AtkTagSet(atkTagSet);
                     var dmg = stat.calculateTrueDamage(tag, coef);
                     b.damageGiveEvent = new DamageGiveEvent(dmg, Vector3.zero, player, null, tag,
-                        10 * Mathf.Min(0.5f + s.aimDuration, 1f) / 2);
+                        5 * Mathf.Min(s.aimDuration, 1f));
                     Destroy(Instantiate(muzzleFlashPrefab, fire, Quaternion.identity), 1);
                     skillBullet = false;
                 }
