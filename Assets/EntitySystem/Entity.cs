@@ -68,5 +68,10 @@ namespace EntitySystem
             new DamageTakeEvent(dmg, e.attacker, this, e.atkTags).trigger();
         }
 
+        public void takeHeal(HealEvent e)
+        {
+            this.stat.nowHp += e.healAmount;
+            if(stat.nowHp >= stat.maxHp) stat.nowHp = stat.maxHp;
+        }
     }
 }

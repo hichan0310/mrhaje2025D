@@ -9,8 +9,8 @@ namespace PlayerSystem.Polyominoes.CurrentAmplifier
     {
         public override string Name => "CurrentAmplifier";
         
-        public float lifeTime;
-        public float power;
+        private float lifeTime;
+        private float power;
 
         private Entity target;
         public override string Description => 

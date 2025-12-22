@@ -9,8 +9,8 @@ namespace PlayerSystem.Polyominoes.RiskAnalyzer
     {
         public override string Name => "NormalAttackCharger";
         
-        public float lifeTime;
-        public float power;
+        private float lifeTime;
+        private float power;
 
         private Entity target;
         

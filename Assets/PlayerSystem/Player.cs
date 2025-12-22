@@ -389,7 +389,7 @@ namespace PlayerSystem
             isDodging = true;
             this.bodyHitboxCollider1.radius = originalSize1 * 2;
             this.bodyHitboxCollider2.size = new Vector2(originalSize2 * 4, this.bodyHitboxCollider2.size.y);
-            this.body.linearVelocityY = 0.1f;
+            this.body.linearVelocityY += 0.1f;
             dodgeTimer = this.stat.dodgeTime;
             dodgeCooldownTimer = this.stat.dodgeCooldown;
             this.bodyHitboxCollider1.enabled = true;

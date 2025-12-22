@@ -9,13 +9,13 @@ namespace PlayerSystem.Polyominoes.NormalAttackCharger
     {
         public override string Name => "NormalAttackCharger";
         
-        public float lifeTime;
-        public float power;
+        private float lifeTime;
+        private float power;
 
         private Entity target;
         
         public override string Description => 
-            "5초동안 일반공격 피해를 (power+1)*10%만큼 상승시킨다. \n" +
+            "5초동안 일반공격 피해를 (power+1)*15%만큼 상승시킨다. \n" +
             this.statBonusDescription;
         
         public override void trigger(Entity player, float power)
@@ -35,7 +35,7 @@ namespace PlayerSystem.Polyominoes.NormalAttackCharger
         {
             if (stat is EntityStat entityStat)
             {
-                entityStat.dmgUp[(int)AtkTags.normalAttackDamage] += (power+1)*10;
+                entityStat.dmgUp[(int)AtkTags.normalAttackDamage] += (power+1)*15;
             }
         }
 
