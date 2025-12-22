@@ -56,7 +56,7 @@ namespace PlayerSystem.Polyominoes.FeatureExtractor
                     }
                 }
 
-                Debug.Log(e.gameObject.name);
+                // Debug.Log(e.gameObject.name);
             }
 
             Destroy(gameObject, 0.1f);
