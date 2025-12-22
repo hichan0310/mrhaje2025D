@@ -170,6 +170,6 @@ MonoBehaviour:
   baseDamage: 10
   collisionMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 256
   destroyOnAnyCollision: 0
-  size: 1
+  size: 2

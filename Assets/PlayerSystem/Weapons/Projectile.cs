@@ -7,6 +7,7 @@ namespace PlayerSystem.Weapons
 {
     /// <summary>
     /// Basic projectile used by the player and enemies.
+    /// Single-hit projectile: deals damage once and is destroyed.
     /// </summary>
     [RequireComponent(typeof(Collider2D))]
     public class Projectile : MonoBehaviour
@@ -20,12 +21,18 @@ namespace PlayerSystem.Weapons
 
         private Vector2 direction;
         private float remainingLife;
+
         private float powerMultiplier = 1f;
         private float damageBonusPercent = 0f;
         private float knockbackForce = 0f;
         private float recoilForce = 0f;
+
         private IStat stat;
-        private AtkTagSet atkTag=new AtkTagSet().Add(AtkTags.physicalDamage, AtkTags.normalAttackDamage);
+        private AtkTagSet atkTag =
+            new AtkTagSet().Add(AtkTags.physicalDamage, AtkTags.normalAttackDamage);
+
+        // ✅ 핵심 플래그
+        private bool hasHit = false;
 
         private void Awake()
         {
@@ -34,9 +41,11 @@ namespace PlayerSystem.Weapons
 
         private void Update()
         {
-            float deltaTime = Time.deltaTime;
-            transform.position += (Vector3)(direction * (speed * deltaTime));
-            remainingLife -= deltaTime;
+            float dt = Time.deltaTime;
+
+            transform.position += (Vector3)(direction * speed * dt);
+
+            remainingLife -= dt;
             if (remainingLife <= 0f)
             {
                 Destroy(gameObject);
@@ -46,15 +55,23 @@ namespace PlayerSystem.Weapons
         public void Initialize(Entity owner, Vector2 direction, float power, float size)
         {
             stat = owner.stat.calculate();
-            this.direction = direction.sqrMagnitude > 0f ? direction.normalized : Vector2.right;
-            this.powerMultiplier = Mathf.Max(0.1f, power);
+
+            this.direction = direction.sqrMagnitude > 0f
+                ? direction.normalized
+                : Vector2.right;
+
+            powerMultiplier = Mathf.Max(0.1f, power);
             remainingLife = lifeTime;
-            transform.localScale += new Vector3(size, size, 0);
+
+            transform.localScale += new Vector3(size, size, 0f);
+
             damageBonusPercent = 0f;
             knockbackForce = 0f;
             recoilForce = 0f;
-            
-            atkTag=new AtkTagSet().Add(AtkTags.physicalDamage);
+
+            hasHit = false;
+
+            atkTag = new AtkTagSet().Add(AtkTags.physicalDamage);
         }
 
         public void ApplyTriggerEnhancements(float bonusPercent, float knockback, float recoil)
@@ -66,36 +83,38 @@ namespace PlayerSystem.Weapons
 
         private void OnTriggerEnter2D(Collider2D other)
         {
+            // ✅ 이미 히트했으면 무조건 무시
+            if (hasHit) return;
+
             if (((1 << other.gameObject.layer) & collisionMask) == 0)
-            {
                 return;
-            }
 
             var entity = other.GetComponentInParent<Entity>();
             if (entity != null && entity != stat.entity)
             {
-                // calculateTrueDamage를 하면 tag에 criticalHit 추가될 수 있어서 복제해둬야 합니다 
-                var tag = new AtkTagSet(this.atkTag);
-                // 공격력, 피해증가, 크리티컬 등 자동 적용됩니다
-                int damage = stat.calculateTrueDamage(tag, 100);
-                // projectile 형식이 아닌 공격이 들어올 수 있어서 저스트 회피는 이 안에서 처리하게 바꿔놨어요
-                new DamageGiveEvent(damage, Vector3.zero, stat.entity, entity, tag, 1).trigger();
+                hasHit = true;
 
-                // 넉백은 DamageGiveEvent의 force에서 전달만 하고 target에서 알아서 처리하게 하기
-                // if (knockbackForce > 0f && entity.TryGetComponent(out Rigidbody2D targetBody))
-                // {
-                //     targetBody.AddForce(direction * knockbackForce, ForceMode2D.Impulse);
-                // }
-                
-                // 이건 뭐지?
-                // if (recoilForce > 0f && owner && owner.TryGetComponent(out Rigidbody2D ownerBody))
-                // {
-                //     ownerBody.AddForce(-direction * recoilForce, ForceMode2D.Impulse);
-                // }
+                var tag = new AtkTagSet(atkTag);
+
+                int damage = stat.calculateTrueDamage(tag, baseDamage);
+
+                new DamageGiveEvent(
+                    damage,
+                    Vector3.zero,
+                    stat.entity,
+                    entity,
+                    tag,
+                    1
+                ).trigger();
+
+                Destroy(gameObject);
+                return;
             }
 
+            // 엔티티는 아니지만 충돌 시 파괴 옵션이 켜져 있으면 제거
             if (destroyOnAnyCollision)
             {
+                hasHit = true;
                 Destroy(gameObject);
             }
         }

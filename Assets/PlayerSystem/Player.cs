@@ -112,7 +112,7 @@ namespace PlayerSystem
                 {
                     if (justDodge == null)
                     {
-                        TimeScaler.Instance.changeScaleForRealTime(justDodgeCooltime, 0.5f);
+                        TimeScaler.Instance.changeScaleForRealTime(0.2f, 0.5f);
                         dodgeTimer = this.stat.dodgeTime;
                         dodgeCooldownTimer = this.justDodgeCooltime;
                         justDodge = dodgeEvent;
