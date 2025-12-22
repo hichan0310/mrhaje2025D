@@ -29,7 +29,7 @@ namespace PlayerSystem.Polyominoes.HeatEnergyRelease
                     Quaternion.AngleAxis(angle, Vector3.forward));
                 var tagSet = new AtkTagSet(atkTagSet);
                 var dmg = stat.calculateTrueDamage(tagSet, 10f + power * 10f);
-                var giveEvent = new DamageGiveEvent(dmg, Vector3.zero, entity, null, tagSet, 1);
+                var giveEvent = new DamageGiveEvent(dmg, Vector3.zero, entity, null, tagSet, 0.2f * power);
                 e.damageGiveEvent = giveEvent;
             }
         }

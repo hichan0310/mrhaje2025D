@@ -69,7 +69,6 @@ namespace PlayerSystem.Weapons.Sniper
                 timer -= 0.2f;
                 damageTime++;
                 this.colliders.Clear();
-                this.hit.energeRecharge = 1;
             }
         }
 
@@ -82,7 +81,6 @@ namespace PlayerSystem.Weapons.Sniper
             if (e == this.hit.attacker) return;
             this.hit.target = e;
             this.hit.trigger();
-            this.hit.energeRecharge = 0;
         }
     }
 }

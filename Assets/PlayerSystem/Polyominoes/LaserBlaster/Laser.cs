@@ -98,7 +98,7 @@ namespace PlayerSystem.Polyominoes.LaserBlaster
             var tag = new AtkTagSet(this.atkTags);
             var coef = (power > 1) ? (power - 1) * 150 + 50 : power * 50;
             var dmg = stat.calculateTrueDamage(tag, coef);
-            new DamageGiveEvent(dmg, Vector3.zero, player, entity, tag, 5).trigger();
+            new DamageGiveEvent(dmg, Vector3.zero, player, entity, tag, 1*power).trigger();
             Debug.Log(dmg);
         }
     }

@@ -33,8 +33,8 @@ namespace PlayerSystem.Weapons.Sniper
             var dmgHit = stat.calculateTrueDamage(hitTag, 30);
             var dmgFinish = stat.calculateTrueDamage(finishTag, 700);
             uHitObj.range = stat.skillRange;
-            uHitObj.hit = new DamageGiveEvent(dmgHit, Vector3.zero, player, null, hitTag, 1);
-            uHitObj.finish = new DamageGiveEvent(dmgFinish, Vector3.zero, player, null, finishTag, 10);
+            uHitObj.hit = new DamageGiveEvent(dmgHit, Vector3.zero, player, null, hitTag, 2);
+            uHitObj.finish = new DamageGiveEvent(dmgFinish, Vector3.zero, player, null, finishTag, 3);
             this.rigidbody2D.linearVelocity=Vector2.zero;
             this.trailDestroy.destroy();
         }

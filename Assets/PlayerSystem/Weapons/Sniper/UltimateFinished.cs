@@ -38,7 +38,6 @@ namespace PlayerSystem.Weapons.Sniper
             if (e == this.damageGiveEvent.attacker) return;
             this.damageGiveEvent.target = e;
             this.damageGiveEvent.trigger();
-            this.damageGiveEvent.energeRecharge = 0;
         }
     }
 }
