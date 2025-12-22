@@ -44,6 +44,7 @@ namespace PlayerSystem.Polyominoes.CurrentAmplifier
 
         public void registerTarget(Entity target, object args = null)
         {
+            this.target = target;
             this.target.registerListener(this);
             this.target.stat.registerBuff(this);
         }

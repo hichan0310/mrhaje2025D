@@ -11,7 +11,7 @@ namespace PlayerSystem.Polyominoes.RecoveryManager
         public override string Name => "RecoveryManager";
 
         public override string Description =>
-            "에너지를 자연적으로 축적하고 내부 에너지는 0부터 1까지 상승한다.\n" +
+            "에너지를 자연적으로 축적하고 내부 에너지는 0부터 2까지 상승한다.\n" +
             "power*1000에 내부 에너지의 제곱을 곱한 값만큼 회복한다. \n" +
             "내부 에너지는 트리거가 발동된 후 1초 이후에 쌓이기 시작한다. \n" +
             this.statBonusDescription;
@@ -30,7 +30,7 @@ namespace PlayerSystem.Polyominoes.RecoveryManager
         private void Update()
         {
             this.energy += TimeManager.deltaTime;
-            if (this.energy >= 1) this.energy = 1;
+            if (this.energy >= 2) this.energy = 2;
         }
     }
 }

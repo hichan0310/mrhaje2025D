@@ -2,6 +2,7 @@
 using EntitySystem.Events;
 using EntitySystem.StatSystem;
 using PlayerSystem.Tiling;
+using UnityEngine;
 
 namespace PlayerSystem.Polyominoes.NormalAttackCharger
 {
@@ -46,6 +47,7 @@ namespace PlayerSystem.Polyominoes.NormalAttackCharger
 
         public void registerTarget(Entity target, object args = null)
         {
+            this.target = target;
             this.target.registerListener(this);
             this.target.stat.registerBuff(this);
         }

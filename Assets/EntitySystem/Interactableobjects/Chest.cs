@@ -86,7 +86,7 @@ public class Chest
 
     public void eventActive(EventArgs e)
     {
-        Debug.Log("interact tried");
+        // Debug.Log("interact tried");
         if (opened) return;
         if (e is not InteractionEvent ie) return;
         if (ie.interactable != this) return;
