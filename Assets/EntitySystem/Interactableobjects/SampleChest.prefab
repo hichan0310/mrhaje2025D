@@ -49,7 +49,7 @@ MonoBehaviour:
   reward: {fileID: 3777817610942172042, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
   sr: {fileID: 5051616435229396333}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
-  focusColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  focusColor: {r: 0.5283019, g: 0.5283019, b: 0.5283019, a: 1}
   interactEffectPrefab: {fileID: 0}
   tooltipPrefab: {fileID: 5962588922759380468, guid: 40a1353f0fc7bab499b464e21dd054ad, type: 3}
 --- !u!212 &5051616435229396333
@@ -96,7 +96,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -8117741355510242654, guid: b7ab0dacf1aa20e4f9a36d8f7da8bd50, type: 3}
+  m_Sprite: {fileID: 7670959825255232715, guid: 0aae373a73039304eb331b20896f9762, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

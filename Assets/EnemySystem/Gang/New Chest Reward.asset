@@ -9,9 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85a8428615c654d4ba8aaf15ac7a370b, type: 3}
-  m_Name: ChestDropTable
+  m_Script: {fileID: 11500000, guid: 01d1534a72fc7ff4694955b16fa0fe21, type: 3}
+  m_Name: New Chest Reward
   m_EditorClassIdentifier: 
-  entries:
-  - probability: 1
-    chestPrefab: {fileID: 9131722299237112920, guid: d3cc4165af68f494085d11808d362c5e, type: 3}
+  chestPrefab: {fileID: 9131722299237112920, guid: d3cc4165af68f494085d11808d362c5e, type: 3}

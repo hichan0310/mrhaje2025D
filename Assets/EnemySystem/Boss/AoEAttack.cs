@@ -11,11 +11,6 @@ public class AoEAttack : MonoBehaviour
 
     private float timer;
 
-    private void Start()
-    {
-        transform.localScale = new Vector3(radius*11, radius, 1);
-    }
-
     private void Update()
     {
         timer += Time.deltaTime;
@@ -28,6 +23,7 @@ public class AoEAttack : MonoBehaviour
         Entity target = col.GetComponentInParent<Entity>();
         if (target != null && target != owner)
         {
+            Debug.Log("내려찍기 성공");
             new DamageGiveEvent(damage, Vector3.zero, owner, target,
                 new AtkTagSet().Add(AtkTags.physicalDamage), 1).trigger();
         }

@@ -183,20 +183,20 @@ MonoBehaviour:
   faceTarget: 1
   detectRange: 10
   moveSpeed: 3
-  baseHp: 100
-  baseAtk: 10
+  baseHp: 3000
+  baseAtk: 30
   baseDef: 0
   armorType: 0
   baseKnockbackResist: 0
-  detectHalfHeight: 2
+  detectHalfHeight: 4
   lineOfSightMask:
     serializedVersion: 2
     m_Bits: 4294967295
   requireLineOfSight: 1
   projectilePrefab: {fileID: 585103627240126144, guid: 36266858b3c0489180fabadc6c426bb5, type: 3}
   muzzleOffset: {x: 0.8, y: 0}
-  waveInterval: 0.2
-  bulletsPerWave: 3
+  waveInterval: 0.1
+  bulletsPerWave: 5
   spreadAngle: 10
   projectilePower: 1
   projectileSize: 0
