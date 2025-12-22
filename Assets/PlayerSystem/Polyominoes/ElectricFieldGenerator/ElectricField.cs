@@ -45,7 +45,7 @@ namespace PlayerSystem.Polyominoes.ElectricFieldGenerator
             {
                 var s = Instantiate(shock, entity.transform);
                 s.transform.localPosition = Vector3.zero;
-                s.Init(entityStat, entity, power);
+                s.Init(entityStat, entity, power*30-50, power);
             }
         }
     }

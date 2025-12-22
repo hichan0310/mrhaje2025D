@@ -21,6 +21,9 @@ namespace PlayerSystem.Polyominoes.LaserBlaster
 
         public void init(EntityStat stat, Entity target, float power)
         {
+            var tmp = stat.bulletRate+stat.skillRange;
+            stat.dmgUp[(int)AtkTags.all] += 20 * tmp;
+            
             this.stat = stat;
             this.target = target;
             this.power = power;

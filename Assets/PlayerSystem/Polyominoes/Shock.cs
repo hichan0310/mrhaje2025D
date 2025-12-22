@@ -33,7 +33,7 @@ namespace PlayerSystem.Polyominoes
         private float paralysisPercent;
 
         // ElectricField에서 생성 직후 호출
-        public void Init(EntityStat attackerStatSnapshot, Entity target, float power)
+        public void Init(EntityStat attackerStatSnapshot, Entity target, float coef, float power)
         {
             attackerStat = attackerStatSnapshot;
 
@@ -42,7 +42,7 @@ namespace PlayerSystem.Polyominoes
 
             // DoT 크기 (명시 수치가 없어서 "초기 타격 (power+1)*50"보다 작은 값으로 기본 배치)
             // 원하면 여기만 바꾸면 됨.
-            tickCoefficient = (power + 1f) * 20f;
+            tickCoefficient = coef;
 
             // 마비 피해 증가 수치
             if (power > 2f)

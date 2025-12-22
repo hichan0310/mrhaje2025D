@@ -17,6 +17,7 @@ namespace PlayerSystem.Polyominoes.LaserBlaster
         public override string Description =>
             "파워가 입력되면 가장 가까이 있는 적에게 모든 것을 관통하는 레이저를 날려서 직선 상의 적에게 강한 물리 속성 피해를 입힌다. \n" +
             "1 이하의 파워일 경우 power*50의 피해량, 1 이상의 파워일 경우 power*150-100의 피해량을 가진다. \n" +
+            "총알 개수, 스킬 범위 1당 가하는 피해가 20% 증가한다. \n" +
             this.statBonusDescription;
 
         public override void trigger(Entity player, float power)
