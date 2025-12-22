@@ -53,6 +53,10 @@ namespace PlayerSystem.Polyominoes
             }
 
             registerTarget(target);
+            
+            var tag = new AtkTagSet(dotTags);
+            var dmg = attackerStat.calculateTrueDamage(tag, tickCoefficient);
+            this.damageGiveEvent=new DamageGiveEvent(dmg, Vector3.back, attackerStat.entity, target, tag, 0);
         }
 
         private void ApplyParalysisOnce(Entity t, float percent)
@@ -108,23 +112,7 @@ namespace PlayerSystem.Polyominoes
 
         public override void update(float deltaTime, Entity target)
         {
-            // 타겟이 사라졌으면 정리
-            if (target == null)
-            {
-                removeSelf();
-                Destroy(gameObject);
-                return;
-            }
-
-            lifeTime -= deltaTime;
-
-            // 1.5초마다 도트
-            timer += deltaTime;
-            while (timer >= cooldown)
-            {
-                timer -= cooldown;
-                TickDamage(target);
-            }
+            base.update(deltaTime, target);
 
             // 만료
             if (lifeTime <= 0f)
@@ -132,18 +120,6 @@ namespace PlayerSystem.Polyominoes
                 removeSelf();
                 Destroy(gameObject);
             }
-        }
-
-        private void TickDamage(Entity t)
-        {
-            if (attackerStat == null || attackerStat.entity == null || t == null) return;
-
-            var tag = new AtkTagSet(dotTags);
-            var dmg = attackerStat.calculateTrueDamage(tag, tickCoefficient);
-
-            // DamageGiveEvent 시그니처가 프로젝트에서 다르면 여기만 맞춰주면 됨.
-            var e = new DamageGiveEvent(dmg, Vector3.back, attackerStat.entity, t, tag, 0);
-            e.trigger();
         }
     }
     

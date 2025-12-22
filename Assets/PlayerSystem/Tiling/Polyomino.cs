@@ -135,7 +135,7 @@ namespace PlayerSystem.Tiling
         {
             for (int i = 0; i < statBonus.Length; i++)
             {
-                statBonus[i](player, true, statBonusId[i]);
+                statBonus[i](player, true, statBonusId[i] * bonusAmount[i]);
             }
         }
 
@@ -143,11 +143,12 @@ namespace PlayerSystem.Tiling
         {
             for (int i = 0; i < statBonus.Length; i++)
             {
-                statBonus[i](player, false, statBonusId[i]);
+                statBonus[i](player, false, statBonusId[i] * bonusAmount[i]);
             }
         }
 
-        protected int[] statBonusId = new[]{0, 0, 0, 0, 0, 0};
+        protected int[] statBonusId = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        protected int[] bonusAmount = new[] { 1, 1, 1, 1, 1, 1, 200, 100, 100 };
 
         protected string[] statBonusName = new[]
         {
@@ -156,7 +157,10 @@ namespace PlayerSystem.Tiling
             "총알 속도",
             "추가 지속시간",
             "스킬 범위",
-            "쿨다운 감소"
+            "쿨다운 감소",
+            "최대체력",
+            "기초공력력",
+            "기초방어력",
         };
 
         protected string statBonusDescription = "";
@@ -168,7 +172,10 @@ namespace PlayerSystem.Tiling
             (player, up, a) => player.stat.bulletSpeed += up ? a : -a,
             (player, up, a) => player.stat.additionalDuration += up ? a : -a,
             (player, up, a) => player.stat.skillRange += up ? a : -a,
-            (player, up, a) => player.stat.skillCooldownDecrease += up ? a : -a
+            (player, up, a) => player.stat.skillCooldownDecrease += up ? a : -a,
+            (player, up, a) => player.stat.maxHp += up ? a : -a,
+            (player, up, a) => player.stat.baseAtk += up ? a : -a,
+            (player, up, a) => player.stat.baseDef += up ? a : -a,
         };
 
         private void setStatBonus()
@@ -211,7 +218,7 @@ namespace PlayerSystem.Tiling
             for (int i = 0; i < statBonus.Length; i++)
             {
                 if (this.statBonusId[i] != 0)
-                    this.statBonusDescription += $"{statBonusName[i]} +{statBonusId[i]}\n";
+                    this.statBonusDescription += $"{statBonusName[i]} +{statBonusId[i] * bonusAmount[i]}\n";
             }
         }
     }

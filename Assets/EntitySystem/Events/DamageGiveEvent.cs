@@ -30,7 +30,11 @@ namespace EntitySystem.Events
             if (target)
             {
                 if (attacker)
+                {
                     attacker.eventActive(this);
+                    this.energeRecharge = 0;
+                }
+
                 if (target is Player player)
                 {
                     if (player.TryInterceptAttack(attacker, this))

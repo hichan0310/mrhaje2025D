@@ -13,7 +13,10 @@ namespace EntitySystem.BuffTypes
         private int damageCount = 0;
 
 
-        public virtual void eventActive(EventArgs eventArgs){}
+        public virtual void eventActive(EventArgs eventArgs)
+        {
+            if(eventArgs is EntityDieEvent) Destroy(this.gameObject);
+        }
 
         public virtual void registerTarget(Entity target, object args = null)
         {
@@ -28,6 +31,7 @@ namespace EntitySystem.BuffTypes
 
         public virtual void update(float deltaTime, Entity target)
         {
+            if(this.target != target) return;
             timer+=deltaTime;
             if (timer > cooldown)
             {
@@ -42,6 +46,13 @@ namespace EntitySystem.BuffTypes
             if (damageGiveEvent is not null)
                 if (damageGiveEvent.target == target)
                     this.damageGiveEvent.trigger();
+        }
+        
+        private void OnDestroy()
+        {
+            // Destroy로 사라질 때도 정리
+            if (target != null)
+                removeSelf();
         }
     }
 }
