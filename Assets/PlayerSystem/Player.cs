@@ -71,6 +71,10 @@ namespace PlayerSystem
         [SerializeField] private int baseDef;
         private IInteractable focused;
 
+        // 그랩 메커니즘 보조
+        private bool isGrabLocked;
+        private float grabLockTimer;
+
 
         private void Awake()
         {
@@ -125,6 +129,17 @@ namespace PlayerSystem
 
         protected override void update(float deltaTime)
         {
+
+            if (isGrabLocked)
+            {
+                grabLockTimer -= deltaTime;
+                if (grabLockTimer <= 0f)
+                {
+                    isGrabLocked = false;
+                    grabLockTimer = 0f;
+                }
+            }
+
             CacheGroundedState();
             ReadInput(deltaTime);
             UpdateTimers(deltaTime);
@@ -205,6 +220,15 @@ namespace PlayerSystem
 
         private void ReadInput(float deltaTime)
         {
+
+            if (isGrabLocked)
+            {
+                horizontalInput = 0f;
+                jumpQueued = false;
+                jumpBufferTimer = 0f;
+                return;
+            }
+
             horizontalInput = Input.GetAxisRaw(horizontalAxis);
             if (Mathf.Abs(horizontalInput) > 0.01f)
             {
@@ -282,10 +306,18 @@ namespace PlayerSystem
 
         private void ApplyMovement()
         {
+
             if (!body)
             {
                 return;
             }
+
+            if (isGrabLocked)
+            {
+                body.linearVelocity = Vector2.zero;
+                return;
+            }
+
 
             Vector2 velocity = body.linearVelocity;
             float fixedDelta = Time.fixedDeltaTime;
@@ -379,24 +411,24 @@ namespace PlayerSystem
             Debug.Log("상호작용 이벤트 발행");
         }
 
-        public void TryDodge(bool ignoreTimer = false)
-        {
-            if (!ignoreTimer && (isDodging || dodgeCooldownTimer > 0f))
-            {
-                return;
-            }
+public void TryDodge(bool ignoreTimer = false)
+{
+    if (isGrabLocked) return;
 
-            isDodging = true;
-            this.bodyHitboxCollider1.radius = originalSize1 * 2;
-            this.bodyHitboxCollider2.size = new Vector2(originalSize2 * 4, this.bodyHitboxCollider2.size.y);
-            this.body.linearVelocityY = 0.1f;
-            dodgeTimer = this.stat.dodgeTime;
-            dodgeCooldownTimer = this.stat.dodgeCooldown;
-            this.bodyHitboxCollider1.enabled = true;
-            this.bodyHitboxCollider2.enabled = true;
-            new DodgeEvent(this).trigger();
-            // ActivateMemory(ActionTriggerType.Dodge, 1f);
-        }
+    if (!ignoreTimer && (isDodging || dodgeCooldownTimer > 0f))
+        return;
+
+    isDodging = true;
+    bodyHitboxCollider1.radius = originalSize1 * 2;
+    bodyHitboxCollider2.size =
+        new Vector2(originalSize2 * 4, bodyHitboxCollider2.size.y);
+    body.linearVelocityY = 0.1f;
+    dodgeTimer = stat.dodgeTime;
+    dodgeCooldownTimer = stat.dodgeCooldown;
+    bodyHitboxCollider1.enabled = true;
+    bodyHitboxCollider2.enabled = true;
+    new DodgeEvent(this).trigger();
+}
 
         private void FallThrough()
         {
@@ -467,6 +499,26 @@ namespace PlayerSystem
 
             return isDodging;
         }
+
+        public void BeginGrabLock(float duration)
+        {
+            Debug.Log("그랩됨");
+            isGrabLocked = true;
+            grabLockTimer = Mathf.Max(grabLockTimer, duration);
+
+            // 회피 중이었으면 즉시 해제
+            isDodging = false;
+
+            bodyHitboxCollider1.enabled = true;
+            bodyHitboxCollider2.enabled = true;
+            bodyHitboxCollider1.radius = originalSize1;
+            bodyHitboxCollider2.size =
+                new Vector2(originalSize2, bodyHitboxCollider2.size.y);
+
+            if (body)
+                body.linearVelocity = Vector2.zero;
+        }
+
 
 
 #if UNITY_EDITOR

@@ -1,6 +1,8 @@
 using EntitySystem;
 using EntitySystem.Events;
 using EntitySystem.StatSystem;
+using EnemySystem.Projectiles;
+using PlayerSystem;
 using PlayerSystem.Weapons;
 using System.Collections;
 using UnityEngine;
@@ -13,50 +15,48 @@ namespace EnemySystem
         Idle,
         Chase,
         MeleeAttack,
-        JumpAttack,
+        GrabAttack,
         MissileVolley,
+        JumpAttack,
         Recover,
         Dead
     }
 
     public class CyberBruteController : EnemyBase
     {
+        /* ===================== RANGE ===================== */
         [Header("Ranges")]
         [SerializeField] private float meleeRange = 1.5f;
         [SerializeField] private float midRange = 6f;
-        [SerializeField] private float chaseRange = 10f;
+        [SerializeField] private float chaseRange = 12f;
 
+        /* ===================== COOLDOWN ===================== */
         [Header("Cooldowns")]
         [SerializeField] private float meleeCooldown = 2f;
-        [SerializeField] private float jumpCooldown = 5f;
+        [SerializeField] private float grabCooldown = 6f;
         [SerializeField] private float missileCooldown = 4f;
+        [SerializeField] private float jumpCooldown = 5f;
 
-        [Header("Parabolic Jump")]
-        [SerializeField] private float jumpDuration = 1.0f;
-        [SerializeField] private float jumpHeight = 4f;
-        [SerializeField] private GameObject landingAoEPrefab;
-
-        [Header("Melee (No Animator)")]
-        [SerializeField] private float meleeDuration = 0.6f;
-
-        [Tooltip("보스 중심에서 근접 히트박스까지의 오프셋 (x는 좌우, y는 위아래)")]
-        [SerializeField] private Vector2 meleeHitOffset = new Vector2(1.0f, 0f);
-
-        [Tooltip("근접 공격 판정 반지름")]
-        [SerializeField] private float meleeHitRadius = 1.2f;
-
-        [Tooltip("맞을 레이어 (Player 등)")]
-        [SerializeField] private LayerMask meleeHitMask;
-
-        [Tooltip("근접 공격 데미지")]
+        /* ===================== MELEE ===================== */
+        [Header("Melee")]
         [SerializeField] private int meleeDamage = 40;
+        [SerializeField] private float meleeWindup = 0.2f;
+        [SerializeField] private float meleeRecover = 1.0f;
 
-        [Header("Melee Visual Flash")]
-        [SerializeField] private SpriteRenderer spriteRenderer;
-        [SerializeField] private Color meleeFlashColor = Color.red;
-        [SerializeField] private float meleeFlashDuration = 0.15f;
+        /* ===================== GRAB ===================== */
+        [Header("Grab")]
+        [SerializeField] private GrabProjectile grabProjectilePrefab;
+        [SerializeField] private Transform grabSpawnPoint;
+        [SerializeField, Range(0f, 1f)] private float grabChance = 0.3f; // 30%
+        [SerializeField] private float grabPullDuration = 0.6f;
+        [SerializeField] private float grabPullOffsetX = 1.2f;
+        [SerializeField] private float grabMissTimeout = 0.8f; // miss timeout
 
-        [Header("Missile Volley")]
+        [Header("Grab Visual")]
+        [SerializeField] private GameObject grabTextPrefab;
+
+        /* ===================== MISSILE ===================== */
+        [Header("Missile")]
         [SerializeField] private Projectile missilePrefab;
         [SerializeField] private Transform missileSpawnPoint;
         [SerializeField] private int minMissiles = 5;
@@ -65,24 +65,42 @@ namespace EnemySystem
         [SerializeField] private float missilePower = 1f;
         [SerializeField] private float missileSize = 0f;
 
+        /* ===================== JUMP (LONG RANGE) ===================== */
+        [Header("Jump Attack")]
+        [SerializeField] private float jumpUpSpeed = 18f;
+        [SerializeField] private float hoverTime = 0.4f;
+        [SerializeField] private float slamDownSpeed = 30f;
+        [SerializeField] private GameObject landingAoEPrefab;
+
+        [Header("Ground Check (for Jump Landing)")]
+        [SerializeField] private LayerMask groundMask = -1;
+        [SerializeField] private float groundCheckDistance = 0.25f;
+
+        private bool jumpWaitingAnim;   // 애니메이션 끝 대기
+        private bool jumpInProgress;    // 실제 점프 진행 중
+        private Animator animator;
+
+        /* ===================== MISC ===================== */
         [Header("Misc")]
         [SerializeField] private float decisionInterval = 0.3f;
         [SerializeField] private float recoverDuration = 1.0f;
         [SerializeField] private float deathDestroyDelay = 2.0f;
 
+        /* ===================== INTERNAL ===================== */
         private CyberBruteState state = CyberBruteState.Idle;
+
         private float decisionTimer;
         private float meleeTimer;
-        private float jumpTimer;
+        private float grabTimer;
         private float missileTimer;
-        private Coroutine currentAction;
+        private float jumpTimer;
 
-        private Color originalColor = Color.white;
+        private Coroutine currentAction;
 
         protected override void Start()
         {
             base.Start();
-
+            animator = GetComponentInChildren<Animator>();
             // 방어 / 접촉 데미지 설정
             if (EnemyStat != null)
             {
@@ -90,27 +108,18 @@ namespace EnemySystem
                 EnemyStat.knockbackResist = 0.9f;
                 EnemyStat.contactDamageMultiplier = 2.0f;
             }
-
-            // 스프라이트 렌더러 자동 할당
-            if (spriteRenderer == null)
-            {
-                spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-            }
-            if (spriteRenderer != null)
-            {
-                originalColor = spriteRenderer.color;
-            }
         }
 
-        // ===== AI 로직 =====
+        /* ===================== AI ===================== */
         protected override void TickAI(float deltaTime)
         {
-            if (state == CyberBruteState.Dead) return;
-            if (target == null) return;
-
-            if (meleeTimer > 0f) meleeTimer -= deltaTime;
-            if (jumpTimer > 0f) jumpTimer -= deltaTime;
-            if (missileTimer > 0f) missileTimer -= deltaTime;
+            if (state == CyberBruteState.Dead || target == null) return;
+            if (jumpWaitingAnim || jumpInProgress)
+                return;
+            meleeTimer -= deltaTime;
+            grabTimer -= deltaTime;
+            missileTimer -= deltaTime;
+            jumpTimer -= deltaTime;
 
             // 행동 코루틴 진행 중이면 의사결정 스킵
             if (currentAction != null) return;
@@ -121,70 +130,67 @@ namespace EnemySystem
 
             float dist = Vector2.Distance(transform.position, target.position);
 
-            // 근접 공격
+            // 근접
             if (dist <= meleeRange && meleeTimer <= 0f)
             {
                 StartMelee();
                 return;
             }
 
-            // 중거리: 점프 공격 or 미사일 난사
-            if (dist <= midRange && missileTimer <= 0f)
+            // 중거리 (그랩 30 / 미사일 70)
+            if (dist <= midRange)
             {
-                if (jumpTimer <= 0f && Random.value < 0.5f)
-                    StartJumpAttack();
-                else
+                if (grabTimer <= 0f && Random.value < grabChance)
+                {
+                    StartGrab();
+                    return;
+                }
+
+                if (missileTimer <= 0f)
+                {
                     StartMissileVolley();
+                    return;
+                }
+            }
+
+            // 장거리 (점프)
+            if (dist <= chaseRange && jumpTimer <= 0f)
+            {
+                StartJumpAttack();
                 return;
             }
 
-            // 추격 / 대기
-            if (dist <= chaseRange)
-            {
-                state = CyberBruteState.Chase;
-            }
-            else
-            {
-                state = CyberBruteState.Idle;
-            }
+            // 기본 추격
+            state = CyberBruteState.Chase;
         }
 
-        // ===== 이동 처리 =====
+        /* ===================== MOVEMENT ===================== */
         protected override void TickMovement(float fixedDeltaTime)
         {
-            if (rb == null) return;
-            if (state == CyberBruteState.Dead) return;
+            if (rb == null || state == CyberBruteState.Dead) return;
 
             // 공격/회복 중에는 수평 이동 정지
-            if (state == CyberBruteState.MeleeAttack ||
-                state == CyberBruteState.JumpAttack ||
-                state == CyberBruteState.MissileVolley ||
-                state == CyberBruteState.Recover)
+            if (state != CyberBruteState.Chase)
             {
                 rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
                 return;
             }
 
-            if (state == CyberBruteState.Chase && target != null)
-            {
-                float dx = target.position.x - transform.position.x;
-                float dir = Mathf.Sign(dx);
-                rb.linearVelocity = new Vector2(dir * moveSpeed, rb.linearVelocity.y);
-            }
-            else
+            if (target == null)
             {
                 rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+                return;
             }
+
+            float dir = Mathf.Sign(target.position.x - transform.position.x);
+            rb.linearVelocity = new Vector2(dir * moveSpeed, rb.linearVelocity.y);
         }
 
-        // ===== 액션 =====
-        #region Actions
+        /* ===================== ACTIONS ===================== */
 
-        // --- Melee ---
+        /* ---------- MELEE ---------- */
         private void StartMelee()
         {
-            if (currentAction != null) return;
-
             meleeTimer = meleeCooldown;
             state = CyberBruteState.MeleeAttack;
             currentAction = StartCoroutine(MeleeRoutine());
@@ -192,144 +198,155 @@ namespace EnemySystem
 
         private IEnumerator MeleeRoutine()
         {
-            // 애니메이터 대신 스프라이트 붉게 + 판정
-            float hitTime = meleeDuration * 0.5f;
-            float flashTime = Mathf.Min(meleeFlashDuration, meleeDuration * 0.5f);
+            // windup
+            if (meleeWindup > 0f)
+                yield return new WaitForSeconds(meleeWindup);
 
-            // 준비 모션 시간
-            float preTime = Mathf.Max(hitTime - flashTime * 0.5f, 0f);
-            if (preTime > 0f)
-                yield return new WaitForSeconds(preTime);
+            // "근접이면" 때린다고 가정하고 이벤트 발생 (거리 체크 추가하고 싶으면 여기서 추가)
+            if (target != null)
+            {
+                Entity targetEntity = target.GetComponent<Entity>();
+                if (targetEntity != null)
+                {
+                    new DamageGiveEvent(
+                        meleeDamage,
+                        Vector3.zero,
+                        this,
+                        targetEntity,
+                        new AtkTagSet().Add(AtkTags.physicalDamage),
+                        1f
+                    ).trigger();
+                }
+            }
 
-            // 붉게 변환 시작
-            if (spriteRenderer != null)
-                spriteRenderer.color = meleeFlashColor;
-
-            // 임팩트 직전 약간 딜레이
-            float preHitFlash = flashTime * 0.5f;
-            if (preHitFlash > 0f)
-                yield return new WaitForSeconds(preHitFlash);
-
-            // 실제 히트 판정
-            DoMeleeHit();
-
-            // 붉은색 유지 후 원래 색으로 복구
-            float postHitFlash = flashTime * 0.5f;
-            if (postHitFlash > 0f)
-                yield return new WaitForSeconds(postHitFlash);
-
-            if (spriteRenderer != null)
-                spriteRenderer.color = originalColor;
-
-            // 남은 애니메이션 시간 소모
-            float remaining = Mathf.Max(meleeDuration - preTime - flashTime, 0f);
-            if (remaining > 0f)
-                yield return new WaitForSeconds(remaining);
+            // recover
+            if (meleeRecover > 0f)
+                yield return new WaitForSeconds(meleeRecover);
 
             state = CyberBruteState.Recover;
             currentAction = StartCoroutine(RecoverRoutine());
         }
 
-        private void DoMeleeHit()
+        /* ---------- GRAB ---------- */
+        private void StartGrab()
         {
-            // 좌우 방향에 따라 오프셋 방향 반영
-            float facing = Mathf.Sign(transform.localScale.x == 0 ? 1 : transform.localScale.x);
-            Vector2 center = (Vector2)transform.position
-                             + new Vector2(meleeHitOffset.x * facing, meleeHitOffset.y);
-
-            // 디버그용 표시
-            Debug.DrawLine(center, center + Vector2.up * 0.2f, Color.red, 0.5f);
-            Debug.Log($"CyberBrute Melee HIT check at {center}");
-
-            Collider2D[] hits = Physics2D.OverlapCircleAll(center, meleeHitRadius, meleeHitMask);
-            foreach (var col in hits)
+            if (grabProjectilePrefab == null || grabSpawnPoint == null)
             {
-                if (col == null) continue;
-
-                var entity = col.GetComponentInParent<Entity>();
-                if (entity != null && entity != this)
-                {
-                    // 너네 damage 시스템에 맞게 수정해서 사용
-                    // 예시 1: 단순 데미지 메서드
-                    // entity.TakeDamage(meleeDamage, this);
-
-                    // 예시 2: Damage 이벤트 시스템
-                    // var ev = new DamageGiveEvent(this, entity, meleeDamage, DamageType.Melee);
-                    // EventBus.Raise(ev);
-
-                    Debug.Log($"CyberBrute melee hit → {entity.name}");
-                }
-            }
-        }
-
-        // --- Jump Attack ---
-        private void StartJumpAttack()
-        {
-            if (currentAction != null) return;
-
-            jumpTimer = jumpCooldown;
-            state = CyberBruteState.JumpAttack;
-            currentAction = StartCoroutine(JumpRoutine());
-        }
-
-        private IEnumerator JumpRoutine()
-        {
-            if (rb == null || target == null)
-            {
-                currentAction = null;
+                // 설정이 없으면 그냥 대기/추격으로 복귀
                 state = CyberBruteState.Idle;
+                currentAction = null;
+                return;
+            }
+
+            grabTimer = grabCooldown;
+            state = CyberBruteState.GrabAttack;
+            currentAction = StartCoroutine(GrabShootRoutine());
+        }
+
+        private IEnumerator GrabShootRoutine()
+        {
+            if (target == null)
+            {
+                state = CyberBruteState.Idle;
+                currentAction = null;
                 yield break;
             }
 
-            Vector2 startPos = rb.position;
-            Vector2 endPos = target.position;
+            // 발사
+            var grab = Instantiate(grabProjectilePrefab, grabSpawnPoint.position, Quaternion.identity);
 
+            Vector2 dir = target.position - grabSpawnPoint.position;
+            if (dir.sqrMagnitude < 0.001f) dir = Vector2.right;
+
+            grab.Initialize(this, dir);
+
+            // miss timeout: 맞으면 OnGrabHit에서 currentAction이 다른 루틴으로 갈아탄다
             float t = 0f;
-            float originalGravity = rb.gravityScale;
-            rb.gravityScale = 0f; // 수동 포물선 이동
-
-            while (t < jumpDuration)
+            while (t < grabMissTimeout)
             {
+                if (state != CyberBruteState.GrabAttack)
+                    yield break;
+
                 t += Time.deltaTime;
-                float n = Mathf.Clamp01(t / jumpDuration);
-
-                // 포물선 곡선
-                float hCurve = 4f * n * (1f - n);
-                Vector2 pos = Vector2.Lerp(startPos, endPos, n);
-                pos.y += hCurve * jumpHeight;
-
-                rb.MovePosition(pos);
                 yield return null;
             }
 
-            rb.gravityScale = originalGravity;
+            // miss: recover
+            state = CyberBruteState.Recover;
+            currentAction = StartCoroutine(RecoverRoutine());
+        }
 
-            // 착지 AoE 생성
-            if (landingAoEPrefab != null)
+        public void OnGrabHit(Entity grabbed)
+        {
+            if (state == CyberBruteState.Dead) return;
+            if (grabbed == null) return;
+
+            SpawnGrabText(grabbed);
+
+            if (currentAction != null)
+                StopCoroutine(currentAction);
+
+            currentAction = StartCoroutine(GrabExecuteRoutine(grabbed));
+        }
+
+        private void SpawnGrabText(Entity targetEntity)
+        {
+            if (!grabTextPrefab || targetEntity == null) return;
+
+            Vector3 pos = targetEntity.transform.position;
+
+            Collider2D col = targetEntity.GetComponent<Collider2D>();
+            if (col != null)
+                pos.y += col.bounds.extents.y + 0.3f;
+            else
+                pos.y += 1.0f;
+
+            Instantiate(grabTextPrefab, pos, Quaternion.identity);
+        }
+
+        private IEnumerator GrabExecuteRoutine(Entity grabbed)
+        {
+            state = CyberBruteState.GrabAttack;
+
+            // 플레이어 락
+            if (grabbed is Player p)
+                p.BeginGrabLock(grabPullDuration + 0.2f);
+
+            Vector2 start = grabbed.transform.position;
+            float facing = Mathf.Sign(transform.localScale.x == 0 ? 1f : transform.localScale.x);
+            Vector2 end = (Vector2)transform.position + new Vector2(grabPullOffsetX * facing, 0f);
+
+            float t = 0f;
+            while (t < grabPullDuration)
             {
-                Vector2 spawnPos = rb.position;
-                Collider2D col = GetComponent<Collider2D>();
-                if (col != null)
-                    spawnPos.y -= col.bounds.extents.y;
-
-                var aoeObj = Object.Instantiate(landingAoEPrefab, spawnPos, Quaternion.identity);
-
-                var aoe = aoeObj.GetComponent<AoEAttack>();
-                if (aoe != null)
-                {
-                    // 보스 Entity를 owner로 설정
-                    aoe.owner = this;
-                }
+                t += Time.deltaTime;
+                grabbed.transform.position = Vector2.Lerp(start, end, t / grabPullDuration);
+                yield return null;
             }
+
+
+            new DamageGiveEvent(
+                meleeDamage*10,
+                Vector3.zero,
+                this,
+                grabbed,
+                new AtkTagSet().Add(AtkTags.physicalDamage),
+                1f
+            ).trigger();
 
             state = CyberBruteState.Recover;
             currentAction = StartCoroutine(RecoverRoutine());
         }
 
-        // --- Missile Volley ---
+        /* ---------- MISSILE ---------- */
         private void StartMissileVolley()
         {
-            if (currentAction != null) return;
+            if (missilePrefab == null || missileSpawnPoint == null)
+            {
+                state = CyberBruteState.Idle;
+                currentAction = null;
+                return;
+            }
 
             missileTimer = missileCooldown;
             state = CyberBruteState.MissileVolley;
@@ -338,10 +355,10 @@ namespace EnemySystem
 
         private IEnumerator MissileRoutine()
         {
-            if (missilePrefab == null || missileSpawnPoint == null)
+            if (target == null)
             {
-                currentAction = null;
                 state = CyberBruteState.Idle;
+                currentAction = null;
                 yield break;
             }
 
@@ -351,18 +368,11 @@ namespace EnemySystem
             {
                 if (target == null) break;
 
-                Projectile proj = Object.Instantiate(
-                    missilePrefab,
-                    missileSpawnPoint.position,
-                    Quaternion.identity
-                );
+                var proj = Instantiate(missilePrefab, missileSpawnPoint.position, Quaternion.identity);
+                Vector2 dir = target.position - missileSpawnPoint.position;
+                if (dir.sqrMagnitude < 0.001f) dir = Vector2.right;
 
-                Vector2 dir = (target.position - missileSpawnPoint.position);
-                if (dir.sqrMagnitude < 0.0001f) dir = Vector2.right;
-
-                // EnemyBase는 Entity 상속이라 owner로 this 전달 가능
                 proj.Initialize(this, dir, missilePower, missileSize);
-
                 yield return new WaitForSeconds(missileInterval);
             }
 
@@ -370,24 +380,147 @@ namespace EnemySystem
             currentAction = StartCoroutine(RecoverRoutine());
         }
 
-        // --- Recover ---
+        /* ---------- JUMP (FAST UP → HOVER → SLAM) ---------- */
+        private void StartJumpAttack()
+        {
+            if (jumpInProgress || jumpWaitingAnim) return;
+
+            jumpTimer = jumpCooldown;
+            state = CyberBruteState.JumpAttack;
+
+            rb.linearVelocity = Vector2.zero;
+            rb.gravityScale = 1f;
+
+            jumpWaitingAnim = true;
+
+            Debug.Log("[Jump] Play jump animation");
+            animator.Play("Jump"); // ← 점프 애니메이션 (이륙까지만 있음)
+        }
+
+        public void AnimEvent_JumpAnimFinished()
+        {
+            if (!jumpWaitingAnim) return;
+
+            Debug.Log("[Jump] Animation finished → start physics jump");
+
+            jumpWaitingAnim = false;
+            jumpInProgress = true;
+
+            StartCoroutine(JumpPhysicsRoutine());
+        }
+
+
+
+        private IEnumerator JumpPhysicsRoutine()
+        {
+            // 1) 빠른 상승
+            rb.gravityScale = 0f;
+            rb.linearVelocity = new Vector2(0f, jumpUpSpeed);
+            Debug.Log("[Jump] Up");
+
+            yield return new WaitForSeconds(0.25f);
+
+            // 2) 체공
+            rb.linearVelocity = Vector2.zero;
+            Debug.Log("[Jump] Hover");
+
+            yield return new WaitForSeconds(hoverTime);
+
+            // 3) 타겟 x축 보정
+            if (target)
+                rb.position = new Vector2(target.position.x, rb.position.y);
+
+            // 4) 급강하
+            rb.gravityScale = 1f;
+            rb.linearVelocity = new Vector2(0f, -slamDownSpeed);
+            Debug.Log("[Jump] Slam");
+
+            // 5) 착지 대기
+            while (!IsGrounded())
+                yield return null;
+
+            Debug.Log("[Jump] Landed");
+
+            rb.linearVelocity = Vector2.zero;
+
+            if (landingAoEPrefab && TryGetGroundPoint(out Vector2 groundPoint))
+            {
+                Vector3 spawnPos = new Vector3(
+                    rb.position.x,
+                    groundPoint.y,
+                    0f
+                );
+
+                Instantiate(landingAoEPrefab, spawnPos, Quaternion.identity);
+            }
+
+
+            EndJump();
+        }
+
+
+        private bool IsGrounded()
+        {
+            Collider2D col = GetComponent<Collider2D>();
+            if (!col) return false;
+
+            Vector2 origin = (Vector2)transform.position
+                + Vector2.down * (col.bounds.extents.y + 0.05f);
+
+            return Physics2D.Raycast(origin, Vector2.down, 0.15f, groundMask);
+        }
+
+        private void EndJump()
+        {
+            jumpInProgress = false;
+
+            state = CyberBruteState.Recover;
+            StartCoroutine(RecoverRoutine());
+
+            Debug.Log("[Jump] End → Recover");
+        }
+
+        private bool TryGetGroundPoint(out Vector2 groundPoint)
+        {
+            groundPoint = Vector2.zero;
+
+            Collider2D col = GetComponent<Collider2D>();
+            if (!col) return false;
+
+            Vector2 origin = (Vector2)transform.position;
+            float rayLength = col.bounds.extents.y + 0.3f;
+
+            RaycastHit2D hit = Physics2D.Raycast(
+                origin,
+                Vector2.down,
+                rayLength,
+                groundMask
+            );
+
+            if (hit.collider != null)
+            {
+                groundPoint = hit.point;
+                return true;
+            }
+
+            return false;
+        }
+
+
+
+        /* ---------- RECOVER ---------- */
         private IEnumerator RecoverRoutine()
         {
             yield return new WaitForSeconds(recoverDuration);
             currentAction = null;
             if (!isDead)
-            {
                 state = CyberBruteState.Idle;
-            }
         }
 
-        #endregion
-
-        // ===== 죽음 처리 =====
+        /* ===================== DEATH ===================== */
         protected override void OnDie(Entity attacker)
         {
             if (state == CyberBruteState.Dead) return;
-
             state = CyberBruteState.Dead;
 
             if (currentAction != null)
@@ -403,41 +536,14 @@ namespace EnemySystem
                 rb.isKinematic = true;
             }
 
-            Collider2D[] colliders = GetComponentsInChildren<Collider2D>();
-            for (int i = 0; i < colliders.Length; i++)
-            {
-                colliders[i].enabled = false;
-            }
+            Collider2D[] cols = GetComponentsInChildren<Collider2D>();
+            for (int i = 0; i < cols.Length; i++)
+                cols[i].enabled = false;
 
-            // 죽을 때는 색만 살짝 어둡게 바꿔도 됨 (선택사항)
-            if (spriteRenderer != null)
-            {
-                spriteRenderer.color = Color.gray;
-            }
+            var sr = GetComponentInChildren<SpriteRenderer>();
+            if (sr != null) sr.color = Color.gray;
 
             Destroy(gameObject, deathDestroyDelay);
         }
-
-        protected override void OnEvent(EventArgs e)
-        {
-            // 필요하면 이벤트 처리 추가
-        }
-
-        // 에디터에서 근접 히트박스 확인용
-#if UNITY_EDITOR
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.red;
-            float facing = 1f;
-            if (Application.isPlaying)
-            {
-                facing = Mathf.Sign(transform.localScale.x == 0 ? 1 : transform.localScale.x);
-            }
-            Vector2 center = (Vector2)transform.position
-                             + new Vector2(meleeHitOffset.x * facing, meleeHitOffset.y);
-            Gizmos.DrawWireSphere(center, meleeHitRadius);
-        }
-#endif
     }
 }
-
