@@ -9,7 +9,8 @@ namespace PlayerSystem.Tiling
 {
     public class Inventory : MonoBehaviour, IGetBoardItem, IGetBagItem
     {
-        [SerializeField] public List<Board> boards = new List<Board>();
+        [SerializeField] private List<Board> boards = new List<Board>();
+        public List<Board> getBoards{get => boards;}
         [SerializeField] private Bag bag;
         [SerializeField] private TMP_Text textDescription;
         [SerializeField] private TMP_Text textName;
@@ -26,15 +27,23 @@ namespace PlayerSystem.Tiling
             boards[boardIndex].selected = null;
         }
 
-
-        private void Start()
+        public void setBoards(List<Board> boards)
         {
-            foreach (Board board in boards)
+            foreach (Board board in this.boards)
+                board.removeSelf();
+            this.boards = boards;
+            foreach (Board board in this.boards)
                 board.registerTarget(this.entity);
             foreach (var bs in boardSelections)
                 bs.gameObject.SetActive(false);
             for (int i = 0; i < boards.Count; i++)
                 boardSelections[i].gameObject.SetActive(true);
+        }
+
+
+        private void Start()
+        {
+            setBoards(this.boards);
             bag.getBagItem = this;
             foreach (var board in boards) board.getBoardItem = this;
         }

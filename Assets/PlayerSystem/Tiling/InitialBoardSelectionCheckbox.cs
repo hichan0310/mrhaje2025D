@@ -8,7 +8,15 @@ namespace PlayerSystem.Tiling
     {
         private InitialBoardSelection boardSelection;
         
-        public InitialBoardSelection boardSelectionSet { set=>boardSelection=value; }
+        public InitialBoardSelection boardSelectionSet
+        {
+            set
+            {
+                // Debug.Log("set");
+                boardSelection = value;
+            }
+        }
+
         [SerializeField] InitialBoardSelectionList boardSelectionList;
         [SerializeField] Image image;
         [SerializeField] Sprite imageSelected;

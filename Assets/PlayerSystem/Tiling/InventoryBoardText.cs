@@ -12,7 +12,7 @@ namespace PlayerSystem.Tiling
 
         private void Update()
         {
-            this.text.text=inventory.boards[index].Name;
+            this.text.text=inventory.getBoards[index].Name;
         }
     }
 }

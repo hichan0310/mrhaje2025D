@@ -45,12 +45,12 @@ namespace PlayerSystem.Tiling
             for (int i = 0; i < selectedBoards.Count; i++)
             {
                 selectedBoards[i] = Instantiate(selectedBoards[i]);
+                selectedBoards[i].transform.SetParent(inventory.transform);
+                selectedBoards[i].GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
+                // Debug.Log(selectedBoards[i].name);
             }
-            inventory.boards = selectedBoards;
-            foreach (var b in this.boards)
-            {
-                Destroy(b.gameObject);
-            }
+            inventory.setBoards(selectedBoards);
+            Destroy(this.gameObject);
         }
     }
 }
