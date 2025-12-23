@@ -9,7 +9,7 @@ namespace PlayerSystem.Tiling
 {
     public class Inventory : MonoBehaviour, IGetBoardItem, IGetBagItem
     {
-        [SerializeField] private List<Board> boards = new List<Board>();
+        [SerializeField] public List<Board> boards = new List<Board>();
         [SerializeField] private Bag bag;
         [SerializeField] private TMP_Text textDescription;
         [SerializeField] private TMP_Text textName;
