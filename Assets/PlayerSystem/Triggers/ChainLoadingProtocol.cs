@@ -1,4 +1,4 @@
-﻿using EntitySystem;
+using EntitySystem;
 using EntitySystem.Events;
 using PlayerSystem.Tiling;
 
@@ -16,20 +16,20 @@ namespace PlayerSystem.Triggers
         
         public override void eventActive(EventArgs eventArgs)
         {
-            if (eventArgs is BasicAttackExecuteEvent)
+            if (eventArgs is BasicAttackExecuteEvent action && action.entity == entity)
             {
                 charge += 1;
             }
             else if (eventArgs is DamageGiveEvent damageGiveEvent)
             {
-                if (damageGiveEvent.atkTags.Contains(AtkTags.skillDamage))
+                if (timer <= 0 && damageGiveEvent.attacker == entity && damageGiveEvent.atkTags.Contains(AtkTags.skillDamage))
                 {
-                    this.trigger(0.2f*this.charge+0.5f);
                     timer = 1;
                     if (this.entity is Player player)
                     {
                         timer = 2f / (player.statCache.fireSpeed + 1);
                     }
+                    this.trigger(0.2f*this.charge+0.5f);
                 }
             }
         }

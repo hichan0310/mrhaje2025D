@@ -1,4 +1,4 @@
-﻿using EntitySystem;
+using EntitySystem;
 using EntitySystem.Events;
 using PlayerSystem.Tiling;
 
@@ -11,7 +11,7 @@ namespace PlayerSystem.Triggers
         
         public override void eventActive(EventArgs eventArgs)
         {
-            if (eventArgs is DodgeEvent)
+            if (eventArgs is DodgeEvent action && action.entity == entity)
             {
                 this.trigger(1.2f);
             }

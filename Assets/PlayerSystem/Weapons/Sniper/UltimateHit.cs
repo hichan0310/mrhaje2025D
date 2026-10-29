@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using EntitySystem;
@@ -15,7 +15,7 @@ namespace PlayerSystem.Weapons.Sniper
         public DamageGiveEvent hit { get; set; }
         public DamageGiveEvent finish { get; set; }
         public UltimateFinished finishObject;
-        public HashSet<Collider2D> colliders = new HashSet<Collider2D>();
+        public HashSet<Entity> colliders = new HashSet<Entity>();
         private Collider2D collider2D;
         private bool finished = false;
 
@@ -74,9 +74,9 @@ namespace PlayerSystem.Weapons.Sniper
 
         private void OnTriggerStay2D(Collider2D other)
         {
-            if (colliders.Contains(other)) return;
-            colliders.Add(other);
-            var e = other.GetComponent<Entity>();
+            var e = other.GetComponentInParent<Entity>();
+            if (e == null || colliders.Contains(e)) return;
+            colliders.Add(e);
             if (e == null) return;
             if (e == this.hit.attacker) return;
             this.hit.target = e;

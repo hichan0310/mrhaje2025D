@@ -165,20 +165,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6f75019cf2845ccb9b26cd6fc663cf1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hudPrefab: {fileID: 6000, guid: 5c2a03244d5c4bbc80ee390e18ce7efc, type: 3}
+  hudIcon: {fileID: 21300000, guid: 3e652a597824bd44d91fd93f87e3857d, type: 3}
   aimSupport: {fileID: 8102883733431299258}
   fireCooldownNormal: 0.2
   fireCooldownUltimate: 0
-  skillCooldown: 0
+  skillCooldown: 6
   maxSkillStack: 2
   ultimateDuration: 0
-  requireEnergy: 0
-  maxEnergy: 0
+  requireEnergy: 60
+  maxEnergy: 100
   bullet: {fileID: -601790943258710981, guid: 59f19675da3ba5646a05e7950002e59f, type: 3}
   knifeSkill: {fileID: -8988235017919117797, guid: 65b13a75b4cb021468fa70e6cba82121, type: 3}
   firePoint: {fileID: 8774327583771512012}
   muzzleFlashPrefab: {fileID: 0}
   marking: {fileID: 7948874810560785132, guid: 357f59ba0c426a94f9c4d6694a306dec, type: 3}
-  bulletNumAdd: 4
+  spreadDegrees: 20
 --- !u!114 &8102883733431299258
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,4 +199,3 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   assistRange: 1
-  slowTime: 0.3

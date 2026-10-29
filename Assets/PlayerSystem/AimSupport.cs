@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using EntitySystem;
 using PlayerSystem.Weapons;
 using UnityEngine;
@@ -77,7 +77,8 @@ namespace PlayerSystem
         protected virtual void Update()
         {
             if(player==null) return;
-            HandleAimInput();
+            if (player.InputSuppressed) isAiming = false;
+            else HandleAimInput();
             UpdateTargeting();
             UpdateAimLines();
         }

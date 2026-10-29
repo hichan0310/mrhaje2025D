@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using EntitySystem;
 using EntitySystem.Events;
 using EntitySystem.StatSystem;
@@ -16,7 +16,7 @@ namespace PlayerSystem.Polyominoes.NestSkillAmplifier
             "지속시간은 무한이며, 스킬로 피해를 입히는 순간 모든 스택이 소모된다.\n" +
             this.statBonusDescription;
 
-        private static NextSkillDamageBuff buff = new NextSkillDamageBuff();
+        private NextSkillDamageBuff buff = new NextSkillDamageBuff();
 
         public override void trigger(Entity entity, float power)
         {

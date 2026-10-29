@@ -1,4 +1,4 @@
-﻿using DefaultNamespace;
+using DefaultNamespace;
 using UnityEngine;
 
 namespace PlayerSystem.Weapons.Sniper
@@ -10,6 +10,18 @@ namespace PlayerSystem.Weapons.Sniper
         private bool slow = false;
         [SerializeField] private Sniper sniper;
         
+        public void ReleaseSlow()
+        {
+            if (slow)
+            {
+                if (TimeScaler.Instance) TimeScaler.Instance.changeTimeScale(3f);
+                else Time.timeScale *= 3f;
+            }
+            slow = false;
+            isAiming = false;
+            aimDuration = 0;
+        }
+
         protected override void HandleAimInput()
         {
             // 마우스 왼쪽 버튼을 누르고 있을 때

@@ -1,4 +1,4 @@
-﻿using EntitySystem;
+using EntitySystem;
 using EntitySystem.Events;
 using PlayerSystem.Tiling;
 
@@ -12,7 +12,7 @@ namespace PlayerSystem.Triggers
         
         public override void eventActive(EventArgs eventArgs)
         {
-            if (eventArgs is BasicAttackExecuteEvent)
+            if (eventArgs is BasicAttackExecuteEvent action && action.entity == entity)
             {
                 if (this.entity is Player player)
                 {

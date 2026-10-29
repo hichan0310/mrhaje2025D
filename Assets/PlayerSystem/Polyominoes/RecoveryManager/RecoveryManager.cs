@@ -17,6 +17,7 @@ namespace PlayerSystem.Polyominoes.RecoveryManager
             this.statBonusDescription;
 
         private float energy;
+        private float rechargeDelay;
 
         public override void trigger(Entity player, float power)
         {
@@ -25,11 +26,20 @@ namespace PlayerSystem.Polyominoes.RecoveryManager
                 var healAmount = energy * energy * power * 1000;
                 new HealEvent(player, (int)healAmount).trigger();
             }
+            energy = 0;
+            rechargeDelay = 1f;
         }
 
         private void Update()
         {
-            this.energy += TimeManager.deltaTime;
+            float dt = TimeManager.deltaTime;
+            if (rechargeDelay > 0)
+            {
+                float waiting = System.Math.Min(rechargeDelay, dt);
+                rechargeDelay -= waiting;
+                dt -= waiting;
+            }
+            this.energy += dt;
             if (this.energy >= 2) this.energy = 2;
         }
     }

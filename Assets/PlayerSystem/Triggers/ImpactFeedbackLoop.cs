@@ -15,10 +15,10 @@ namespace PlayerSystem.Triggers
         
         public override void eventActive(EventArgs eventArgs)
         {
-            if (timer <= 0)
+            if (timer <= 0 && eventArgs is DamageGiveEvent hit && hit.attacker == entity)
             {
+                timer = entity is Player player ? 2f / (player.statCache.fireSpeed + 1f) : 1f;
                 this.trigger(1);
-                timer = 1;
             }
         }
 

@@ -1,4 +1,4 @@
-﻿using EntitySystem;
+using EntitySystem;
 using EntitySystem.Events;
 using PlayerSystem.Tiling;
 
@@ -14,12 +14,12 @@ namespace PlayerSystem.Triggers
         private float charge=0;
         public override void eventActive(EventArgs eventArgs)
         {
-            if (eventArgs is JustDodgeEvent justDodgeEvent)
+            if (eventArgs is JustDodgeEvent justDodgeEvent && justDodgeEvent.entity == entity && justDodgeEvent.damageGiveEvent != null)
             {
                 charge+=(float)justDodgeEvent.damageGiveEvent.trueDmg/300;
                 if (charge > 6) charge = 6;
             }
-            else if (eventArgs is UltimateExecuteEvent)
+            else if (eventArgs is UltimateExecuteEvent action && action.entity == entity)
             {
                 this.trigger(3+charge);
             }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using EntitySystem;
 using EntitySystem.Events;
@@ -11,7 +11,7 @@ namespace PlayerSystem.Weapons.Sniper
     {
         private bool active = true;
         private CircleCollider2D collider2D;
-        private HashSet<Collider2D> colliders = new HashSet<Collider2D>();
+        private HashSet<Entity> colliders = new HashSet<Entity>();
         public DamageGiveEvent damageGiveEvent { get; set; }
         private ParticleSystem[] particleSystems;
 
@@ -46,9 +46,9 @@ namespace PlayerSystem.Weapons.Sniper
 
         protected override void OnTriggerEnter2D(Collider2D other)
         {
-            if (colliders.Contains(other)) return;
-            colliders.Add(other);
-            var e = other.gameObject.GetComponent<Entity>();
+            var e = other.GetComponentInParent<Entity>();
+            if (e == null || colliders.Contains(e)) return;
+            colliders.Add(e);
             if (e == null) return;
             if (e == this.damageGiveEvent.attacker) return;
             this.damageGiveEvent.target = e;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using EntitySystem;
 using EntitySystem.Events;
 using PlayerSystem.Tiling;
@@ -33,7 +33,7 @@ namespace PlayerSystem.Triggers
                     if (this.damageCharge < stat.maxHp * 5) return;
                     if (this.entity.stat.nowHp <= 0)
                     {
-                        this.entity.stat.nowHp = (int)(this.entity.stat.maxHp * 0.1f);
+                        this.entity.stat.nowHp = Mathf.Max(1, (int)(stat.maxHp * 0.1f));
                         this.damageCharge = 0;
                         this.trigger(9);
                     }

@@ -25,7 +25,15 @@ namespace EntitySystem
 
     public static class Tag
     {
-        public static int atkTagCount = Enum.GetValues(typeof(AtkTags)).Length;
+        // Values are sparse (fireball is 60), so the number of enum members is not an array capacity.
+        public static readonly int atkTagCount = GetCapacity();
+
+        private static int GetCapacity()
+        {
+            int highest = 0;
+            foreach (AtkTags tag in Enum.GetValues(typeof(AtkTags))) highest = Math.Max(highest, (int)tag);
+            return highest + 1;
+        }
     }
 
     public class AtkTagSet : IEnumerable<AtkTags>

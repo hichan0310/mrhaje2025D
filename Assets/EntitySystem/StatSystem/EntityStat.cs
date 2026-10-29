@@ -140,13 +140,14 @@ namespace EntitySystem.StatSystem
 
         public void registerBuff(IBuff buff)
         {
+            if (buff == null) return;
             if (buff.isStable)
             {
-                stableBuffs.Add(buff);
+                if (!stableBuffs.Contains(buff)) stableBuffs.Add(buff);
             }
             else
             {
-                changeBuffs.Add(buff);
+                if (!changeBuffs.Contains(buff)) changeBuffs.Add(buff);
             }
         }
 
@@ -164,6 +165,7 @@ namespace EntitySystem.StatSystem
 
         public int calculateTrueDamage(AtkTagSet tags, float coefficient)
         {
+            tags ??= AtkTagSet.None;
             if (tags.Contains(AtkTags.fixedDamage)) return (int)coefficient;
 
             float dmg = coefficient * this.atk / 100;
@@ -198,6 +200,7 @@ namespace EntitySystem.StatSystem
 
         public int calculateTakenDamage(AtkTagSet tags, int damage)
         {
+            tags ??= AtkTagSet.None;
             if (tags.Contains(AtkTags.fixedDamage)) return damage;
 
             float dmgUpSum = dmgTakeUp[(int)AtkTags.all];

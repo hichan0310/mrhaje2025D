@@ -23,6 +23,7 @@ namespace PlayerSystem.Polyominoes.ExecutionFollowupShot
         {
             if (shots.Count >= 20) return;
             var shot = Instantiate(shotObject);
+            shots.Add(shot);
             shot.registerTarget(entity);
             shot.shots = this.shots;
         }

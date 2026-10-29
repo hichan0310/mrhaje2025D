@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -19,8 +19,11 @@ namespace PlayerSystem.Tiling
             return res;
         }
 
+        public Action<EntitySystem.Entity, float> RuntimeActivation { get; set; }
+
         public void trigger(float power)
         {
+            if (RuntimeActivation != null) { RuntimeActivation(entity, power); return; }
             foreach (var t in this.polyominos)
             {
                 t.p.trigger(this.entity, power);

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using EntitySystem;
 using EntitySystem.Events;
 using PlayerSystem.Tiling;
@@ -13,13 +13,14 @@ namespace PlayerSystem
 
         public void registerTarget(Entity target, object args = null)
         {
+            removeSelf();
             this.entity = target;
-            target.registerListener(this);
+            if (target) target.registerListener(this);
         }
 
         public void removeSelf()
         {
-            this.entity.removeListener(this);
+            if (entity) entity.removeListener(this);
         }
         public abstract void update(float deltaTime, Entity target);
 

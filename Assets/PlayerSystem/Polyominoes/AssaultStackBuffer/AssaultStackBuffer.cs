@@ -1,4 +1,4 @@
-﻿using EntitySystem;
+using EntitySystem;
 using EntitySystem.Events;
 using EntitySystem.StatSystem;
 using PlayerSystem.Tiling;
@@ -15,7 +15,7 @@ namespace PlayerSystem.Polyominoes.AssaultStackBuffer
             "지속시간은 3초이고, 피해를 줄 때마다 지속시간이 3초로 초기화된다.\n" +
             this.statBonusDescription;
 
-        private static AssaultStackBuff buff;
+        private AssaultStackBuff buff = new AssaultStackBuff();
 
         protected override void Start()
         {
@@ -58,7 +58,7 @@ namespace PlayerSystem.Polyominoes.AssaultStackBuffer
                 if (stack < 1000f)
                 {
                     stack += 100f;
-                    if (stack > 1000f) stack = 2000f;
+                    if (stack > 1000f) stack = 1000f;
                 }
 
                 time = Duration * (target is Player pl ? pl.statCache.additionalDuration : 1);

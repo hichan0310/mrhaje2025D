@@ -12,11 +12,10 @@ namespace PlayerSystem.Effects.AtkUpEffect
 {
     public class AtkUpByPower: MonoBehaviour, ITriggerEffect
     {
-        private static AtkUpBuff atkUpBuff;
+        private readonly AtkUpBuff atkUpBuff = new AtkUpBuff();
 
         private void Start()
         {
-            if(atkUpBuff==null)atkUpBuff = new AtkUpBuff();
         }
 
         public void trigger(Entity entity, float power)
@@ -49,6 +48,11 @@ namespace PlayerSystem.Effects.AtkUpEffect
             
             public void registerTarget(Entity target, object args = null)
             {
+                if (this.target != target)
+                {
+                    removeSelf();
+                    power = 0;
+                }
                 this.target = target;
                 target.registerListener(this);
                 target.stat.registerBuff(this);
@@ -57,13 +61,20 @@ namespace PlayerSystem.Effects.AtkUpEffect
 
             public void removeSelf()
             {
-                target.removeListener(this);
-                target.stat.removeBuff(this);
+                if (target)
+                {
+                    target.removeListener(this);
+                    target.stat.removeBuff(this);
+                }
+                target = null;
+                power = 0;
             }
 
             public void update(float deltaTime, Entity target)
             {
+                if (target != this.target) return;
                 time -= deltaTime;
+                if (time <= 0) removeSelf();
             }
         }
     }

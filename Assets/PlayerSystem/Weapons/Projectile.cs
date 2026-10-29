@@ -60,7 +60,7 @@ namespace PlayerSystem.Weapons
                 ? direction.normalized
                 : Vector2.right;
 
-            powerMultiplier = Mathf.Max(0.1f, power);
+            powerMultiplier = Mathf.Max(0f, power);
             remainingLife = lifeTime;
 
             transform.localScale += new Vector3(size, size, 0f);
@@ -96,16 +96,22 @@ namespace PlayerSystem.Weapons
 
                 var tag = new AtkTagSet(atkTag);
 
-                int damage = stat.calculateTrueDamage(tag, baseDamage);
+                int damage = stat.calculateTrueDamage(tag, baseDamage * powerMultiplier);
+                damage = Mathf.Max(0, Mathf.RoundToInt(damage * (1f + damageBonusPercent / 100f)));
 
                 new DamageGiveEvent(
                     damage,
-                    Vector3.zero,
+                    (Vector3)(direction * knockbackForce),
                     stat.entity,
                     entity,
                     tag,
                     1
                 ).trigger();
+
+                if (knockbackForce > 0 && entity.TryGetComponent<Rigidbody2D>(out var targetBody))
+                    targetBody.AddForce(direction * knockbackForce, ForceMode2D.Impulse);
+                if (recoilForce > 0 && stat.entity && stat.entity.TryGetComponent<Rigidbody2D>(out var ownerBody))
+                    ownerBody.AddForce(-direction * recoilForce, ForceMode2D.Impulse);
 
                 Destroy(gameObject);
                 return;

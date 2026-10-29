@@ -7,7 +7,7 @@ namespace PlayerSystem.Polyominoes.RiskAnalyzer
 {
     public class RiskAnalyzer: Polyomino, IEntityEventListener, IBuff
     {
-        public override string Name => "NormalAttackCharger";
+        public override string Name => "RiskAnalyzer";
         
         private float lifeTime;
         private float power;
@@ -22,7 +22,7 @@ namespace PlayerSystem.Polyominoes.RiskAnalyzer
         {
             if (player is Player p)
             {
-                lifeTime = p.statCache.additionalDuration + 5;
+                lifeTime = p.statCache.additionalDuration + 10;
                 this.power = power;
                 if(this.target)
                     this.removeSelf();

@@ -1,0 +1,13 @@
+{
+  "name": "WeaponRulesTests",
+  "references": [
+    "WeaponRules",
+    "WeaponHudModel"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

@@ -22,6 +22,8 @@ namespace PlayerSystem.Polyominoes.OverclockConverter
         {
             if (player is Player p)
             {
+                if (p.stat.nowHp <= 0) return;
+                p.stat.nowHp = System.Math.Max(1, (int)(p.stat.nowHp * 0.95f));
                 lifeTime = p.statCache.additionalDuration + 5;
                 this.power = power;
                 if (this.target)

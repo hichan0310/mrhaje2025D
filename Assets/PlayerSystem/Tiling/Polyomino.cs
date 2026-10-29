@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using EntitySystem;
 using UnityEngine;
@@ -28,10 +28,19 @@ namespace PlayerSystem.Tiling
             cg.blocksRaycasts = false;
         }
 
+        private bool equipmentMode;
+        public void UseEquipmentMode()
+        {
+            equipmentMode = true;
+            foreach (var graphic in GetComponentsInChildren<UnityEngine.UI.Graphic>(true)) graphic.enabled = false;
+            var group = GetComponent<CanvasGroup>();
+            if (group) { group.alpha = 0; group.blocksRaycasts = false; group.interactable = false; }
+        }
+
         protected virtual void Start()
         {
             // Debug.Log("fuck");
-            setStatBonus();
+            if (!equipmentMode) setStatBonus();
             // Debug.Log(this.statBonusDescription);
         }
 

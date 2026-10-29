@@ -1,5 +1,7 @@
 # Project Structure & Code Review
 
+> Historical review: several findings below have since been fixed. See [weapon implementation and fixes](WeaponImplementation.md) and [current trigger/effect values](TriggerAndEffectCatalog.md) for the latest changes; verify the linked source before treating an old finding as an open issue.
+
 ## High-level Architecture
 - **EntitySystem** contains the runtime model for combatants. `Entity` is a `MonoBehaviour` that
   maintains an `EntityStat` instance, keeps a list of `IEntityEventListener`s, and forwards Unity

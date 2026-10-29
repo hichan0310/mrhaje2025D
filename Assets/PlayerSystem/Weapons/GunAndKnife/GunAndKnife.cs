@@ -1,4 +1,3 @@
-﻿using System.Collections.Generic;
 using EntitySystem;
 using EntitySystem.Events;
 using UnityEngine;
@@ -7,214 +6,146 @@ namespace PlayerSystem.Weapons.GunAndKnife
 {
     public class GunAndKnife : Weapon
     {
-        public float fireCooldownNormal;
+        public float fireCooldownNormal = 0.2f;
         public float fireCooldownUltimate;
-        public float skillCooldown;
-        public float maxSkillStack;
+        public float skillCooldown = 6f;
+        public float maxSkillStack = 2;
         public float ultimateDuration;
-        public int requireEnergy;
-        public int maxEnergy;
-
-        private float fireTimer;
-        private float skillTimer = 0;
-        private int skillStack;
-        private bool isUltimate;
-        private float ultimateTimer = 0;
-        private float energy = 0;
-
+        public int requireEnergy = 60;
+        public int maxEnergy = 100;
         [SerializeField] private Bullet bullet;
         [SerializeField] private KnifeSkill knifeSkill;
         [SerializeField] private GameObject firePoint;
-
-
         public GameObject muzzleFlashPrefab;
         public Mark marking;
-
-
-        [SerializeField] private int bulletNumAdd = 0;
-
-        private AtkTagSet atkTagSetBullet = new AtkTagSet().Add(AtkTags.physicalDamage, AtkTags.normalAttackDamage);
-
+        [SerializeField, Min(0)] private float spreadDegrees = 20f;
+        [SerializeField, Min(0)] private float bulletCoefficient = 50f;
+        [SerializeField] private float skillRadius = 10f;
+        [SerializeField] private float ultimateRadius = 6f;
+        private float fireTimer;
+        private float skillTimer;
+        private float skillDuration;
+        private float RechargeDuration => Mathf.Max(0.1f, skillCooldown * 4f /
+            Mathf.Max(0.1f, player.stat.calculate().skillCooldownDecrease + 4f));
+        public int SkillStack { get; private set; }
+        public float Energy { get; private set; }
 
         public override void registerTarget(Entity target, object args = null)
         {
             base.registerTarget(target, args);
-            marking.player=player;
+            if (!player) return;
+            if (marking && marking.transform.IsChildOf(transform)) marking.removeSelf();
+            else if (marking) marking = Instantiate(marking, transform);
+            else marking = new GameObject("Marks").AddComponent<Mark>();
+            marking.transform.SetParent(transform, false);
+            marking.player = player;
+            SkillStack = Mathf.Max(1, (int)maxSkillStack);
+            skillTimer = skillDuration = RechargeDuration;
         }
 
         public override void fire()
         {
-            if (fireTimer <= 0)
+            if (!isActiveAndEnabled || !player || player.InputSuppressed || player.stat == null || player.stat.nowHp <= 0 || !bullet || fireTimer > 0) return;
+            fireTimer = Mathf.Max(0.02f, fireCooldownNormal / Mathf.Max(0.1f, player.stat.calculate().fireSpeed));
+            new BasicAttackExecuteEvent(player, aimSupport.target).trigger();
+            var stat = player.stat.calculate();
+            Vector2 origin = firePoint ? (Vector2)firePoint.transform.position : (Vector2)player.transform.position;
+            Vector2 direction = (Vector2)aimSupport.target - origin;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            int count = WeaponRules.ProjectileCount(stat.bulletRate);
+            for (int i = 0; i < count; i++)
             {
-                var stat = this.player.stat.calculate();
-                Vector2 target = this.aimSupport.target;
-                Vector2 fire = firePoint.transform.position;
-                Vector2 direction = target - fire;
-                direction.Normalize();
-                var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                var bullets = (int)stat.bulletRate + bulletNumAdd;
-                for (int i = 0; i < bullets; i++)
-                {
-                    var b = Instantiate(bullet, fire, Quaternion.identity);
-                    b.rigidbody2D.position = fire;
-
-
-                    float angleOffset;
-
-                    var tmp = (bullets % 2 == 0) ? bullets * 2 + 1 : bullets * 2 - 1;
-                    var tmpp = this.aimSupport.aimRange / (tmp - 1);
-                    if (bullets % 2 == 0)
-                    {
-                        var tmppp = i * 2 - bullets + 1;
-                        angleOffset = tmppp * tmpp;
-                    }
-                    else
-                    {
-                        var tmppp = i * 2 - bullets + 1;
-                        angleOffset = tmppp * tmpp;
-                    }
-
-                    var a = angle + angleOffset;
-                    //Debug.Log(angleOffset);
-                    b.rigidbody2D.rotation = a;
-                    b.direction = new Vector2(Mathf.Cos(a * Mathf.Deg2Rad), Mathf.Sin(a * Mathf.Deg2Rad));
-
-
-                    var coef = 200f/((int)(stat.bulletRate)+3);
-
-                    var tag = new AtkTagSet(atkTagSetBullet);
-                    var dmg = stat.calculateTrueDamage(tag, coef);
-                    b.damageGiveEvent = new DamageGiveEvent(dmg, Vector3.zero, player, null, tag, 10);
-                }
-                //Destroy(Instantiate(muzzleFlashPrefab, fire, Quaternion.identity), 1);
-                this.fireTimer = fireCooldownNormal;
+                float offset = count == 1 ? 0 : Mathf.Lerp(-spreadDegrees / 2,
+                    spreadDegrees / 2, (float)i / (count - 1));
+                float radians = (angle + offset) * Mathf.Deg2Rad;
+                var instance = Instantiate(bullet, origin, Quaternion.Euler(0, 0, angle + offset));
+                instance.direction = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians));
+                var tags = new AtkTagSet().Add(AtkTags.physicalDamage, AtkTags.normalAttackDamage);
+                float coefficient = bulletCoefficient;
+                instance.damageGiveEvent = new DamageGiveEvent(stat.calculateTrueDamage(tags, coefficient),
+                    Vector3.zero, player, null, tags, 2f);
             }
         }
 
         public override void skill()
         {
-            if (isUltimate)
+            if (!isActiveAndEnabled || !player || player.InputSuppressed || player.stat == null || player.stat.nowHp <= 0 || SkillStack <= 0 || !knifeSkill) return;
+            if (SkillStack == Mathf.Max(1, (int)maxSkillStack)) skillTimer = skillDuration = RechargeDuration;
+            SkillStack--;
+            new SkillExecuteEvent(player, null).trigger();
+            var stat = player.stat.calculate();
+            foreach (var enemy in FindObjectsByType<EnemyBase>(FindObjectsSortMode.None))
             {
-            }
-            else if (skillStack > 0)
-            {
-                var stat = player.stat.calculate();
-                fireTimer = fireCooldownNormal;
-                Entity[] allEntities = FindObjectsByType<Entity>(0);
-
-                Vector3 myPos = transform.position;
-
-                foreach (var e in allEntities)
-                {
-                    if (!e) continue;
-
-                    // 자기 자신이면 스킵 (원하면 제거)
-                    if (e.gameObject == this.player.gameObject)
-                        continue;
-
-                    float dist = Vector3.Distance(myPos, e.transform.position);
-                    if (dist <= 10)
-                    {
-                        var b = Instantiate(knifeSkill, player.transform.position, Quaternion.identity);
-                        b.rigidbody2D.position = player.transform.position;
-
-                
-                        Vector2 target = e.transform.position;
-                        Vector2 fire = player.transform.position;
-                        Vector2 direction = target - fire;
-                        direction.Normalize();
-                        var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                
-                        b.rigidbody2D.rotation = angle;
-                        b.direction = direction;
-
-                        var coef = 50;
-
-                        var tag = new AtkTagSet(atkTagSetBullet);
-                        var dmg = stat.calculateTrueDamage(tag, coef);
-                        b.damageGiveEventHit=new DamageGiveEvent(dmg, Vector3.zero, player, null, tag, 5);
-                        b.marking=this.marking;
-                    }
-                }
-                
-                
-                
-                
-                
-                
-                
-                
-                
+                if (!enemy.isActiveAndEnabled || enemy.stat == null || enemy.stat.nowHp <= 0 ||
+                    Vector2.Distance(player.transform.position, enemy.transform.position) > skillRadius) continue;
+                Vector2 direction = (enemy.transform.position - player.transform.position).normalized;
+                var instance = Instantiate(knifeSkill, player.transform.position, Quaternion.identity);
+                instance.direction = direction;
+                instance.rigidbody2D.rotation = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                var tags = new AtkTagSet().Add(AtkTags.physicalDamage, AtkTags.skillDamage);
+                instance.damageGiveEventHit = new DamageGiveEvent(stat.calculateTrueDamage(tags, 50),
+                    Vector3.zero, player, null, tags, 3f);
+                instance.marking = marking;
             }
         }
 
         public override void ultimate()
         {
-            if (energy >= requireEnergy)
-            {
-            }
+            if (!isActiveAndEnabled || !player || player.InputSuppressed || player.stat == null || player.stat.nowHp <= 0 || Energy < requireEnergy) return;
+            Energy -= requireEnergy;
+            Vector2 center = aimSupport ? (Vector2)aimSupport.target : (Vector2)player.transform.position;
+            marking.MakeOneHitInArea(center, ultimateRadius);
+            new UltimateExecuteEvent(player, requireEnergy).trigger();
         }
 
         public override void eventActive(EventArgs eventArgs)
         {
-            switch (eventArgs)
-            {
-                case DamageGiveEvent damageGiveEvent:
-                {
-                    this.energy += player.statCache.energyRecharge * damageGiveEvent.energeRecharge;
-                    break;
-                }
-                case JustDodgeEvent justDodgeEvent:
-                {
-                    this.energy += player.statCache.energyRecharge * 5;
-                    break;
-                }
-                case DamageTakeEvent damageTakeEvent:
-                {
-                    this.energy += player.statCache.energyRecharge * 1;
-                    break;
-                }
-            }
+            if (!player || player.stat == null) return;
+            float gain = 0;
+            if (eventArgs is DamageGiveEvent hit && hit.attacker == player) gain = hit.energeRecharge;
+            else if (eventArgs is JustDodgeEvent) gain = 5;
+            else if (eventArgs is DamageTakeEvent taken && taken.target == player) gain = 1;
+            Energy = Mathf.Clamp(Energy + gain * player.stat.calculate().energyRecharge, 0, Mathf.Max(maxEnergy, requireEnergy));
         }
 
         public override void update(float deltaTime, Entity target)
         {
-            fireTimer -= deltaTime;
-            if (fireTimer < 0) fireTimer = 0;
-
-            if (skillStack < maxSkillStack)
+            if (target != player) return;
+            fireTimer = Mathf.Max(0, fireTimer - deltaTime);
+            if (SkillStack >= Mathf.Max(1, (int)maxSkillStack)) return;
+            skillTimer -= deltaTime;
+            while (skillTimer <= 0 && SkillStack < Mathf.Max(1, (int)maxSkillStack))
             {
-                skillTimer -= deltaTime;
-                if (skillTimer < 0)
-                {
-                    skillTimer += skillCooldown;
-                    skillStack += 1;
-                }
+                SkillStack++;
+                skillDuration = RechargeDuration;
+                skillTimer += skillDuration;
             }
-
-            ultimateTimer -= deltaTime;
-            if (ultimateTimer < 0) ultimateTimer = 0;
         }
 
         private void Update()
         {
-            Vector2 pp = player.transform.position;
-            this.transform.position = pp;
-            Vector2 t = this.aimSupport.target;
-            Vector2 p = this.player.transform.position;
-            if (t.x < p.x) this.transform.localScale = new Vector3(1, -1, 1);
-            else this.transform.localScale = new Vector3(1, 1, 1);
-            this.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(t.y - p.y, t.x - p.x) * Mathf.Rad2Deg);
+            if (!player || player.stat == null || player.stat.nowHp <= 0) return;
+            transform.position = player.transform.position;
+            Vector2 direction = (Vector2)aimSupport.target - (Vector2)player.transform.position;
+            transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
+            if (Input.GetKeyDown(KeyCode.E)) skill();
+            if (Input.GetKeyDown(KeyCode.Q)) ultimate();
+        }
 
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                skill();
-            }
+        public override void WriteHud(WeaponHudState state)
+        {
+            base.WriteHud(state);
+            state.Title = "건 / 나이프";
+            state.Subtitle = "나이프로 표식 부여 · 사격으로 표식 폭발";
+            state.Entries.Add(WeaponHudEntry.Skill("표식 투척", SkillStack, Mathf.Max(1, (int)maxSkillStack),
+                skillTimer, skillDuration));
+            state.Entries.Add(WeaponHudEntry.Ultimate("처형 구역", Energy, Mathf.Max(maxEnergy, requireEnergy), requireEnergy));
+        }
 
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                ultimate();
-            }
+        protected override void OnDisable()
+        {
+            if (marking && marking.player == player) marking.removeSelf();
+            base.OnDisable();
         }
     }
 }

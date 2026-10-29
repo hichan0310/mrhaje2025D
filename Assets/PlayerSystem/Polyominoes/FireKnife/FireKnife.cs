@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using EntitySystem;
 using EntitySystem.Events;
 using PlayerSystem.Tiling;
@@ -31,7 +31,7 @@ namespace PlayerSystem.Polyominoes.FireKnife
         public override void trigger(Entity player, float power)
         {
             timer = 10;
-            if (player is Player p) timer += p.statCache.additionalDuration;
+            if (player && player.stat != null) timer += player.stat.calculate().additionalDuration;
             this.registerTarget(player);
             this.powerRecord = power;
             // Debug.Log(power);
@@ -39,24 +39,27 @@ namespace PlayerSystem.Polyominoes.FireKnife
 
         public void eventActive(EventArgs eventArgs)
         {
-            if (eventArgs is DamageGiveEvent damageGiveEvent)
+            if (eventArgs is DamageDealtEvent damageGiveEvent)
             {
                 if (damageGiveEvent.attacker != this.target) return;
-                if (damageGiveEvent.target == this.target) return;
+                if (!damageGiveEvent.target || damageGiveEvent.target == this.target ||
+                    damageGiveEvent.target.stat == null || damageGiveEvent.target.stat.nowHp <= 0) return;
                 if (ICD.ContainsKey(damageGiveEvent.target)) return;
                 if (damageGiveEvent.atkTags.Contains(
                         AtkTags.normalAttackDamage,
                         AtkTags.skillDamage,
                         AtkTags.ultimateDamage))
                 {
+                    if (!burning) return;
+                    ICD[damageGiveEvent.target] = 0.5f;
                     var b = Instantiate(burning);
                     var stat = damageGiveEvent.attacker.stat.calculate();
                     var damage = stat.calculateTrueDamage(this.atkTagSet, (powerRecord + 1) * 20);
                     b.duration = 8 + stat.additionalDuration;
                     b.damageGiveEvent = new DamageGiveEvent(damage, Vector3.zero, target, damageGiveEvent.target,
-                        this.atkTagSet, 0);
+                        new AtkTagSet(this.atkTagSet), 0);
                     b.registerTarget(damageGiveEvent.target);
-                    ICD.Add(damageGiveEvent.target, 0.5f);
+
                 }
             }
         }
@@ -70,7 +73,7 @@ namespace PlayerSystem.Polyominoes.FireKnife
 
         public void removeSelf()
         {
-            target.removeListener(this);
+            if (target) target.removeListener(this);
             this.target = null;
         }
 

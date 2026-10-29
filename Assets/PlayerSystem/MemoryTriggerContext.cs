@@ -50,7 +50,8 @@ namespace PlayerSystem
         {
             if (callback != null)
             {
-                projectileCallbacks.Add(callback);
+                float registeredPower = CurrentPiecePower;
+                projectileCallbacks.Add((projectile, _) => callback(projectile, registeredPower));
             }
         }
 

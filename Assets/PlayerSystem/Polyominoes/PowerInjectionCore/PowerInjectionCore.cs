@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using EntitySystem;
 using EntitySystem.Events;
 using EntitySystem.StatSystem;
@@ -16,7 +16,7 @@ namespace PlayerSystem.Polyominoes.PowerInjectionCore
             "이 효과는 중첩되지 않는다. (여러 번 발동 시 가장 높은 증가량만 적용된다)\n" +
             this.statBonusDescription;
 
-        private static AtkPriorityStack buff;
+        private AtkPriorityStack buff = new AtkPriorityStack();
 
         protected override void Start()
         {

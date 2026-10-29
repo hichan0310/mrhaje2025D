@@ -211,13 +211,17 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   fallThroughDuration: 0.35
+  justDodgeCooltime: 0
   interactRadius: 1.5
   interactMask:
     serializedVersion: 2
     m_Bits: 4294967295
   horizontalAxis: Horizontal
   inventory: {fileID: 0}
-  weapon: {fileID: 229302457419543078, guid: e6fab49b6abb04348aebdf0e8edafb0d, type: 3}
+  weapon: {fileID: 114000, guid: b1c0044080fe49f6b8b0f03162b0cb8e, type: 3}
+  baseHp: 0
+  baseAtk: 0
+  baseDef: 0
 --- !u!1 &8880595522246193532
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using EntitySystem;
 using EntitySystem.Events;
 using PlayerSystem.Skills;
@@ -41,7 +41,7 @@ namespace PlayerSystem.Weapons.Sniper
         protected override void OnTriggerEnter2D(Collider2D other)
         {
             if(finish) return;
-            var e = other.gameObject.GetComponent<Entity>();
+            var e = other.GetComponentInParent<Entity>();
             if(e!=null) if(e is Player) return;
             // Debug.Log(other.gameObject.name);
             trailDestroy.destroy();

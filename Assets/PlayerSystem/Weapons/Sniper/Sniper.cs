@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using DefaultNamespace;
 using DG.Tweening;
 using EntitySystem;
 using EntitySystem.Events;
 using GameBackend;
-using TMPro;
 using UnityEngine;
 using EventArgs = EntitySystem.Events.EventArgs;
 using Random = UnityEngine.Random;
@@ -32,8 +31,19 @@ namespace PlayerSystem.Weapons.Sniper
 
         private bool skillBullet = false;
 
+        public override void registerTarget(Entity target, object args = null)
+        {
+            base.registerTarget(target, args);
+            skillStackCount = maxSkillStack;
+            skillCooltimeNow = Mathf.Max(0.1f, baseSkillCooltime * 4f /
+                Mathf.Max(0.1f, player.stat.calculate().skillCooldownDecrease + 4f));
+            skillCooldown = skillCooltimeNow;
+        }
+
         public override void fire()
         {
+            if (!isActiveAndEnabled || !player || player.InputSuppressed || player.stat == null || player.stat.nowHp <= 0 || inUltimate) return;
+            new BasicAttackExecuteEvent(player, aimSupport.target).trigger();
             if (!skillBullet)
             {
                 Vector2 target = this.aimSupport.target;
@@ -91,7 +101,7 @@ namespace PlayerSystem.Weapons.Sniper
 
                     coef = coef * 0.8f + 100;
 
-                    var tag = new AtkTagSet(atkTagSet);
+                    var tag = new AtkTagSet().Add(AtkTags.electricalDamage, AtkTags.skillDamage);
                     var dmg = stat.calculateTrueDamage(tag, coef);
                     b.damageGiveEvent = new DamageGiveEvent(dmg, Vector3.zero, player, null, tag,
                         5 * Mathf.Min(s.aimDuration, 1f));
@@ -103,6 +113,13 @@ namespace PlayerSystem.Weapons.Sniper
 
         public override void skill()
         {
+            if (!isActiveAndEnabled || !player || player.InputSuppressed || player.stat == null || player.stat.nowHp <= 0 || skillStackCount <= 0 ||
+                skillBullet || inUltimate || aimSupport.isAiming) return;
+            if (skillStackCount == maxSkillStack)
+                skillCooldown = skillCooltimeNow = Mathf.Max(0.1f, baseSkillCooltime * 4f /
+                    Mathf.Max(0.1f, player.stat.calculate().skillCooldownDecrease + 4f));
+            skillStackCount--;
+            new SkillExecuteEvent(player, null).trigger();
             this.skillBullet = true;
             this.player.TryDodge(true);
         }
@@ -111,13 +128,16 @@ namespace PlayerSystem.Weapons.Sniper
 
         public override void ultimate()
         {
+            if (!isActiveAndEnabled || !player || player.InputSuppressed || player.stat == null || player.stat.nowHp <= 0 || inUltimate ||
+                aimSupport.isAiming || energy < ultimateEnergyUsage) return;
+            energy -= ultimateEnergyUsage;
             TimeScaler.Instance.changeTimeScale(1f / 3);
             inUltimate = true;
         }
 
         public override void eventActive(EventArgs eventArgs)
         {
-            if (eventArgs is DamageGiveEvent d)
+            if (eventArgs is DamageGiveEvent d && d.attacker == player)
             {
                 this.energy += d.energeRecharge * player.statCache.energyRecharge;
                 if (this.energy > this.maxUltimateEnergyCharge) this.energy = this.maxUltimateEnergyCharge;
@@ -135,18 +155,15 @@ namespace PlayerSystem.Weapons.Sniper
 
         private void Update()
         {
+            if (!player || player.stat == null || player.stat.nowHp <= 0) return;
             if (skillStackCount < maxSkillStack)
             {
                 this.skillCooldown -= TimeManager.deltaTime;
                 if (this.skillCooldown <= 0)
                 {
                     this.skillStackCount += 1;
-                    this.skillCooldown += baseSkillCooltime * (4 / (player.statCache.skillCooldownDecrease + 4));
-                    this.skillCooltimeNow = baseSkillCooltime * (4 / (player.statCache.skillCooldownDecrease + 4));
-                    if (this.skillCooltimeNow >= this.baseSkillCooltime)
-                    {
-                        skillCooldown = 0;
-                    }
+                    this.skillCooldown += Mathf.Max(0.1f, baseSkillCooltime * 4f / Mathf.Max(0.1f, player.stat.calculate().skillCooldownDecrease + 4f));
+                    this.skillCooltimeNow = Mathf.Max(0.1f, baseSkillCooltime * 4f / Mathf.Max(0.1f, player.stat.calculate().skillCooldownDecrease + 4f));
                 }
             }
 
@@ -158,34 +175,14 @@ namespace PlayerSystem.Weapons.Sniper
             else this.transform.localScale = new Vector3(1, 1, 1);
             this.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(t.y - p.y, t.x - p.x) * Mathf.Rad2Deg);
 
-            if (!aimSupport.isAiming && !inUltimate && Input.GetKeyDown(KeyCode.E))
-            {
-                if (skillStackCount > 0)
-                {
-                    if (this.skillStackCount == maxSkillStack)
-                    {
-                        this.skillCooldown = baseSkillCooltime * (4 / (player.statCache.skillCooldownDecrease + 4));
-                    }
-
-                    this.skillStackCount -= 1;
-                    skill();
-                }
-            }
-
-            if (!aimSupport.isAiming && !inUltimate && Input.GetKeyDown(KeyCode.Q))
-            {
-                if (energy >= ultimateEnergyUsage)
-                {
-                    energy -= ultimateEnergyUsage;
-                    ultimate();
-                }
-            }
+            if (Input.GetKeyDown(KeyCode.E)) skill();
+            if (Input.GetKeyDown(KeyCode.Q)) ultimate();
 
             if (inUltimate && Input.GetMouseButtonUp(0))
             {
                 Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 TimeScaler.Instance.changeTimeScale(3f);
-                new UltimateExecuteEvent(this.player, 50).trigger();
+                new UltimateExecuteEvent(this.player, ultimateEnergyUsage).trigger();
                 var stat = this.player.stat.calculate();
                 Vector2 target = this.aimSupport.target;
                 Vector2 fire = firePoint.transform.position;
@@ -235,22 +232,34 @@ namespace PlayerSystem.Weapons.Sniper
                 //Destroy(Instantiate(muzzleFlashPrefab, fire, Quaternion.identity), 1);
             }
 
-            uiControl();
         }
 
-        [SerializeField] private TMP_Text skillCountText;
-        [SerializeField] private TMP_Text ultimateEnergyText;
-        [SerializeField] private RectTransform skillCooldownProgressBar;
-        [SerializeField] private RectTransform ultimateEnergyProgressBar;
-
-        private void uiControl()
+        protected override void OnDisable()
         {
-            skillCountText.text = skillStackCount.ToString();
-            ultimateEnergyText.text = $"{(int)energy}/{maxUltimateEnergyCharge}";
+            if (aimSupport is SniperAim aim) aim.ReleaseSlow();
+            if (inUltimate)
+            {
+                if (TimeScaler.Instance) TimeScaler.Instance.changeTimeScale(3f);
+                else Time.timeScale *= 3f;
+            }
+            inUltimate = false;
+            base.OnDisable();
+        }
 
-            skillCooldownProgressBar.localScale =
-                new Vector3((skillCooltimeNow - skillCooldown) / skillCooltimeNow, 1, 1);
-            ultimateEnergyProgressBar.localScale = new Vector3(energy / maxUltimateEnergyCharge, 1, 1);
+        public override void WriteHud(WeaponHudState state)
+        {
+            base.WriteHud(state);
+            state.Title = "저격총";
+            state.Subtitle = "길게 조준해 정밀 사격 · E 회피 후 강화탄";
+            string block = inUltimate ? "필살기 조준 중" : aimSupport && aimSupport.isAiming ? "조준 해제 후 사용" : "";
+            state.Entries.Add(WeaponHudEntry.Skill("회피 · 강화탄", skillStackCount, maxSkillStack,
+                skillCooldown, skillCooltimeNow, skillBullet ? "강화탄 발사 후 재사용" : block, skillBullet));
+            state.Entries.Add(WeaponHudEntry.Ultimate("전격 포화", energy, maxUltimateEnergyCharge,
+                ultimateEnergyUsage, inUltimate ? "좌클릭을 놓으면 발사" : block, inUltimate));
+            if (aimSupport is SniperAim aim && aimSupport.isAiming && !inUltimate)
+                state.Entries.Add(new WeaponHudEntry("", "정밀 조준", $"{aim.aimDuration:0.00}초",
+                    aim.aimDuration >= 0.3f ? "정밀 사격 준비 완료" : "0.3초부터 정밀 사격",
+                    aim.aimDuration / 0.5f, WeaponHudAccent.Effect, active: aim.aimDuration >= 0.3f, compact: true));
         }
     }
 }

@@ -2,6 +2,7 @@
 using EntitySystem.Events;
 using EntitySystem.StatSystem;
 using PlayerSystem.Tiling;
+using UnityEngine;
 
 namespace PlayerSystem.Polyominoes.UltimateCapacitor
 {
@@ -22,13 +23,13 @@ namespace PlayerSystem.Polyominoes.UltimateCapacitor
 
         public override void trigger(Entity player, float power)
         {
+            if (!player || power < 1f) return;
             if (!this.player || this.player != player)
             {
                 registerTarget(player);
             }
 
-            this.power += (power - 1) * 1.3f;
-            if (power >= 20) power = 20;
+            this.power = Mathf.Min(20f, this.power + (power - 1) * 1.3f);
         }
 
         public void eventActive(EventArgs eventArgs)
@@ -67,10 +68,12 @@ namespace PlayerSystem.Polyominoes.UltimateCapacitor
                 this.player.removeListener(this);
                 this.player.stat.removeBuff(this);
             }
+            this.player = null;
         }
 
         public void update(float deltaTime, Entity target)
         {
+            if (target != player) return;
             if (buffTimer > 0)
             {
                 buffTimer -= deltaTime;
@@ -78,7 +81,7 @@ namespace PlayerSystem.Polyominoes.UltimateCapacitor
                 {
                     buffTimer = 0;
                     this.power = 0;
-                    this.player = null;
+                    removeSelf();
                 }
             }
         }

@@ -22,6 +22,7 @@ namespace PlayerSystem.Polyominoes.ExecutionFollowupShot
         public float speed = 1;
         public List<Shot> shots { get; set; }
         private Entity target;
+        private bool scheduled;
         [SerializeField] private GameObject hitEffect;
 
         private void Awake()
@@ -62,6 +63,8 @@ namespace PlayerSystem.Polyominoes.ExecutionFollowupShot
             {
                 if (damageGiveEvent.atkTags.Contains(AtkTags.normalAttackDamage))
                 {
+                    if (scheduled || damageGiveEvent.attacker != player) return;
+                    scheduled = true;
                     target = damageGiveEvent.target;
                     Invoke("targetActive", 0.5f);
                 }
@@ -76,9 +79,11 @@ namespace PlayerSystem.Polyominoes.ExecutionFollowupShot
 
         public void removeSelf()
         {
-            this.player.removeListener(this);
-            this.shots.Remove(this);
+            if (player) player.removeListener(this);
+            shots?.Remove(this);
         }
+
+        private void OnDestroy() => removeSelf();
 
         public void update(float deltaTime, Entity target)
         {

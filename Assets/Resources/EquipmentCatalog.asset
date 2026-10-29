@@ -1,0 +1,249 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d64c13c4ab34b3297c2ef8b10242b9b, type: 3}
+  m_Name: EquipmentCatalog
+  m_EditorClassIdentifier: 
+  font: {fileID: 11400000, guid: 8a739872b4a37727c963bc2e8ed1f9f6, type: 2}
+  definitions:
+  - id: NeonHeartbeat
+    title: "네온 박동"
+    description: "1초마다 자동으로 발동합니다."
+    powerSummary: "P 0.30  ·  주기 발동"
+    kind: 0
+    prefab: {fileID: 5284806370076414674, guid: 93207994de7077d4f9e742da59171931, type: 3}
+    icon: {fileID: 0}
+    glyph: 0
+  - id: RapidFirePulse
+    title: "연사 펄스"
+    description: "일반 공격을 실행할 때마다 발동합니다.\n탄환 수가 증가하면 전달하는 파워도 증가합니다."
+    powerSummary: "P 탄환 수 ÷ 10"
+    kind: 0
+    prefab: {fileID: 5284806370076414674, guid: 3461caf1b253b3c41a0ae0aade25a65a, type: 3}
+    icon: {fileID: 0}
+    glyph: 1
+  - id: ModuleBoostCall
+    title: "모듈 부스트"
+    description: "스킬을 사용할 때 연결한 효과를 발동합니다."
+    powerSummary: "P 2.00  ·  스킬 사용"
+    kind: 0
+    prefab: {fileID: 5284806370076414674, guid: 2f9df1203c80fe44685dac1792673803, type: 3}
+    icon: {fileID: 0}
+    glyph: 2
+  - id: EnergyFlareExpansion
+    title: "에너지 플레어"
+    description: "필살기 사용 시 소모한 에너지에 비례하는 파워를 전달합니다."
+    powerSummary: "P 소모 에너지 ÷ 10"
+    kind: 0
+    prefab: {fileID: 5284806370076414674, guid: d08f90114e3adc244bda256b24658d17, type: 3}
+    icon: {fileID: 0}
+    glyph: 3
+  - id: SlipstreamEvasion
+    title: "슬립스트림"
+    description: "회피를 실행할 때 발동합니다.\n저스트 회피 여부와 관계없이 반응합니다."
+    powerSummary: "P 1.20  ·  회피"
+    kind: 0
+    prefab: {fileID: 5284806370076414674, guid: 147949f214138304cb3ac01834da959e, type: 3}
+    icon: {fileID: 0}
+    glyph: 4
+  - id: ReverseHackReflection
+    title: "역해킹 반사"
+    description: "저스트 회피 시 발동합니다.\n피한 공격이 강할수록 전달 파워가 증가합니다."
+    powerSummary: "P 2 + 회피 피해 ÷ 200"
+    kind: 0
+    prefab: {fileID: 5284806370076414674, guid: 33113ac27fdf279418ee7ab50dc42e7e, type: 3}
+    icon: {fileID: 0}
+    glyph: 5
+  - id: OverchargeSurge
+    title: "과충전 서지"
+    description: "저스트 회피로 충전을 축적합니다.\n필살기 사용 시 축적량에 따른 파워를 전달합니다."
+    powerSummary: "P 3–9  ·  축적 / 필살기"
+    kind: 0
+    prefab: {fileID: 5284806370076414674, guid: c5622b3216121f244ac1530650f43f3f, type: 3}
+    icon: {fileID: 0}
+    glyph: 6
+  - id: ChainLoadingProtocol
+    title: "체인 로딩"
+    description: "일반 공격으로 축적하고, 스킬 피해를 주면 발동합니다.\n공격 속도에 따라 내부 발동 간격이 줄어듭니다."
+    powerSummary: "P 0.5 + 0.2 × 축적"
+    kind: 0
+    prefab: {fileID: 5284806370076414674, guid: 62ced25d8044c3e48814ecd5b11fc9f3, type: 3}
+    icon: {fileID: 0}
+    glyph: 7
+  - id: ImpactFeedbackLoop
+    title: "충격 피드백"
+    description: "피해를 가하면 발동합니다.\n공격 속도에 따라 내부 발동 간격이 줄어듭니다."
+    powerSummary: "P 1.00  ·  피해 가하기"
+    kind: 0
+    prefab: {fileID: 5284806370076414674, guid: 5ec185db6053b2a45b30d495c5f6f183, type: 3}
+    icon: {fileID: 0}
+    glyph: 8
+  - id: RebootProtocol
+    title: "리부트 프로토콜"
+    description: "누적 피해가 최대 체력의 5배에 도달하면 준비됩니다.\n치명상을 받으면 체력을 10%로 복구하고 발동합니다."
+    powerSummary: "P 9.00  ·  치명상 / 재충전"
+    kind: 0
+    prefab: {fileID: 5284806370076414674, guid: ee0270e3178faf8468681711428cbbe2, type: 3}
+    icon: {fileID: 0}
+    glyph: 9
+  - id: CurrentAmplifier
+    title: "전류 증폭기"
+    description: "5초 + 추가 지속시간 동안 공격력 증가율을 (P+1)×10% 높입니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 7827984227590917182, guid: 199a8dafc2dab9f4c83ca1340c706667, type: 3}
+    icon: {fileID: 8069689919781454228, guid: 1c0bff6873507014aad71b3d32320b59, type: 3}
+    glyph: 0
+  - id: NormalAttackCharger
+    title: "일반 공격 충전기"
+    description: "5초 + 추가 지속시간 동안 일반 공격 피해를 (P+1)×15% 높입니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 2320844886715584191, guid: 9b42295927d1af449b14685a52b284c2, type: 3}
+    icon: {fileID: 3701469224661849542, guid: 5988c5631f274bd4b8c0021f6bfe339a, type: 3}
+    glyph: 1
+  - id: SkillCharger
+    title: "스킬 충전기"
+    description: "5초 + 추가 지속시간 동안 스킬 피해를 (P+1)×15% 높입니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 8526170697222819578, guid: 2add36be5e25b3d4f9368926214fcd90, type: 3}
+    icon: {fileID: -3193086299081126789, guid: 33c9e4cd22ec44d4ca1f144d8082f997, type: 3}
+    glyph: 2
+  - id: RiskAnalyzer
+    title: "위험 분석기"
+    description: "10초 + 추가 지속시간 동안 방어력 증가율을 (P+1)×15% 높입니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 1685746598091771331, guid: a9e0325e2ae03b041beced285024e718, type: 3}
+    icon: {fileID: 1765069364117286630, guid: 363654ede96be5e47b2cb9dd87e62db2, type: 3}
+    glyph: 3
+  - id: OverclockConverter
+    title: "오버클록 변환기"
+    description: "현재 체력 5%를 소모합니다.\n모든 피해 +15P%, 방어력 증가율 -20%. 체력은 1 미만으로 내려가지 않습니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 2014024199292576998, guid: 4425ddd06a5fa6c4aaad0f42c8eca48b, type: 3}
+    icon: {fileID: -8789849720289081353, guid: e94c8d7bd985f8947bd7f24625ad088a, type: 3}
+    glyph: 4
+  - id: OverclockUnlocker
+    title: "오버클록 해제기"
+    description: "현재 체력 20%를 소모하고 공격력 증가율을 20P% 높입니다.\n낮은 체력에서는 발동하지 않습니다. 각 발동이 독립 중첩됩니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 8996464626641262388, guid: 79f6eea88c100be4ebf78388e8477595, type: 3}
+    icon: {fileID: -6344101988771632132, guid: b53a0dcffda86aa4c8c0f7615b13f3da, type: 3}
+    glyph: 5
+  - id: AssaultStackBuffer
+    title: "돌격 축적 회로"
+    description: "발동마다 공격력 +100을 축적하며 최대 +1000입니다.\n피해를 가하면 지속시간을 갱신합니다. 파워는 사용하지 않습니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 1516905716660471880, guid: c3cc798485530ae458c1fd9383744691, type: 3}
+    icon: {fileID: -6515822370724908953, guid: 01730361310196340948b6fb0ccbd0fd, type: 3}
+    glyph: 6
+  - id: PowerInjectionCore
+    title: "파워 주입 코어"
+    description: "공격력 +250+250P, 최대 +2500.\n여러 기록 중 가장 높은 증가량만 적용합니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 1000, guid: d92386ac1f504d5fa140344a40c37aa6, type: 3}
+    icon: {fileID: 0}
+    glyph: 7
+  - id: NextShotAmplifier
+    title: "다음 탄환 증폭기"
+    description: "다음 일반 공격 피해를 스택당 10+10P% 증폭합니다.\n높은 파워 3개를 보관하며 합계 최대 150%, 명중하면 소모합니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 1906114290440177425, guid: 58df9bb00ea516b46ad8d4a30975ec4d, type: 3}
+    icon: {fileID: -1571878275955065359, guid: 140f8b92ca0d6344aa73abcf8fbd2fd8, type: 3}
+    glyph: 8
+  - id: NextSkillAmplifier
+    title: "다음 스킬 증폭기"
+    description: "다음 스킬 피해를 스택당 10+10P% 증폭합니다.\n높은 파워 3개를 보관하며 합계 최대 150%, 명중하면 소모합니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 3541531470717481223, guid: 29237f53d94405c43a4b9044fc1579b9, type: 3}
+    icon: {fileID: -1571878275955065359, guid: c67ce5279ae5c1f489b062c478a69043, type: 3}
+    glyph: 9
+  - id: UltimateCapacitor
+    title: "필살기 축전기"
+    description: "P가 1 이상이면 파워를 최대 20까지 축적합니다.\n필살기 사용 후 3초 동안 축적 파워×20%만큼 필살기 피해를 높입니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 8556765436821493371, guid: c20163dfd6e19214fb57d8985bdabda2, type: 3}
+    icon: {fileID: 4624508086414281385, guid: a8a569bb25f5796478d4a1153dbf6f51, type: 3}
+    glyph: 10
+  - id: HeatEnergyRelease
+    title: "열에너지 방출"
+    description: "5 + 탄환 수만큼 유도탄을 발사합니다.\n각 유도탄은 10+10P% 계수의 열 피해를 줍니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 1906114290440177425, guid: 587ff793a2dd77f479faa217fadd8877, type: 3}
+    icon: {fileID: 6401090084128518732, guid: f61c31c048b7f48439a0d9688429d510, type: 3}
+    glyph: 11
+  - id: LaserBlaster
+    title: "레이저 블래스터"
+    description: "가까운 적을 향해 관통 레이저를 발사합니다.\n파워와 탄환 수·범위 스탯에 따라 피해가 증가합니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 5658481779875327057, guid: 399aaf22db31b5043932353e9240f7d8, type: 3}
+    icon: {fileID: 2338036682312994853, guid: 226037cf6dcd03f4389f56a92e1b7f5c, type: 3}
+    glyph: 12
+  - id: ElectricFieldGenerator
+    title: "전기장 발생기"
+    description: "짧은 전기장을 생성해 (P+1)×50% 계수의 피해를 줍니다.\nP가 2를 초과하면 추가 감전 상태를 부여합니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 306814736600448334, guid: 943b50b2bdb2a1041a27ce5d4c2e14bd, type: 3}
+    icon: {fileID: -5748723417378428678, guid: 55a764ed8cbb73a47b07a5679f0c917a, type: 3}
+    glyph: 13
+  - id: ExecutionFollowupShot
+    title: "처형 추적탄"
+    description: "추적 구체를 최대 20개까지 보관합니다.\n일반 공격 명중 후 지연 공격으로 고정 피해 500을 줍니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 1906114290440177425, guid: 30f9f30026456fe4aa4cf10eebc1df86, type: 3}
+    icon: {fileID: -6138514178140635759, guid: dd8508e5c17f384429406981e544d834, type: 3}
+    glyph: 14
+  - id: FireKnife
+    title: "화염 칼날"
+    description: "일정 시간 동안 일반 공격·스킬·필살기 명중 시 화상을 부여합니다.\n화상은 2초마다 (P+1)×20% 계수의 피해를 줍니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 7048972632813690993, guid: d52176502e7583b4289fddda4e21a2db, type: 3}
+    icon: {fileID: -8528757242307102836, guid: 43b9b9fcc08ab914aaa9e629df237ec2, type: 3}
+    glyph: 15
+  - id: FeatureExtractor
+    title: "특성 추출기"
+    description: "P가 1 이상일 때 주변 적의 지속 피해를 즉시 한 번 추가 실행합니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 204713239720802847, guid: aa8eade278abb364caa55951b4d58dbd, type: 3}
+    icon: {fileID: 4758704348484277046, guid: 975c6a729df378e469b2841b18a9d23c, type: 3}
+    glyph: 16
+  - id: SimpleCooler
+    title: "냉각 복구기"
+    description: "체력을 50P만큼 회복합니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 6912754027265256072, guid: fa19918ace097984c898f44ce0048c99, type: 3}
+    icon: {fileID: 8664455974209473125, guid: 0b513a5493c877d43a9ed09cfd85b0ac, type: 3}
+    glyph: 17
+  - id: RecoveryManager
+    title: "회복 관리기"
+    description: "시간에 따라 내부 에너지를 0부터 2까지 충전합니다.\n발동 시 1000P×내부 에너지²만큼 회복하고 충전을 소모합니다."
+    powerSummary: ""
+    kind: 1
+    prefab: {fileID: 2866627386885402614, guid: 5b7dbaf7debe3fc4bb0ec71f4057bc59, type: 3}
+    icon: {fileID: 6668732300466102387, guid: 8141de5b32686914584358e4cb34266a, type: 3}
+    glyph: 18
+  grantStartingKit: 1

@@ -1,4 +1,4 @@
-﻿using EntitySystem;
+using EntitySystem;
 using EntitySystem.Events;
 using PlayerSystem.Skills;
 using UnityEngine;
@@ -41,7 +41,7 @@ namespace PlayerSystem.Weapons.GunAndKnife
         protected override void OnTriggerEnter2D(Collider2D other)
         {
             if (finish) return;
-            var e = other.gameObject.GetComponent<Entity>();
+            var e = other.GetComponentInParent<Entity>();
             if (e == null) return;
             if (e is Player) return;
             //Debug.Log(other.gameObject.name);

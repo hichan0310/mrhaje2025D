@@ -1,4 +1,4 @@
-﻿using EntitySystem;
+using EntitySystem;
 using EntitySystem.Events;
 using PlayerSystem.Tiling;
 
@@ -12,7 +12,7 @@ namespace PlayerSystem.Triggers
         
         public override void eventActive(EventArgs eventArgs)
         {
-            if (eventArgs is SkillExecuteEvent)
+            if (eventArgs is SkillExecuteEvent action && action.entity == entity)
             {
                 this.trigger(2);
             }

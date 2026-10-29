@@ -1,4 +1,4 @@
-﻿using EntitySystem;
+using EntitySystem;
 using EntitySystem.Events;
 using PlayerSystem.Tiling;
 
@@ -11,7 +11,7 @@ namespace PlayerSystem.Triggers
         
         public override void eventActive(EventArgs eventArgs)
         {
-            if (eventArgs is JustDodgeEvent justDodgeEvent)
+            if (eventArgs is JustDodgeEvent justDodgeEvent && justDodgeEvent.entity == entity && justDodgeEvent.damageGiveEvent != null)
             {
                 this.trigger(2f+(float)justDodgeEvent.damageGiveEvent.trueDmg/200);
             }

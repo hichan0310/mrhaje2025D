@@ -112,7 +112,9 @@ namespace PlayerSystem.Polyominoes
 
         public override void update(float deltaTime, Entity target)
         {
+            if (this.target != target) return;
             base.update(deltaTime, target);
+            lifeTime -= deltaTime;
 
             // 만료
             if (lifeTime <= 0f)

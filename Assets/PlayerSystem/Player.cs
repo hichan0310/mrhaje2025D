@@ -11,6 +11,7 @@ using PlayerSystem.Effects.EnergyGun;
 using PlayerSystem.Skills.ElectricShock;
 using PlayerSystem.Tiling;
 using PlayerSystem.Weapons;
+using PlayerSystem.Equipment;
 using UnityEngine;
 using EventArgs = EntitySystem.Events.EventArgs;
 
@@ -72,13 +73,34 @@ namespace PlayerSystem
         private IInteractable focused;
 
         // 그랩 메커니즘 보조
+        private readonly HashSet<object> controlLocks = new();
+        private int suppressedInputFrame=-1;
+        public bool InputSuppressed => ControlsLocked || Time.frameCount<=suppressedInputFrame;
+        public void SuppressInputForFrame() => suppressedInputFrame=Time.frameCount;
+        public bool ControlsLocked => isGrabLocked || controlLocks.Count > 0;
+
+        public void AcquireControlLock(object owner)
+        {
+            if (owner == null) return;
+            controlLocks.Add(owner);
+            horizontalInput = 0;
+            jumpQueued = false;
+            jumpBufferTimer = 0;
+            if (body) body.linearVelocity = Vector2.zero;
+        }
+
+        public void ReleaseControlLock(object owner)
+        {
+            if (owner != null) controlLocks.Remove(owner);
+        }
+
         private bool isGrabLocked;
         private float grabLockTimer;
 
 
         private void Awake()
         {
-            this.inventory.entity = this;
+            if (inventory) inventory.entity = this;
         }
 
         protected override void Start()
@@ -93,6 +115,9 @@ namespace PlayerSystem
             originalSize2 = bodyHitboxCollider2.size.x;
             this.stat = new EntityStat(this, baseHp, baseAtk, baseDef);
             this.statCache = this.stat.calculate();
+            var equipment = GetComponent<EquipmentLoadout>();
+            if (!equipment) equipment = gameObject.AddComponent<EquipmentLoadout>();
+            equipment.Initialize(this, Resources.Load<EquipmentCatalog>("EquipmentCatalog"));
             if (weapon)
             {
                 weapon = Instantiate(weapon);
@@ -108,11 +133,11 @@ namespace PlayerSystem
         {
             if (e is JustDodgeEvent dodgeEvent)
             {
-                if (this == dodgeEvent.entity)
+                if (this == dodgeEvent.entity && dodgeEvent.damageGiveEvent != null)
                 {
                     if (justDodge == null)
                     {
-                        TimeScaler.Instance.changeScaleForRealTime(0.2f, 0.5f);
+                        if (TimeScaler.Instance) TimeScaler.Instance.changeScaleForRealTime(0.2f, 0.5f);
                         dodgeTimer = this.stat.dodgeTime;
                         dodgeCooldownTimer = this.justDodgeCooltime;
                         justDodge = dodgeEvent;
@@ -124,7 +149,21 @@ namespace PlayerSystem
                             : justDodge;
                 }
             }
-            else base.eventActive(e);
+            else if (e != null)
+            {
+                FlushPendingCombatEvents();
+                base.eventActive(e);
+            }
+        }
+
+        // Keep one strongest perfect-dodge notification per pending batch, but flush it
+        // before the next action/hit so same-frame follow-ups cannot outrun their buffs.
+        internal void FlushPendingCombatEvents()
+        {
+            var pending = justDodge;
+            if (pending == null) return;
+            justDodge = null;
+            base.eventActive(pending);
         }
 
         protected override void update(float deltaTime)
@@ -146,8 +185,7 @@ namespace PlayerSystem
             if (energyChargeICD < 0) energyChargeICD = 0;
             UpdateFocus();
             base.update(deltaTime);
-            base.eventActive(justDodge);
-            justDodge = null;
+            FlushPendingCombatEvents();
         }
 
 
@@ -205,21 +243,28 @@ namespace PlayerSystem
             }
         }
 
-        public void GivePolyominoReward(Polyomino rewardPrefab)
+        public void RefreshEquipmentStats()
         {
-            if (!inventory) return;
-
-            // �κ� ���� Ȱ��ȭ
-            inventory.gameObject.SetActive(true);
-            inventory.show = true;
-
-            inventory.CreateAndAddPolyomino(rewardPrefab);
+            if (stat == null) return;
+            statCache = stat.calculate();
+            stat.nowHp = Mathf.Min(stat.nowHp, statCache.maxHp);
         }
 
+        public void GivePolyominoReward(Polyomino rewardPrefab)
+        {
+            var equipment = GetComponent<EquipmentLoadout>();
+            if (equipment && equipment.GrantLegacyEffect(rewardPrefab))
+            {
+                var effect = equipment.Items[equipment.Items.Count-1];
+                equipment.GrantRandom(EquipmentKind.Trigger);
+                equipment.View.Open();
+                equipment.View.SelectItem(effect);
+            }
+        }
 
         private void ReadInput(float deltaTime)
         {
-            if (isGrabLocked)
+            if (InputSuppressed)
             {
                 horizontalInput = 0f;
                 jumpQueued = false;
@@ -276,8 +321,8 @@ namespace PlayerSystem
 
             if (Input.GetKeyUp(inventoryKey))
             {
-                inventory.gameObject.SetActive(true);
-                inventory.show = true;
+                var equipment = GetComponent<EquipmentLoadout>();
+                if (equipment && equipment.View) equipment.View.Open();
             }
         }
 
@@ -309,7 +354,7 @@ namespace PlayerSystem
                 return;
             }
 
-            if (isGrabLocked)
+            if (InputSuppressed)
             {
                 body.linearVelocity = Vector2.zero;
                 return;
@@ -410,7 +455,7 @@ namespace PlayerSystem
 
         public void TryDodge(bool ignoreTimer = false)
         {
-            if (isGrabLocked) return;
+            if (InputSuppressed) return;
 
             if (!ignoreTimer && (isDodging || dodgeCooldownTimer > 0f))
                 return;
@@ -488,6 +533,7 @@ namespace PlayerSystem
 
         public bool TryInterceptAttack(Entity attacker, DamageGiveEvent giveEvent)
         {
+            if (giveEvent == null || (giveEvent.atkTags != null && giveEvent.atkTags.Contains(AtkTags.dodgeImpossible))) return false;
             if (isDodging)
             {
                 this.bodyHitboxCollider1.enabled = false;

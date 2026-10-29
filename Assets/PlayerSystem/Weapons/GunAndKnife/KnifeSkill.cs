@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using EntitySystem;
 using EntitySystem.Events;
 using PlayerSystem.Skills;
@@ -28,7 +28,7 @@ namespace PlayerSystem.Weapons.GunAndKnife
         protected override void update(float deltaTime)
         {
             this.timer += deltaTime;
-            checkDestroy(0.5f);
+            checkDestroy(1f);
             if (finish) Destroy(this.gameObject);
         }
 
@@ -37,10 +37,10 @@ namespace PlayerSystem.Weapons.GunAndKnife
         protected override void OnTriggerEnter2D(Collider2D other)
         {
             if (finish) return;
-            var e = other.gameObject.GetComponent<Entity>();
+            var e = other.GetComponentInParent<EnemyBase>();
             if (e == null) return;
-            if (e is Player) return;
             // Debug.Log(other.gameObject.name);
+            finish = true;
             Destroy(gameObject);
             this.rigidbody2D.linearVelocity = Vector2.zero;
             damageGiveEventHit.target = e;

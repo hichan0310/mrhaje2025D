@@ -14,33 +14,46 @@ namespace EntitySystem
         public Animator animator { get; private set; }
         
         private List<IEntityEventListener> listeners = new List<IEntityEventListener>();
+        private readonly List<IEntityEventListener> tickBuffer = new();
+        private readonly Stack<List<IEntityEventListener>> eventBuffers = new();
         public IReadOnlyList<IEntityEventListener> Listeners => listeners;
         
         protected virtual void Start()
         {
             animator = GetComponent<Animator>();
             TimeManager.registrarEntity(this);
-            hpBar = Instantiate(hpBar);
-            hpBar.target = this.transform;
+            if (hpBar)
+            {
+                hpBar = Instantiate(hpBar);
+                hpBar.target = this.transform;
+            }
         }
 
         protected virtual void Update()
         {
-            hpBar.ratio=(float)stat.nowHp/stat.maxHp;
+            if (stat == null) return;
+            if (hpBar)
+            {
+                int maximum = this is PlayerSystem.Player player && player.statCache != null ? player.statCache.maxHp : stat.maxHp;
+                hpBar.ratio = (float)stat.nowHp / Mathf.Max(1, maximum);
+            }
             update(TimeManager.deltaTime);
         }
 
         protected virtual void update(float deltaTime)
         {
-            for (int i=listeners.Count-1; i>=0; i--)
+            tickBuffer.Clear();
+            tickBuffer.AddRange(listeners);
+            for (int i=tickBuffer.Count-1; i>=0; i--)
             {
-                listeners[i].update(deltaTime, this);
+                if (listeners.Contains(tickBuffer[i])) tickBuffer[i].update(deltaTime, this);
             }
+            tickBuffer.Clear();
         }
         
         public void registerListener(IEntityEventListener listener)
         {
-            this.listeners.Add(listener);
+            if (listener != null && !listeners.Contains(listener)) this.listeners.Add(listener);
         }
 
         public void removeListener(IEntityEventListener listener)
@@ -51,9 +64,18 @@ namespace EntitySystem
 
         public virtual void eventActive(EventArgs e)
         {
-            for (int i=listeners.Count-1; i>=0; i--)
+            if (e == null) return;
+            var snapshot = eventBuffers.Count > 0 ? eventBuffers.Pop() : new List<IEntityEventListener>();
+            snapshot.AddRange(listeners);
+            try
             {
-                listeners[i].eventActive(e);
+                for (int i=snapshot.Count-1; i>=0; i--)
+                    if (listeners.Contains(snapshot[i])) snapshot[i].eventActive(e);
+            }
+            finally
+            {
+                snapshot.Clear();
+                eventBuffers.Push(snapshot);
             }
         }
 
@@ -70,8 +92,17 @@ namespace EntitySystem
 
         public void takeHeal(HealEvent e)
         {
+            if (stat == null || e == null) return;
             this.stat.nowHp += e.healAmount;
-            if(stat.nowHp >= stat.maxHp) stat.nowHp = stat.maxHp;
+            int maximum = stat.calculate().maxHp;
+            if (stat.nowHp >= maximum) stat.nowHp = maximum;
+        }
+
+        protected virtual void OnDestroy()
+        {
+            TimeManager.removerEntity(this);
+            if (hpBar) Destroy(hpBar.gameObject);
+            listeners.Clear();
         }
     }
 }

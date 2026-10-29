@@ -15,7 +15,7 @@ namespace EntitySystem.BuffTypes
 
         public virtual void eventActive(EventArgs eventArgs)
         {
-            if(eventArgs is EntityDieEvent) Destroy(this.gameObject);
+            if(eventArgs is EntityDieEvent death && death.entity == target) Destroy(this.gameObject);
         }
 
         public virtual void registerTarget(Entity target, object args = null)
@@ -26,7 +26,7 @@ namespace EntitySystem.BuffTypes
 
         public virtual void removeSelf()
         {
-            target.removeListener(this);
+            if (target) target.removeListener(this);
         }
 
         public virtual void update(float deltaTime, Entity target)

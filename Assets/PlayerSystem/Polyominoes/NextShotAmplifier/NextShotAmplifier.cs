@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using EntitySystem;
 using EntitySystem.Events;
 using EntitySystem.StatSystem;
@@ -16,7 +16,7 @@ namespace PlayerSystem.Polyominoes.NextShotAmplifier
             "지속시간은 무한이며, 일반 공격으로 피해를 입히는 순간 모든 스택이 소모된다.\n" +
             this.statBonusDescription;
 
-        private static NextBasicAttackDamageBuff buff = new NextBasicAttackDamageBuff();
+        private NextBasicAttackDamageBuff buff = new NextBasicAttackDamageBuff();
 
         public override void trigger(Entity entity, float power)
         {

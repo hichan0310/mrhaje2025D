@@ -91,6 +91,7 @@ namespace EntitySystem.BuffTypes
             else
             {
                 this.targets.Add(target, new StackManager(1));
+                this.targets[target].addStack((args is ITimeInfo t) ? t.time : this.defaultTime);
                 target.registerListener(this);
                 target.stat.registerBuff(this);
             }

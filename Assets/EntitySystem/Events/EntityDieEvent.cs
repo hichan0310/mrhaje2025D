@@ -13,8 +13,8 @@
 
         public override void trigger()
         {
-            entity.eventActive(this);
-            attacker.eventActive(this);
+            entity?.eventActive(this);
+            if (attacker != entity) attacker?.eventActive(this);
         }
     }
 }

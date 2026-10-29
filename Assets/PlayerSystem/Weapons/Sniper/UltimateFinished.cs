@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using EntitySystem;
 using EntitySystem.Events;
@@ -10,7 +10,7 @@ namespace PlayerSystem.Weapons.Sniper
     {
         public DamageGiveEvent damageGiveEvent { get; set; }
         
-        public HashSet<Collider2D> colliders = new HashSet<Collider2D>();
+        public HashSet<Entity> colliders = new HashSet<Entity>();
         private Collider2D collider2D;
         private float timer = 0;
 
@@ -31,9 +31,9 @@ namespace PlayerSystem.Weapons.Sniper
 
         private void OnTriggerStay2D(Collider2D other)
         {
-            if (colliders.Contains(other)) return;
-            colliders.Add(other);
-            var e = other.GetComponent<Entity>();
+            var e = other.GetComponentInParent<Entity>();
+            if (e == null || colliders.Contains(e)) return;
+            colliders.Add(e);
             if (e == null) return;
             if (e == this.damageGiveEvent.attacker) return;
             this.damageGiveEvent.target = e;

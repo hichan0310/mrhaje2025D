@@ -1,0 +1,5 @@
+{
+  "name": "WeaponRules",
+  "rootNamespace": "PlayerSystem.Weapons",
+  "noEngineReferences": true
+}
